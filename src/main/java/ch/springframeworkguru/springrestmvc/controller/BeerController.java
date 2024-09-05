@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/beer")
+@RequestMapping("${controllers.beer-controller.request-path}")
 @Slf4j
 public class BeerController {
 
@@ -27,14 +27,12 @@ public class BeerController {
         return new ResponseEntity<>(deletedBeer, HttpStatus.OK);
     }
 
-    @RequestMapping(value="/listBears",
-            method = RequestMethod.GET)
+    @GetMapping(value="/listBears")
     public List<Beer> listBeers(){
         return beerService.listBeers();
     }
 
-    @RequestMapping(value = "/getBeerById/{beerId}",
-                    method = RequestMethod.GET)
+    @GetMapping(value = "/getBeerById/{beerId}")
     public Beer getBeerById(@PathVariable("beerId") UUID beerId){
 
         log.debug("Get Beer by Id - in controller");
@@ -42,15 +40,13 @@ public class BeerController {
         return beerService.getBeerById(beerId);
     }
 
-    @RequestMapping(value = "/createBeer",
-            method = RequestMethod.POST)
+    @PostMapping(value = "/createBeer")
     public ResponseEntity<Beer> createBeer(@RequestBody Beer newBeer) {
         Beer beer = beerService.saveNewBeer(newBeer);
-        return new ResponseEntity<>(beer, HttpStatus.OK);
+        return new ResponseEntity<>(beer, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/editBeer/{beerId}",
-            method = RequestMethod.PUT)
+    @PutMapping(value = "/editBeer/{beerId}")
     public ResponseEntity<Beer> editBeer(@RequestBody Beer beer, @PathVariable("beerId") UUID beerId) {
         Beer updatedBeer = beerService.editBeer(beerId, beer);
         return new ResponseEntity<>(updatedBeer, HttpStatus.OK);
