@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/customer")
+@RequestMapping("${controllers.customer-controller.request-path}")
 @Slf4j
 public class CustomerController {
 

@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: springRestMvc
+
+controllers:
+  customer-controller:
+    request-path: "/api/v1/customer"
+  beer-controller:
+    request-path: "/api/v1/beer"
