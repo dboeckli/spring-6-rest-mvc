@@ -24,7 +24,7 @@ public class CustomerController {
     @DeleteMapping(value = "/deleteCustomer/{customerId}")
     public ResponseEntity<Customer> deleteCustomer(@PathVariable("customerId") UUID customerId) {
         Customer deletedCustomer = customerService.deleteCustomer(customerId);
-        return new ResponseEntity<>(deletedCustomer, HttpStatus.FOUND);
+        return new ResponseEntity<>(deletedCustomer, HttpStatus.OK);
     }
 
     @GetMapping(value = "/listCustomer")
