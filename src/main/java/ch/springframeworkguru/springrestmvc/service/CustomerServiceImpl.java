@@ -1,6 +1,7 @@
 package ch.springframeworkguru.springrestmvc.service;
 
 import ch.springframeworkguru.springrestmvc.model.Customer;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -74,4 +75,26 @@ public class CustomerServiceImpl implements CustomerService {
         customerMap.replace(customerId, editedCustomer);
         return editedCustomer;
     }
+
+    @Override
+    public Customer deleteCustomer(UUID customerId) {
+        return customerMap.remove(customerId);
+    }
+
+    @Override
+    public Customer patchCustomer(UUID customerId, Customer customer) {
+        Customer customerToChange = customerMap.get(customerId);
+        if (StringUtils.isNotEmpty(customer.getCustomerName())) {
+            customerToChange.setCustomerName(customer.getCustomerName());
+        }
+        if (StringUtils.isNotEmpty(customer.getVersion())) {
+            customerToChange.setVersion(customer.getVersion());
+        }
+        if (!customer.equals(customerToChange)) {
+            customerToChange.setLastModifiedDate(LocalDate.now());
+            customerMap.replace(customerId, customerToChange);
+        }
+        return customerToChange;
+    }
+
 }
