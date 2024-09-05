@@ -102,4 +102,9 @@ public class BeerServiceImpl implements BeerService {
         beerMap.replace(beerId, beerToChange);
         return beerToChange;
     }
+
+    @Override
+    public Beer deleteBeer(UUID beerId) {
+        return beerMap.remove(beerId);
+    }
 }

@@ -21,6 +21,12 @@ public class BeerController {
         this.beerService = beerService;
     }
 
+    @DeleteMapping(value="/deleteBeer/{beerId}")
+    public ResponseEntity<Beer> deleteBeer(@PathVariable("beerId") UUID beerId) {
+        Beer deletedBeer = beerService.deleteBeer(beerId);
+        return new ResponseEntity<>(deletedBeer, HttpStatus.FOUND);
+    }
+
     @RequestMapping(value="/listBears",
             method = RequestMethod.GET)
     public List<Beer> listBeers(){
@@ -36,18 +42,18 @@ public class BeerController {
         return beerService.getBeerById(beerId);
     }
 
-    @RequestMapping(value = "/createBear",
+    @RequestMapping(value = "/createBeer",
             method = RequestMethod.POST)
-    public ResponseEntity<Beer> createBear(@RequestBody Beer newBeer) {
+    public ResponseEntity<Beer> createBeer(@RequestBody Beer newBeer) {
         Beer bear = beerService.saveNewBeer(newBeer);
-        return new ResponseEntity<>(bear, HttpStatus.CREATED);
+        return new ResponseEntity<>(bear, HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "/editBea/{beerId}",
+    @RequestMapping(value = "/editBeer/{beerId}",
             method = RequestMethod.PUT)
-    public ResponseEntity<Beer> editBear(@RequestBody Beer beer, @PathVariable("beerId") UUID beerId) {
+    public ResponseEntity<Beer> editBeer(@RequestBody Beer beer, @PathVariable("beerId") UUID beerId) {
         Beer updatedBeer = beerService.editBeer(beerId, beer);
-        return new ResponseEntity<>(updatedBeer, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(updatedBeer, HttpStatus.NO_CONTENT);
     }
 
 
