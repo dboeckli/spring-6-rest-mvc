@@ -17,8 +17,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = BeerController.class)
@@ -84,12 +83,26 @@ class BeerControllerTest {
     }
 
     @Test
-    void deleteBeer() {
+    void testEditBeer() throws Exception {
+        Beer givenBeerToEdit = beerServiceImpl.listBeers().getFirst();
+        givenBeerToEdit.setBeerName("veryveryNew Bear");
+
+        given(beerService.editBeer(givenBeerToEdit.getId(), givenBeerToEdit)).willReturn(givenBeerToEdit);
+
+        mockMvc.perform(put("/api/v1/beer/editBeer/" + givenBeerToEdit.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(givenBeerToEdit)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(givenBeerToEdit)));  // oder das ganze Object;
     }
 
     @Test
-    void editBeer() {
+    void deleteBeer() {
     }
+
+
 
     @Test
     void patchBeer() {

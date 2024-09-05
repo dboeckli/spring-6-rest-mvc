@@ -15,8 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CustomerController.class)
@@ -70,15 +69,27 @@ class CustomerControllerTest {
     }
 
     @Test
+    void testEditCustomer() throws Exception {
+        Customer givenCustomerToEdit = customerServiceImpl.listCustomers().getFirst();
+        givenCustomerToEdit.setCustomerName("veryveryNew Customer");
+
+        given(customerService.editCustomer(givenCustomerToEdit.getId(), givenCustomerToEdit)).willReturn(givenCustomerToEdit);
+
+        mockMvc.perform(put("/api/v1/customer/editCustomer/" + givenCustomerToEdit.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(givenCustomerToEdit)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(givenCustomerToEdit)));  // oder das ganze Object;
+    }
+
+    @Test
     void deleteCustomer() {
     }
 
     @Test
     void listCustomer() {
-    }
-
-    @Test
-    void editCustomer() {
     }
 
     @Test
