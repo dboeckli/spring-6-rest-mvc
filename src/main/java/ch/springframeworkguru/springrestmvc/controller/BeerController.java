@@ -46,7 +46,7 @@ public class BeerController {
             method = RequestMethod.POST)
     public ResponseEntity<Beer> createBeer(@RequestBody Beer newBeer) {
         Beer beer = beerService.saveNewBeer(newBeer);
-        return new ResponseEntity<>(beer, HttpStatus.OK);
+        return new ResponseEntity<>(beer, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/editBeer/{beerId}",

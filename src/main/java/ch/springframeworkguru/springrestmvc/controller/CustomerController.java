@@ -29,13 +29,13 @@ public class CustomerController {
 
     @RequestMapping(value="/listCustomer",
                     method = RequestMethod.GET)
-    public List<Customer> listBeers(){
+    public List<Customer> listCustomer(){
         return customerService.listCustomers();
     }
 
     @RequestMapping(value = "/getCustomerById/{customerId}",
                     method = RequestMethod.GET)
-    public Customer getBeerById(@PathVariable("customerId") UUID customerId){
+    public Customer getCustomerById(@PathVariable("customerId") UUID customerId){
         log.debug("Get Customer by Id - in controller");
         return customerService.getCustomerById(customerId);
     }
