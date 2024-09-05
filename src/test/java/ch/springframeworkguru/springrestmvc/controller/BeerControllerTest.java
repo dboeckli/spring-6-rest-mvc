@@ -113,9 +113,19 @@ class BeerControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(givenBeerToDelete)));  // oder das
     }
 
-
-
     @Test
-    void patchBeer() {
+    void testPatchBeer() throws Exception {
+        Beer givenBeerToPatch = beerServiceImpl.listBeers().getFirst();
+        givenBeerToPatch.setBeerName("patchedBeerName");
+
+        given(beerService.patchBeer(givenBeerToPatch.getId(), givenBeerToPatch)).willReturn(givenBeerToPatch);
+
+        mockMvc.perform(patch("/api/v1/beer/patchBeer/" + givenBeerToPatch.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(givenBeerToPatch)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(givenBeerToPatch)));  // oder das
     }
 }
