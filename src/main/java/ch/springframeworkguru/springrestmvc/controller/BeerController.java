@@ -24,7 +24,7 @@ public class BeerController {
     @DeleteMapping(value="/deleteBeer/{beerId}")
     public ResponseEntity<Beer> deleteBeer(@PathVariable("beerId") UUID beerId) {
         Beer deletedBeer = beerService.deleteBeer(beerId);
-        return new ResponseEntity<>(deletedBeer, HttpStatus.FOUND);
+        return new ResponseEntity<>(deletedBeer, HttpStatus.OK);
     }
 
     @RequestMapping(value="/listBears",
@@ -45,16 +45,20 @@ public class BeerController {
     @RequestMapping(value = "/createBeer",
             method = RequestMethod.POST)
     public ResponseEntity<Beer> createBeer(@RequestBody Beer newBeer) {
-        Beer bear = beerService.saveNewBeer(newBeer);
-        return new ResponseEntity<>(bear, HttpStatus.NO_CONTENT);
+        Beer beer = beerService.saveNewBeer(newBeer);
+        return new ResponseEntity<>(beer, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/editBeer/{beerId}",
             method = RequestMethod.PUT)
     public ResponseEntity<Beer> editBeer(@RequestBody Beer beer, @PathVariable("beerId") UUID beerId) {
         Beer updatedBeer = beerService.editBeer(beerId, beer);
-        return new ResponseEntity<>(updatedBeer, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(updatedBeer, HttpStatus.OK);
     }
 
-
+    @PatchMapping(value = "/patchBeer/{beerId}")
+    public ResponseEntity<Beer> patchBeer(@RequestBody Beer beer, @PathVariable("beerId") UUID beerId) {
+        Beer patchedBeer = beerService.patchBeer(beerId, beer);
+        return new ResponseEntity<>(patchedBeer, HttpStatus.OK);
+    }
 }
