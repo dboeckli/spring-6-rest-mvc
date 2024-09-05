@@ -7,9 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.is;
@@ -19,6 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CustomerController.class)
+@ActiveProfiles("test")
 class CustomerControllerTest {
 
     @Autowired
@@ -29,6 +32,9 @@ class CustomerControllerTest {
 
     @MockBean
     CustomerService customerService;
+
+    @Value("${controllers.customer-controller.request-path}")
+    private String requestPath;
 
     CustomerServiceImpl customerServiceImpl;
 
@@ -42,7 +48,7 @@ class CustomerControllerTest {
         Customer givenCustomer = customerServiceImpl.listCustomers().getFirst();
         given(customerService.getCustomerById(givenCustomer.getId())).willReturn(givenCustomer);
 
-        mockMvc.perform(get("/api/v1/customer/getCustomerById/" + givenCustomer.getId())
+        mockMvc.perform(get(requestPath + "/getCustomerById/" + givenCustomer.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -59,7 +65,7 @@ class CustomerControllerTest {
 
         given(customerService.saveNewCustomer(any(Customer.class))).willReturn(givenCustomer);
 
-        mockMvc.perform(post("/api/v1/customer/createCustomer")
+        mockMvc.perform(post(requestPath + "/createCustomer")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(givenCustomer)))
@@ -75,7 +81,7 @@ class CustomerControllerTest {
 
         given(customerService.editCustomer(givenCustomerToEdit.getId(), givenCustomerToEdit)).willReturn(givenCustomerToEdit);
 
-        mockMvc.perform(put("/api/v1/customer/editCustomer/" + givenCustomerToEdit.getId())
+        mockMvc.perform(put(requestPath + "/editCustomer/" + givenCustomerToEdit.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(givenCustomerToEdit)))
@@ -90,7 +96,7 @@ class CustomerControllerTest {
 
         given(customerService.deleteCustomer(givenCustomerToDelete.getId())).willReturn(givenCustomerToDelete);
 
-        mockMvc.perform(delete("/api/v1/customer/deleteCustomer/" + givenCustomerToDelete.getId())
+        mockMvc.perform(delete(requestPath + "/deleteCustomer/" + givenCustomerToDelete.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(givenCustomerToDelete)))
@@ -110,7 +116,7 @@ class CustomerControllerTest {
 
         given(customerService.patchCustomer(givenCustomerToPatch.getId(), givenCustomerToPatch)).willReturn(givenCustomerToPatch);
 
-        mockMvc.perform(patch("/api/v1/customer/patchCustomer/" + givenCustomerToPatch.getId())
+        mockMvc.perform(patch(requestPath + "/patchCustomer/" + givenCustomerToPatch.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(givenCustomerToPatch)))
