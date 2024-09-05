@@ -14,4 +14,8 @@ public interface CustomerService {
     Customer saveNewCustomer(Customer newCustomer);
 
     Customer editCustomer(UUID customerId, Customer customerToEdit);
+
+    Customer deleteCustomer(UUID customerId);
+
+    Customer patchCustomer(UUID customerId, Customer customer);
 }

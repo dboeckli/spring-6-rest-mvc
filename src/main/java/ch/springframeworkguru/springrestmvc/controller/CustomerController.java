@@ -1,6 +1,5 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
-import ch.springframeworkguru.springrestmvc.model.Beer;
 import ch.springframeworkguru.springrestmvc.model.Customer;
 import ch.springframeworkguru.springrestmvc.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +19,12 @@ public class CustomerController {
 
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
+    }
+
+    @DeleteMapping(value="/deleteCustomer/{customerId}")
+    public ResponseEntity<Customer> deleteCustomer(@PathVariable("customerId") UUID customerId) {
+        Customer deletedCustomer = customerService.deleteCustomer(customerId);
+        return new ResponseEntity<>(deletedCustomer, HttpStatus.FOUND);
     }
 
     @RequestMapping(value="/listCustomer",
@@ -46,6 +51,12 @@ public class CustomerController {
             method = RequestMethod.PUT)
     public ResponseEntity<Customer> editCustomer(@RequestBody Customer customerToEdit, @PathVariable("customerId") UUID customerId) {
         Customer customer = customerService.editCustomer(customerId, customerToEdit);
-        return new ResponseEntity<>(customer, HttpStatus.OK);
+        return new ResponseEntity<>(customer, HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping(value = "/patchCustomer/{customerId}")
+    public ResponseEntity<Customer> patchCustomer(@RequestBody Customer customer, @PathVariable("customerId") UUID customerId) {
+        Customer patchedCustomer = customerService.patchCustomer(customerId, customer);
+        return new ResponseEntity<>(patchedCustomer, HttpStatus.NO_CONTENT);
     }
 }
