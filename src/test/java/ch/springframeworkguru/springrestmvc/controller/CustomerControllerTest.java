@@ -104,6 +104,18 @@ class CustomerControllerTest {
     }
 
     @Test
-    void patchCustomer() {
+    void testPatchCustomer() throws Exception {
+        Customer givenCustomerToPatch = customerServiceImpl.listCustomers().getFirst();
+        givenCustomerToPatch.setCustomerName("patchedCustomerName");
+
+        given(customerService.patchCustomer(givenCustomerToPatch.getId(), givenCustomerToPatch)).willReturn(givenCustomerToPatch);
+
+        mockMvc.perform(patch("/api/v1/customer/patchCustomer/" + givenCustomerToPatch.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(givenCustomerToPatch)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(givenCustomerToPatch)));  // oder das
     }
 }
