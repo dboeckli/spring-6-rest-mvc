@@ -85,7 +85,18 @@ class CustomerControllerTest {
     }
 
     @Test
-    void deleteCustomer() {
+    void testDeleteCustomer() throws Exception {
+        Customer givenCustomerToDelete = customerServiceImpl.listCustomers().getFirst();
+
+        given(customerService.deleteCustomer(givenCustomerToDelete.getId())).willReturn(givenCustomerToDelete);
+
+        mockMvc.perform(delete("/api/v1/customer/deleteCustomer/" + givenCustomerToDelete.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(givenCustomerToDelete)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(givenCustomerToDelete)));  // oder das
     }
 
     @Test

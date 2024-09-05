@@ -99,7 +99,18 @@ class BeerControllerTest {
     }
 
     @Test
-    void deleteBeer() {
+    void testDeleteBeer() throws Exception {
+        Beer givenBeerToDelete = beerServiceImpl.listBeers().getFirst();
+
+        given(beerService.deleteBeer(givenBeerToDelete.getId())).willReturn(givenBeerToDelete);
+
+        mockMvc.perform(delete("/api/v1/beer/deleteBeer/" + givenBeerToDelete.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(givenBeerToDelete)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(givenBeerToDelete)));  // oder das
     }
 
 
