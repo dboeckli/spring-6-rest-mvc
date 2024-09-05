@@ -51,6 +51,12 @@ public class CustomerController {
             method = RequestMethod.PUT)
     public ResponseEntity<Customer> editCustomer(@RequestBody Customer customerToEdit, @PathVariable("customerId") UUID customerId) {
         Customer customer = customerService.editCustomer(customerId, customerToEdit);
-        return new ResponseEntity<>(customer, HttpStatus.OK);
+        return new ResponseEntity<>(customer, HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping(value = "/patchCustomer/{customerId}")
+    public ResponseEntity<Customer> patchCustomer(@RequestBody Customer customer, @PathVariable("customerId") UUID customerId) {
+        Customer patchedCustomer = customerService.patchCustomer(customerId, customer);
+        return new ResponseEntity<>(patchedCustomer, HttpStatus.NO_CONTENT);
     }
 }

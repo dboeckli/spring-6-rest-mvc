@@ -2,6 +2,7 @@ package ch.springframeworkguru.springrestmvc.service;
 
 import ch.springframeworkguru.springrestmvc.model.Beer;
 import ch.springframeworkguru.springrestmvc.model.BeerStyle;
+import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -106,5 +107,33 @@ public class BeerServiceImpl implements BeerService {
     @Override
     public Beer deleteBeer(UUID beerId) {
         return beerMap.remove(beerId);
+    }
+
+    @Override
+    public Beer patchBeer(UUID beerId, Beer beer) {
+        Beer beerToChange = beerMap.get(beerId);
+        if (StringUtils.isNotEmpty(beer.getBeerName())) {
+            beerToChange.setBeerName(beer.getBeerName());
+        }
+        if (StringUtils.isNotEmpty(beer.getUpc())) {
+            beerToChange.setUpc(beer.getUpc());
+        }
+        if (beer.getBeerStyle() != null) {
+            beerToChange.setBeerStyle(beer.getBeerStyle());
+        }
+        if (beer.getPrice() != null) {
+            beerToChange.setPrice(beer.getPrice());
+        }
+        if (beer.getQuantityOnHand() != null) {
+            beerToChange.setQuantityOnHand(beer.getQuantityOnHand());
+        }
+        if (beer.getVersion() != null) {
+            beerToChange.setVersion(beer.getVersion());
+        }
+        if (!beer.equals(beerToChange)) {
+            beerToChange.setUpdateDate(LocalDateTime.now());
+            beerMap.replace(beerId, beerToChange);
+        }
+        return beerToChange;
     }
 }

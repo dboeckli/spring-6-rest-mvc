@@ -43,6 +43,25 @@ Content-Type: application/json
 }
 
 ###
+PUT http://localhost:8080/api/v1/customer/editCustomer/4908886e-8df4-4df1-bdb0-6ac0bae289af
+Accept: application/json
+Content-Type: application/json
+
+{
+  "customerName": "editedCustomerName",
+  "version": "77"
+}
+
+###
+PUT http://localhost:8080/api/v1/customer/patchCustomer/4908886e-8df4-4df1-bdb0-6ac0bae289af
+Accept: application/json
+Content-Type: application/json
+
+{
+  "customerName": "patchedCustomerName"
+}
+
+###
 PUT http://localhost:8080/api/v1/beer/editBeer/4908886e-8df4-4df1-bdb0-6ac0bae289af
 Accept: application/json
 Content-Type: application/json
@@ -54,6 +73,15 @@ Content-Type: application/json
   "upc": "",
   "quantityOnHand": 0,
   "price": 27.16
+}
+
+###
+PATCH http://localhost:8080/api/v1/beer/patchBeer/9d07c34b-36fb-4108-b9ca-0de3393ea2ab
+Accept: application/json
+Content-Type: application/json
+
+{
+  "beerName": "patched Beername"
 }
 
 ###
