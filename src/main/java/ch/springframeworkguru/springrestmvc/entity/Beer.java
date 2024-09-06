@@ -1,11 +1,7 @@
 package ch.springframeworkguru.springrestmvc.entity;
 
 import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Version;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
