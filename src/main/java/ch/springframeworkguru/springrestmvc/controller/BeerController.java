@@ -28,8 +28,8 @@ public class BeerController {
     }
 
     @GetMapping(value="/listBears")
-    public List<BeerDTO> listBeers(){
-        return beerService.listBeers();
+    public ResponseEntity<List<BeerDTO>> listBeers() {
+        return new ResponseEntity<>(beerService.listBeers(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/getBeerById/{beerId}")
