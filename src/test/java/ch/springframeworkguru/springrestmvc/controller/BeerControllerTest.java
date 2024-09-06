@@ -1,6 +1,6 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
-import ch.springframeworkguru.springrestmvc.model.Beer;
+import ch.springframeworkguru.springrestmvc.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.service.BeerService;
 import ch.springframeworkguru.springrestmvc.service.BeerServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,7 +49,7 @@ class BeerControllerTest {
 
     @Test
     void testGetBeerById() throws Exception {
-        Beer givenBeer = beerServiceImpl.listBeers().getFirst();
+        BeerDTO givenBeer = beerServiceImpl.listBeers().getFirst();
         given(beerService.getBeerById(givenBeer.getId())).willReturn(Optional.of(givenBeer));
 
         mockMvc.perform(get(requestPath + "/getBeerById/" + givenBeer.getId())
@@ -73,7 +73,7 @@ class BeerControllerTest {
 
     @Test
     void testListBeers() throws Exception {
-        List<Beer> givenBeers = beerServiceImpl.listBeers();
+        List<BeerDTO> givenBeers = beerServiceImpl.listBeers();
         given(beerService.listBeers()).willReturn(givenBeers);
 
         mockMvc.perform(get(requestPath + "/listBears")
@@ -85,11 +85,11 @@ class BeerControllerTest {
 
     @Test
     void testCreateBeer() throws Exception {
-        Beer givenBeer = beerServiceImpl.listBeers().getFirst();
+        BeerDTO givenBeer = beerServiceImpl.listBeers().getFirst();
         givenBeer.setVersion(null);
         givenBeer.setId(null);
 
-        given(beerService.saveNewBeer(any(Beer.class))).willReturn(givenBeer);
+        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(givenBeer);
 
         mockMvc.perform(post(requestPath + "/createBeer")
                         .accept(MediaType.APPLICATION_JSON)
@@ -102,7 +102,7 @@ class BeerControllerTest {
 
     @Test
     void testEditBeer() throws Exception {
-        Beer givenBeerToEdit = beerServiceImpl.listBeers().getFirst();
+        BeerDTO givenBeerToEdit = beerServiceImpl.listBeers().getFirst();
         givenBeerToEdit.setBeerName("veryveryNew Bear");
 
         given(beerService.editBeer(givenBeerToEdit.getId(), givenBeerToEdit)).willReturn(givenBeerToEdit);
@@ -118,7 +118,7 @@ class BeerControllerTest {
 
     @Test
     void testDeleteBeer() throws Exception {
-        Beer givenBeerToDelete = beerServiceImpl.listBeers().getFirst();
+        BeerDTO givenBeerToDelete = beerServiceImpl.listBeers().getFirst();
 
         given(beerService.deleteBeer(givenBeerToDelete.getId())).willReturn(givenBeerToDelete);
 
@@ -133,7 +133,7 @@ class BeerControllerTest {
 
     @Test
     void testPatchBeer() throws Exception {
-        Beer givenBeerToPatch = beerServiceImpl.listBeers().getFirst();
+        BeerDTO givenBeerToPatch = beerServiceImpl.listBeers().getFirst();
         givenBeerToPatch.setBeerName("patchedBeerName");
 
         given(beerService.patchBeer(givenBeerToPatch.getId(), givenBeerToPatch)).willReturn(givenBeerToPatch);

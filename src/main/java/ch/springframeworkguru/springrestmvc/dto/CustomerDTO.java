@@ -1,4 +1,4 @@
-package ch.springframeworkguru.springrestmvc.model;
+package ch.springframeworkguru.springrestmvc.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Builder
 @Data
-public class Customer {
+public class CustomerDTO {
 
     private String customerName;
 
