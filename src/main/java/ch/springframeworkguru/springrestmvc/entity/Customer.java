@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -26,7 +26,7 @@ public class Customer {
 
     private String customerName;
 
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
 
-    private LocalDate lastModifiedDate;
+    private LocalDateTime lastModifiedDate;
 }

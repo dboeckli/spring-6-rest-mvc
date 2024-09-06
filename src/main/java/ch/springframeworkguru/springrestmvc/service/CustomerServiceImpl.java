@@ -4,7 +4,7 @@ import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -18,24 +18,24 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerDTO customer1 = CustomerDTO.builder()
                 .id(UUID.randomUUID())
                 .customerName("Pumukel")
-                .createdDate(LocalDate.now())
-                .lastModifiedDate(LocalDate.now())
+                .createdDate(LocalDateTime.now())
+                .lastModifiedDate(LocalDateTime.now())
                 .version("1.0")
                 .build();
 
         CustomerDTO customer2 = CustomerDTO.builder()
                 .id(UUID.randomUUID())
                 .customerName("Pumukel")
-                .createdDate(LocalDate.now())
-                .lastModifiedDate(LocalDate.now())
+                .createdDate(LocalDateTime.now())
+                .lastModifiedDate(LocalDateTime.now())
                 .version("1.0")
                 .build();
 
         CustomerDTO customer3 = CustomerDTO.builder()
                 .id(UUID.randomUUID())
                 .customerName("Pumukel")
-                .createdDate(LocalDate.now())
-                .lastModifiedDate(LocalDate.now())
+                .createdDate(LocalDateTime.now())
+                .lastModifiedDate(LocalDateTime.now())
                 .version("1.0")
                 .build();
 
@@ -59,8 +59,8 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerDTO customer = CustomerDTO.builder()
                 .id(UUID.randomUUID())
                 .customerName(newCustomer.getCustomerName())
-                .createdDate(LocalDate.now())
-                .lastModifiedDate(LocalDate.now())
+                .createdDate(LocalDateTime.now())
+                .lastModifiedDate(LocalDateTime.now())
                 .version(newCustomer.getVersion())
                 .build();
         customerMap.put(customer.getId(), customer);
@@ -91,7 +91,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerToChange.setVersion(customer.getVersion());
         }
         if (!customer.equals(customerToChange)) {
-            customerToChange.setLastModifiedDate(LocalDate.now());
+            customerToChange.setLastModifiedDate(LocalDateTime.now());
             customerMap.replace(customerId, customerToChange);
         }
         return customerToChange;
