@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +34,22 @@ class BeerControllerIT {
                 () -> {
                     assert beersDtos != null;
                     assertEquals(3, beersDtos.size());
+                }
+        );
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    void testEmtpyListBeer() {
+        beerRepository.deleteAll();
+        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers();
+        List<BeerDTO> beerDtos = beersDtoResponseEntity.getBody();
+
+        assertAll(
+                () -> {
+                    assert beerDtos != null;
+                    assertEquals(0, beerDtos.size());
                 }
         );
     }

@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,14 +26,30 @@ class CustomerControllerIT {
     CustomerRepository customerRepository;
 
     @Test
-    void listCustomer() {
-        ResponseEntity<List<CustomerDTO>> beersDtoResponseEntity = customerController.listCustomer();
-        List<CustomerDTO> customerDtos = beersDtoResponseEntity.getBody();
+    void testListCustomer() {
+        ResponseEntity<List<CustomerDTO>> customersDtoResponseEntity = customerController.listCustomer();
+        List<CustomerDTO> customerDtos = customersDtoResponseEntity.getBody();
 
         assertAll(
                 () -> {
                     assert customerDtos != null;
                     assertEquals(3, customerDtos.size());
+                }
+        );
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    void testEmtpyListCustomer() {
+        customerRepository.deleteAll();
+        ResponseEntity<List<CustomerDTO>> customersDtoResponseEntity = customerController.listCustomer();
+        List<CustomerDTO> customerDtos = customersDtoResponseEntity.getBody();
+
+        assertAll(
+                () -> {
+                    assert customerDtos != null;
+                    assertEquals(0, customerDtos.size());
                 }
         );
     }
@@ -52,7 +70,7 @@ class CustomerControllerIT {
     }
 
     @Test
-    void testGetBeerByIdNotFound() {
+    void testGetCustomerByIdNotFound() {
         assertThrows(NotfoundException.class, () -> customerController.getCustomerById(UUID.randomUUID()));
     }
 }
