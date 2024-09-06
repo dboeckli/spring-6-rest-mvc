@@ -1,6 +1,6 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
-import ch.springframeworkguru.springrestmvc.dto.CustomerDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import ch.springframeworkguru.springrestmvc.service.CustomerService;
 import ch.springframeworkguru.springrestmvc.service.CustomerServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;

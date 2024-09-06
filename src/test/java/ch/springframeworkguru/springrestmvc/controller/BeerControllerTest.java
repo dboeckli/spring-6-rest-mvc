@@ -1,6 +1,6 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
-import ch.springframeworkguru.springrestmvc.dto.BeerDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.service.BeerService;
 import ch.springframeworkguru.springrestmvc.service.BeerServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;

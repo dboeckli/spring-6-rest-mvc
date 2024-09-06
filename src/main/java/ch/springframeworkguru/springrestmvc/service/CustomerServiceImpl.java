@@ -1,6 +1,6 @@
 package ch.springframeworkguru.springrestmvc.service;
 
-import ch.springframeworkguru.springrestmvc.dto.CustomerDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 

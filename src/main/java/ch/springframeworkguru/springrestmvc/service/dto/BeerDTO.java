@@ -1,4 +1,4 @@
-package ch.springframeworkguru.springrestmvc.dto;
+package ch.springframeworkguru.springrestmvc.service.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +12,7 @@ import java.util.UUID;
 public class BeerDTO {
     private UUID id;
     private Integer version;
+
     private String beerName;
     private BeerStyle beerStyle;
     private String upc;

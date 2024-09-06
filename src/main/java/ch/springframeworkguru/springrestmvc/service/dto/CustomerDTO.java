@@ -1,4 +1,4 @@
-package ch.springframeworkguru.springrestmvc.dto;
+package ch.springframeworkguru.springrestmvc.service.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,11 +10,11 @@ import java.util.UUID;
 @Data
 public class CustomerDTO {
 
-    private String customerName;
-
     private UUID id;
 
     private String version;
+
+    private String customerName;
 
     private LocalDate createdDate;
 
