@@ -33,11 +33,8 @@ public class BeerController {
     }
 
     @GetMapping(value = "/getBeerById/{beerId}")
-    public Beer getBeerById(@PathVariable("beerId") UUID beerId){
-
-        log.debug("Get Beer by Id - in controller");
-
-        return beerService.getBeerById(beerId);
+    public ResponseEntity<Beer> getBeerById(@PathVariable("beerId") UUID beerId){
+        return new ResponseEntity<>(beerService.getBeerById(beerId).orElseThrow(NotfoundException::new), HttpStatus.OK);
     }
 
     @PostMapping(value = "/createBeer")
