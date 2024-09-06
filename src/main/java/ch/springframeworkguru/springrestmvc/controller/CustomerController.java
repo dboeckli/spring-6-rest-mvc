@@ -28,8 +28,8 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/listCustomer")
-    public List<CustomerDTO> listCustomer() {
-        return customerService.listCustomers();
+    public ResponseEntity<List<CustomerDTO>> listCustomer() {
+        return new ResponseEntity<>(customerService.listCustomers(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/getCustomerById/{customerId}")
