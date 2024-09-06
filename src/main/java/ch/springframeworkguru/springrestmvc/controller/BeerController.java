@@ -1,6 +1,6 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
-import ch.springframeworkguru.springrestmvc.dto.BeerDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.service.BeerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

@@ -1,7 +1,7 @@
 package ch.springframeworkguru.springrestmvc.service;
 
-import ch.springframeworkguru.springrestmvc.dto.BeerDTO;
-import ch.springframeworkguru.springrestmvc.dto.BeerStyle;
+import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

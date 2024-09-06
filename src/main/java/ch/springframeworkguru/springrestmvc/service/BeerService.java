@@ -1,6 +1,6 @@
 package ch.springframeworkguru.springrestmvc.service;
 
-import ch.springframeworkguru.springrestmvc.dto.BeerDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 
 import java.util.List;
 import java.util.Optional;
