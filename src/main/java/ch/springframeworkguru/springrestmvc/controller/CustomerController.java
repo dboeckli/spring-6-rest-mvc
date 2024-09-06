@@ -33,9 +33,8 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/getCustomerById/{customerId}")
-    public Customer getCustomerById(@PathVariable("customerId") UUID customerId) {
-        log.debug("Get Customer by Id - in controller");
-        return customerService.getCustomerById(customerId);
+    public ResponseEntity<Customer> getCustomerById(@PathVariable("customerId") UUID customerId) {
+        return new ResponseEntity<>(customerService.getCustomerById(customerId).orElseThrow(NotfoundException::new), HttpStatus.OK);
     }
 
     @PostMapping(value = "/createCustomer")

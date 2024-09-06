@@ -15,6 +15,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,7 +50,7 @@ class BeerControllerTest {
     @Test
     void testGetBeerById() throws Exception {
         Beer givenBeer = beerServiceImpl.listBeers().getFirst();
-        given(beerService.getBeerById(givenBeer.getId())).willReturn(givenBeer);
+        given(beerService.getBeerById(givenBeer.getId())).willReturn(Optional.of(givenBeer));
 
         mockMvc.perform(get(requestPath + "/getBeerById/" + givenBeer.getId())
                         .accept(MediaType.APPLICATION_JSON))
@@ -57,6 +59,16 @@ class BeerControllerTest {
                 .andExpect(jsonPath("$.id", is(givenBeer.getId().toString())))
                 .andExpect(jsonPath("$.beerName", is(givenBeer.getBeerName())))
                 .andExpect(content().json(objectMapper.writeValueAsString(givenBeer)));  // oder das ganze Object
+    }
+
+    @Test
+    void testGetBearByIdAndThrowsNotFoundException() throws Exception {
+        //given(beerService.getBeerById(any())).willThrow(NotfoundException.class);
+        given(beerService.getBeerById(any())).willReturn(Optional.empty());
+
+        mockMvc.perform(get(requestPath + "/getBeerById/" + UUID.randomUUID())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test
