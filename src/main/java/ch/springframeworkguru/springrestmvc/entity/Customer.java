@@ -18,11 +18,11 @@ public class Customer {
     @GeneratedValue(generator = "UUID")
     @UuidGenerator
     //@GenericGenerator(name = "UUID", type = UuidGenerator.class) // Deprecated, has been replaced with above
-    @Column(unique = true, columnDefinition = "varchar", updatable = false, nullable = false)
+    @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
     private UUID id;
 
     @Version
-    private String version;
+    private Integer version;
 
     private String customerName;
 
