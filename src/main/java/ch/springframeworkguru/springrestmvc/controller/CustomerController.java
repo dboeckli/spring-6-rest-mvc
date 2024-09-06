@@ -1,6 +1,6 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
-import ch.springframeworkguru.springrestmvc.model.Customer;
+import ch.springframeworkguru.springrestmvc.dto.CustomerDTO;
 import ch.springframeworkguru.springrestmvc.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,36 +22,36 @@ public class CustomerController {
     }
 
     @DeleteMapping(value = "/deleteCustomer/{customerId}")
-    public ResponseEntity<Customer> deleteCustomer(@PathVariable("customerId") UUID customerId) {
-        Customer deletedCustomer = customerService.deleteCustomer(customerId);
+    public ResponseEntity<CustomerDTO> deleteCustomer(@PathVariable("customerId") UUID customerId) {
+        CustomerDTO deletedCustomer = customerService.deleteCustomer(customerId);
         return new ResponseEntity<>(deletedCustomer, HttpStatus.OK);
     }
 
     @GetMapping(value = "/listCustomer")
-    public List<Customer> listCustomer() {
+    public List<CustomerDTO> listCustomer() {
         return customerService.listCustomers();
     }
 
     @GetMapping(value = "/getCustomerById/{customerId}")
-    public ResponseEntity<Customer> getCustomerById(@PathVariable("customerId") UUID customerId) {
+    public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable("customerId") UUID customerId) {
         return new ResponseEntity<>(customerService.getCustomerById(customerId).orElseThrow(NotfoundException::new), HttpStatus.OK);
     }
 
     @PostMapping(value = "/createCustomer")
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer newCustomer) {
-        Customer customer = customerService.saveNewCustomer(newCustomer);
+    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO newCustomer) {
+        CustomerDTO customer = customerService.saveNewCustomer(newCustomer);
         return new ResponseEntity<>(customer, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/editCustomer/{customerId}")
-    public ResponseEntity<Customer> editCustomer(@RequestBody Customer customerToEdit, @PathVariable("customerId") UUID customerId) {
-        Customer customer = customerService.editCustomer(customerId, customerToEdit);
+    public ResponseEntity<CustomerDTO> editCustomer(@RequestBody CustomerDTO customerToEdit, @PathVariable("customerId") UUID customerId) {
+        CustomerDTO customer = customerService.editCustomer(customerId, customerToEdit);
         return new ResponseEntity<>(customer, HttpStatus.OK);
     }
 
     @PatchMapping(value = "/patchCustomer/{customerId}")
-    public ResponseEntity<Customer> patchCustomer(@RequestBody Customer customer, @PathVariable("customerId") UUID customerId) {
-        Customer patchedCustomer = customerService.patchCustomer(customerId, customer);
+    public ResponseEntity<CustomerDTO> patchCustomer(@RequestBody CustomerDTO customer, @PathVariable("customerId") UUID customerId) {
+        CustomerDTO patchedCustomer = customerService.patchCustomer(customerId, customer);
         return new ResponseEntity<>(patchedCustomer, HttpStatus.OK);
     }
 }

@@ -1,6 +1,6 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
-import ch.springframeworkguru.springrestmvc.model.Customer;
+import ch.springframeworkguru.springrestmvc.dto.CustomerDTO;
 import ch.springframeworkguru.springrestmvc.service.CustomerService;
 import ch.springframeworkguru.springrestmvc.service.CustomerServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,7 +48,7 @@ class CustomerControllerTest {
 
     @Test
     void testGetCustomerById() throws Exception {
-        Customer givenCustomer = customerServiceImpl.listCustomers().getFirst();
+        CustomerDTO givenCustomer = customerServiceImpl.listCustomers().getFirst();
         given(customerService.getCustomerById(givenCustomer.getId())).willReturn(Optional.of(givenCustomer));
 
         mockMvc.perform(get(requestPath + "/getCustomerById/" + givenCustomer.getId())
@@ -72,11 +72,11 @@ class CustomerControllerTest {
 
     @Test
     void testCreateCustomer() throws Exception {
-        Customer givenCustomer = customerServiceImpl.listCustomers().getFirst();
+        CustomerDTO givenCustomer = customerServiceImpl.listCustomers().getFirst();
         givenCustomer.setCustomerName("pumukel");
         givenCustomer.setId(null);
 
-        given(customerService.saveNewCustomer(any(Customer.class))).willReturn(givenCustomer);
+        given(customerService.saveNewCustomer(any(CustomerDTO.class))).willReturn(givenCustomer);
 
         mockMvc.perform(post(requestPath + "/createCustomer")
                         .accept(MediaType.APPLICATION_JSON)
@@ -89,7 +89,7 @@ class CustomerControllerTest {
 
     @Test
     void testEditCustomer() throws Exception {
-        Customer givenCustomerToEdit = customerServiceImpl.listCustomers().getFirst();
+        CustomerDTO givenCustomerToEdit = customerServiceImpl.listCustomers().getFirst();
         givenCustomerToEdit.setCustomerName("veryveryNew Customer");
 
         given(customerService.editCustomer(givenCustomerToEdit.getId(), givenCustomerToEdit)).willReturn(givenCustomerToEdit);
@@ -105,7 +105,7 @@ class CustomerControllerTest {
 
     @Test
     void testDeleteCustomer() throws Exception {
-        Customer givenCustomerToDelete = customerServiceImpl.listCustomers().getFirst();
+        CustomerDTO givenCustomerToDelete = customerServiceImpl.listCustomers().getFirst();
 
         given(customerService.deleteCustomer(givenCustomerToDelete.getId())).willReturn(givenCustomerToDelete);
 
@@ -124,7 +124,7 @@ class CustomerControllerTest {
 
     @Test
     void testPatchCustomer() throws Exception {
-        Customer givenCustomerToPatch = customerServiceImpl.listCustomers().getFirst();
+        CustomerDTO givenCustomerToPatch = customerServiceImpl.listCustomers().getFirst();
         givenCustomerToPatch.setCustomerName("patchedCustomerName");
 
         given(customerService.patchCustomer(givenCustomerToPatch.getId(), givenCustomerToPatch)).willReturn(givenCustomerToPatch);

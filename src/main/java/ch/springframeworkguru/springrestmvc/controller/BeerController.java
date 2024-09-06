@@ -1,6 +1,6 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
-import ch.springframeworkguru.springrestmvc.model.Beer;
+import ch.springframeworkguru.springrestmvc.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.service.BeerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,36 +22,36 @@ public class BeerController {
     }
 
     @DeleteMapping(value="/deleteBeer/{beerId}")
-    public ResponseEntity<Beer> deleteBeer(@PathVariable("beerId") UUID beerId) {
-        Beer deletedBeer = beerService.deleteBeer(beerId);
+    public ResponseEntity<BeerDTO> deleteBeer(@PathVariable("beerId") UUID beerId) {
+        BeerDTO deletedBeer = beerService.deleteBeer(beerId);
         return new ResponseEntity<>(deletedBeer, HttpStatus.OK);
     }
 
     @GetMapping(value="/listBears")
-    public List<Beer> listBeers(){
+    public List<BeerDTO> listBeers(){
         return beerService.listBeers();
     }
 
     @GetMapping(value = "/getBeerById/{beerId}")
-    public ResponseEntity<Beer> getBeerById(@PathVariable("beerId") UUID beerId){
+    public ResponseEntity<BeerDTO> getBeerById(@PathVariable("beerId") UUID beerId){
         return new ResponseEntity<>(beerService.getBeerById(beerId).orElseThrow(NotfoundException::new), HttpStatus.OK);
     }
 
     @PostMapping(value = "/createBeer")
-    public ResponseEntity<Beer> createBeer(@RequestBody Beer newBeer) {
-        Beer beer = beerService.saveNewBeer(newBeer);
+    public ResponseEntity<BeerDTO> createBeer(@RequestBody BeerDTO newBeer) {
+        BeerDTO beer = beerService.saveNewBeer(newBeer);
         return new ResponseEntity<>(beer, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/editBeer/{beerId}")
-    public ResponseEntity<Beer> editBeer(@RequestBody Beer beer, @PathVariable("beerId") UUID beerId) {
-        Beer updatedBeer = beerService.editBeer(beerId, beer);
+    public ResponseEntity<BeerDTO> editBeer(@RequestBody BeerDTO beer, @PathVariable("beerId") UUID beerId) {
+        BeerDTO updatedBeer = beerService.editBeer(beerId, beer);
         return new ResponseEntity<>(updatedBeer, HttpStatus.OK);
     }
 
     @PatchMapping(value = "/patchBeer/{beerId}")
-    public ResponseEntity<Beer> patchBeer(@RequestBody Beer beer, @PathVariable("beerId") UUID beerId) {
-        Beer patchedBeer = beerService.patchBeer(beerId, beer);
+    public ResponseEntity<BeerDTO> patchBeer(@RequestBody BeerDTO beer, @PathVariable("beerId") UUID beerId) {
+        BeerDTO patchedBeer = beerService.patchBeer(beerId, beer);
         return new ResponseEntity<>(patchedBeer, HttpStatus.OK);
     }
 }
