@@ -14,6 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -46,7 +49,7 @@ class CustomerControllerTest {
     @Test
     void testGetCustomerById() throws Exception {
         Customer givenCustomer = customerServiceImpl.listCustomers().getFirst();
-        given(customerService.getCustomerById(givenCustomer.getId())).willReturn(givenCustomer);
+        given(customerService.getCustomerById(givenCustomer.getId())).willReturn(Optional.of(givenCustomer));
 
         mockMvc.perform(get(requestPath + "/getCustomerById/" + givenCustomer.getId())
                         .accept(MediaType.APPLICATION_JSON))
@@ -55,6 +58,16 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.id", is(givenCustomer.getId().toString())))
                 .andExpect(jsonPath("$.customerName", is(givenCustomer.getCustomerName())))
                 .andExpect(content().json(objectMapper.writeValueAsString(givenCustomer)));  // oder das ganze Object
+    }
+
+    @Test
+    void testGetCustomerByIdAndThrowsNotFoundException() throws Exception {
+        //given(customerService.getCustomerById(any())).willThrow(NotfoundException.class);
+        given(customerService.getCustomerById(any())).willReturn(Optional.empty());
+
+        mockMvc.perform(get(requestPath + "/getCustomerById/" + UUID.randomUUID())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test
