@@ -1,7 +1,11 @@
 package ch.springframeworkguru.springrestmvc.entity;
 
 import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Version;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -20,8 +24,9 @@ public class Beer {
     @GeneratedValue(generator = "UUID")
     @UuidGenerator
     //@GenericGenerator(name = "UUID", type = UuidGenerator.class) // Deprecated, has been replaced with above
-    @Column(unique = true, columnDefinition = "varchar", updatable = false, nullable = false)
+    @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
     private UUID id;
+
     @Version
     private Integer version;
 
