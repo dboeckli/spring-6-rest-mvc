@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -22,9 +23,11 @@ public class BeerController {
     }
 
     @DeleteMapping(value="/deleteBeer/{beerId}")
-    public ResponseEntity<BeerDTO> deleteBeer(@PathVariable("beerId") UUID beerId) {
-        BeerDTO deletedBeer = beerService.deleteBeer(beerId);
-        return new ResponseEntity<>(deletedBeer, HttpStatus.OK);
+    public ResponseEntity deleteBeer(@PathVariable("beerId") UUID beerId) {
+        if (!beerService.deleteBeer(beerId)) {
+            throw new NotfoundException();
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value="/listBears")
@@ -45,8 +48,12 @@ public class BeerController {
 
     @PutMapping(value = "/editBeer/{beerId}")
     public ResponseEntity<BeerDTO> editBeer(@RequestBody BeerDTO beer, @PathVariable("beerId") UUID beerId) {
-        BeerDTO updatedBeer = beerService.editBeer(beerId, beer);
-        return new ResponseEntity<>(updatedBeer, HttpStatus.OK);
+        Optional<BeerDTO> updatedBeer = beerService.editBeer(beerId, beer);
+        if (updatedBeer.isEmpty()) {
+            throw new NotfoundException();
+        } else {
+            return new ResponseEntity<>(updatedBeer.get(), HttpStatus.OK);
+        }
     }
 
     @PatchMapping(value = "/patchBeer/{beerId}")

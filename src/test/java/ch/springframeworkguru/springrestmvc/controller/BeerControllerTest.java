@@ -1,8 +1,8 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
-import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.service.BeerService;
 import ch.springframeworkguru.springrestmvc.service.BeerServiceImpl;
+import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -105,7 +105,7 @@ class BeerControllerTest {
         BeerDTO givenBeerToEdit = beerServiceImpl.listBeers().getFirst();
         givenBeerToEdit.setBeerName("veryveryNew Bear");
 
-        given(beerService.editBeer(givenBeerToEdit.getId(), givenBeerToEdit)).willReturn(givenBeerToEdit);
+        given(beerService.editBeer(givenBeerToEdit.getId(), givenBeerToEdit)).willReturn(Optional.of(givenBeerToEdit));
 
         mockMvc.perform(put(requestPath + "/editBeer/" + givenBeerToEdit.getId())
                         .accept(MediaType.APPLICATION_JSON)
@@ -120,15 +120,13 @@ class BeerControllerTest {
     void testDeleteBeer() throws Exception {
         BeerDTO givenBeerToDelete = beerServiceImpl.listBeers().getFirst();
 
-        given(beerService.deleteBeer(givenBeerToDelete.getId())).willReturn(givenBeerToDelete);
+        given(beerService.deleteBeer(any())).willReturn(true);
 
         mockMvc.perform(delete(requestPath + "/deleteBeer/" + givenBeerToDelete.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(givenBeerToDelete)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(givenBeerToDelete)));  // oder das
+                .andExpect(status().isOk());  // oder das
     }
 
     @Test

@@ -45,17 +45,28 @@ public class BeerServiceJpaImpl implements BeerService {
 
     @Override
     public BeerDTO saveNewBeer(BeerDTO newBeer) {
-        return null;
+        return beerMapper.beerToBeerDto(beerRepository.save(beerMapper.beerDtoToBeer(newBeer)));
     }
 
     @Override
-    public BeerDTO editBeer(UUID beerId, BeerDTO beer) {
-        return null;
+    public Optional<BeerDTO> editBeer(UUID beerId, BeerDTO beer) {
+        beerRepository.findById(beerId).ifPresent(foundBeer -> {
+            foundBeer.setBeerName(beer.getBeerName());
+            foundBeer.setBeerStyle(beer.getBeerStyle());
+            foundBeer.setUpc(beer.getUpc());
+            foundBeer.setPrice(beer.getPrice());
+            beerMapper.beerToBeerDto(beerRepository.save(foundBeer));
+        });
+        return Optional.ofNullable(beerMapper.beerToBeerDto(beerRepository.findById(beerId).orElse(null)));
     }
 
     @Override
-    public BeerDTO deleteBeer(UUID beerId) {
-        return null;
+    public Boolean deleteBeer(UUID beerId) {
+        if (beerRepository.existsById(beerId)) {
+            beerRepository.deleteById(beerId);
+            return true;
+        }
+        return false;
     }
 
     @Override
