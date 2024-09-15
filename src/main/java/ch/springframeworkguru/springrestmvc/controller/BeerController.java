@@ -5,6 +5,7 @@ import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,13 +42,13 @@ public class BeerController {
     }
 
     @PostMapping(value = "/createBeer")
-    public ResponseEntity<BeerDTO> createBeer(@RequestBody BeerDTO newBeer) {
+    public ResponseEntity<BeerDTO> createBeer(@Validated @RequestBody BeerDTO newBeer) {
         BeerDTO beer = beerService.saveNewBeer(newBeer);
         return new ResponseEntity<>(beer, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/editBeer/{beerId}")
-    public ResponseEntity<BeerDTO> editBeer(@RequestBody BeerDTO beer, @PathVariable("beerId") UUID beerId) {
+    public ResponseEntity<BeerDTO> editBeer(@Validated @RequestBody BeerDTO beer, @PathVariable("beerId") UUID beerId) {
         Optional<BeerDTO> updatedBeer = beerService.editBeer(beerId, beer);
         if (updatedBeer.isEmpty()) {
             throw new NotfoundException();
