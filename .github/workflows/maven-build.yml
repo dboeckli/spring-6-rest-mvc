@@ -91,6 +91,6 @@ jobs:
             echo "::notice:: ### Build of Main. Version: $BRANCH_MVN_VERSION"
           else
             echo "::notice:: ### Build of Feature Branch ${BRANCH_NAME}. Version: $BRANCH_MVN_VERSION"
-            mvn -B versions:set -Partifactory -e -DnewVersion="$BRANCH_MVN_VERSION" -s $GITHUB_WORKSPACE/.github/.m2/artifactory/settings.xml
+            mvn -B versions:set -e -DnewVersion="$BRANCH_MVN_VERSION"
           fi
           mvn -B install
