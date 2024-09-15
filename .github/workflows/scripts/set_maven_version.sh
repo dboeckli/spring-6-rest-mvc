@@ -16,9 +16,9 @@ echo "BRANCH_NAME=$branch" >>"$GITHUB_OUTPUT"
 
 # get current version of the top level pom
 mvn help:evaluate -e -Dexpression=project.version
-MVN_VERSION=$(mvn help:evaluate -P -Dexpression=project.version -q -DforceStdout)
-ARTIFACT_ID=$(mvn help:evaluate -P -Dexpression=project.artifactId -q -DforceStdout)
-GROUP_ID=$(mvn help:evaluate -P -Dexpression=project.groupId -q -DforceStdout)
+MVN_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+GROUP_ID=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)
 echo "MVN_VERSION=$MVN_VERSION" >>"$GITHUB_OUTPUT"
 echo "ARTIFACT_ID=$ARTIFACT_ID" >>"$GITHUB_OUTPUT"
 echo "GROUP_ID=$GROUP_ID" >>"$GITHUB_OUTPUT"
