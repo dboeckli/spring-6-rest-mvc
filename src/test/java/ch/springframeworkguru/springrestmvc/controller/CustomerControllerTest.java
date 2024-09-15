@@ -1,6 +1,6 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
-import ch.springframeworkguru.springrestmvc.model.Customer;
+import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import ch.springframeworkguru.springrestmvc.service.CustomerService;
 import ch.springframeworkguru.springrestmvc.service.CustomerServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,7 +48,7 @@ class CustomerControllerTest {
 
     @Test
     void testGetCustomerById() throws Exception {
-        Customer givenCustomer = customerServiceImpl.listCustomers().getFirst();
+        CustomerDTO givenCustomer = customerServiceImpl.listCustomers().getFirst();
         given(customerService.getCustomerById(givenCustomer.getId())).willReturn(Optional.of(givenCustomer));
 
         mockMvc.perform(get(requestPath + "/getCustomerById/" + givenCustomer.getId())
@@ -72,11 +72,11 @@ class CustomerControllerTest {
 
     @Test
     void testCreateCustomer() throws Exception {
-        Customer givenCustomer = customerServiceImpl.listCustomers().getFirst();
+        CustomerDTO givenCustomer = customerServiceImpl.listCustomers().getFirst();
         givenCustomer.setCustomerName("pumukel");
         givenCustomer.setId(null);
 
-        given(customerService.saveNewCustomer(any(Customer.class))).willReturn(givenCustomer);
+        given(customerService.saveNewCustomer(any(CustomerDTO.class))).willReturn(givenCustomer);
 
         mockMvc.perform(post(requestPath + "/createCustomer")
                         .accept(MediaType.APPLICATION_JSON)
@@ -89,10 +89,10 @@ class CustomerControllerTest {
 
     @Test
     void testEditCustomer() throws Exception {
-        Customer givenCustomerToEdit = customerServiceImpl.listCustomers().getFirst();
+        CustomerDTO givenCustomerToEdit = customerServiceImpl.listCustomers().getFirst();
         givenCustomerToEdit.setCustomerName("veryveryNew Customer");
 
-        given(customerService.editCustomer(givenCustomerToEdit.getId(), givenCustomerToEdit)).willReturn(givenCustomerToEdit);
+        given(customerService.editCustomer(givenCustomerToEdit.getId(), givenCustomerToEdit)).willReturn(Optional.of(givenCustomerToEdit));
 
         mockMvc.perform(put(requestPath + "/editCustomer/" + givenCustomerToEdit.getId())
                         .accept(MediaType.APPLICATION_JSON)
@@ -105,17 +105,15 @@ class CustomerControllerTest {
 
     @Test
     void testDeleteCustomer() throws Exception {
-        Customer givenCustomerToDelete = customerServiceImpl.listCustomers().getFirst();
+        CustomerDTO givenCustomerToDelete = customerServiceImpl.listCustomers().getFirst();
 
-        given(customerService.deleteCustomer(givenCustomerToDelete.getId())).willReturn(givenCustomerToDelete);
+        given(customerService.deleteCustomer(givenCustomerToDelete.getId())).willReturn(true);
 
         mockMvc.perform(delete(requestPath + "/deleteCustomer/" + givenCustomerToDelete.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(givenCustomerToDelete)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(givenCustomerToDelete)));  // oder das
+                .andExpect(status().isOk());  
     }
 
     @Test
@@ -124,10 +122,10 @@ class CustomerControllerTest {
 
     @Test
     void testPatchCustomer() throws Exception {
-        Customer givenCustomerToPatch = customerServiceImpl.listCustomers().getFirst();
+        CustomerDTO givenCustomerToPatch = customerServiceImpl.listCustomers().getFirst();
         givenCustomerToPatch.setCustomerName("patchedCustomerName");
 
-        given(customerService.patchCustomer(givenCustomerToPatch.getId(), givenCustomerToPatch)).willReturn(givenCustomerToPatch);
+        given(customerService.patchCustomer(givenCustomerToPatch.getId(), givenCustomerToPatch)).willReturn(Optional.of(givenCustomerToPatch));
 
         mockMvc.perform(patch(requestPath + "/patchCustomer/" + givenCustomerToPatch.getId())
                         .accept(MediaType.APPLICATION_JSON)
