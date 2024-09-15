@@ -18,5 +18,5 @@ public interface BeerService {
 
     Boolean deleteBeer(UUID beerId);
 
-    BeerDTO patchBeer(UUID beerId, BeerDTO beer);
+    Optional<BeerDTO> patchBeer(UUID beerId, BeerDTO beer);
 }

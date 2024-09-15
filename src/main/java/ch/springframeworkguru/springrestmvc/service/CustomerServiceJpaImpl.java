@@ -6,7 +6,9 @@ import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,21 +47,39 @@ public class CustomerServiceJpaImpl implements CustomerService {
 
     @Override
     public CustomerDTO saveNewCustomer(CustomerDTO newCustomer) {
-        return null;
+        return customerMapper.customerToCustomerDto(customerRepository.save(customerMapper.customerDtoToCustomer(newCustomer)));
     }
 
     @Override
-    public CustomerDTO editCustomer(UUID customerId, CustomerDTO customerToEdit) {
-        return null;
+    public Optional<CustomerDTO> editCustomer(UUID customerId, CustomerDTO customerToEdit) {
+        customerRepository.findById(customerId).ifPresent(foundCustomer -> {
+            if (StringUtils.hasText(customerToEdit.getCustomerName())) {
+                foundCustomer.setCustomerName(customerToEdit.getCustomerName());
+            }
+            foundCustomer.setLastModifiedDate(LocalDateTime.now());
+            customerMapper.customerToCustomerDto(customerRepository.save(foundCustomer));
+        });
+        return Optional.ofNullable(customerMapper.customerToCustomerDto(customerRepository.findById(customerId).orElse(null)));
     }
 
     @Override
-    public CustomerDTO deleteCustomer(UUID customerId) {
-        return null;
+    public Optional<CustomerDTO> patchCustomer(UUID customerId, CustomerDTO customerToPatch) {
+        customerRepository.findById(customerId).ifPresent(foundCustomer -> {
+            if (StringUtils.hasText(customerToPatch.getCustomerName())) {
+                foundCustomer.setCustomerName(customerToPatch.getCustomerName());
+            }
+            foundCustomer.setLastModifiedDate(LocalDateTime.now());
+            customerMapper.customerToCustomerDto(customerRepository.save(foundCustomer));
+        });
+        return Optional.ofNullable(customerMapper.customerToCustomerDto(customerRepository.findById(customerId).orElse(null)));
     }
 
     @Override
-    public CustomerDTO patchCustomer(UUID customerId, CustomerDTO customer) {
-        return null;
+    public Boolean deleteCustomer(UUID customerId) {
+        if (customerRepository.existsById(customerId)) {
+            customerRepository.deleteById(customerId);
+            return true;
+        }
+        return false;
     }
 }

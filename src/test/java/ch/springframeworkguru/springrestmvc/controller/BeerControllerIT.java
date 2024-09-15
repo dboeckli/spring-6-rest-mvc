@@ -83,11 +83,11 @@ class BeerControllerIT {
         beerDTO.setVersion(null);
 
         BeerDTO editedBeer = beerController.editBeer(beerDTO, beer.getId()).getBody();
-
         assertAll(() -> {
             assert editedBeer != null;
             assertEquals("UPDATED BEER", editedBeer.getBeerName());
         });
+        
 
     }
 
@@ -97,6 +97,33 @@ class BeerControllerIT {
     void testUpdateExistingBeerButNotFound() {
         assertThrows(NotfoundException.class, () -> {
             beerController.editBeer(BeerDTO.builder().build(), UUID.randomUUID());
+        });
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    void testPatchBeer() {
+        Beer givenBeer = beerRepository.findAll().getFirst();
+        BeerDTO beerDTO = beerMapper.beerToBeerDto(givenBeer);
+        beerDTO.setBeerName("Well");
+
+        BeerDTO editedBeerDTO = beerController.patchBeer(beerDTO, beerDTO.getId()).getBody();
+
+        assertAll(() -> {
+            assertNotNull(editedBeerDTO);
+            assertEquals("Well", editedBeerDTO.getBeerName());
+        });
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    void testPatchBeerDoesNotExist() {
+        BeerDTO beerDTO = BeerDTO.builder().build();
+
+        assertThrows(NotfoundException.class, () -> {
+            beerController.patchBeer(beerDTO, UUID.randomUUID());
         });
     }
 

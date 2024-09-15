@@ -134,7 +134,7 @@ class BeerControllerTest {
         BeerDTO givenBeerToPatch = beerServiceImpl.listBeers().getFirst();
         givenBeerToPatch.setBeerName("patchedBeerName");
 
-        given(beerService.patchBeer(givenBeerToPatch.getId(), givenBeerToPatch)).willReturn(givenBeerToPatch);
+        given(beerService.patchBeer(givenBeerToPatch.getId(), givenBeerToPatch)).willReturn(Optional.of(givenBeerToPatch));
 
         mockMvc.perform(patch(requestPath + "/patchBeer/" + givenBeerToPatch.getId())
                         .accept(MediaType.APPLICATION_JSON)

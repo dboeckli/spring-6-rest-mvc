@@ -6,6 +6,7 @@ import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,10 +52,39 @@ public class BeerServiceJpaImpl implements BeerService {
     @Override
     public Optional<BeerDTO> editBeer(UUID beerId, BeerDTO beer) {
         beerRepository.findById(beerId).ifPresent(foundBeer -> {
-            foundBeer.setBeerName(beer.getBeerName());
-            foundBeer.setBeerStyle(beer.getBeerStyle());
-            foundBeer.setUpc(beer.getUpc());
-            foundBeer.setPrice(beer.getPrice());
+            if (StringUtils.hasText(beer.getBeerName())) {
+                foundBeer.setBeerName(beer.getBeerName());
+            }
+            if (beer.getBeerStyle() != null) {
+                foundBeer.setBeerStyle(beer.getBeerStyle());
+            }
+            if (StringUtils.hasText(beer.getUpc())) {
+                foundBeer.setUpc(beer.getUpc());
+            }
+            if (beer.getPrice() != null) {
+                foundBeer.setPrice(beer.getPrice());
+            }
+            beerMapper.beerToBeerDto(beerRepository.save(foundBeer));
+        });
+        return Optional.ofNullable(beerMapper.beerToBeerDto(beerRepository.findById(beerId).orElse(null)));
+    }
+
+
+    @Override
+    public Optional<BeerDTO> patchBeer(UUID beerId, BeerDTO beer) {
+        beerRepository.findById(beerId).ifPresent(foundBeer -> {
+            if (StringUtils.hasText(beer.getBeerName())) {
+                foundBeer.setBeerName(beer.getBeerName());
+            }
+            if (beer.getBeerStyle() != null) {
+                foundBeer.setBeerStyle(beer.getBeerStyle());
+            }
+            if (StringUtils.hasText(beer.getUpc())) {
+                foundBeer.setUpc(beer.getUpc());
+            }
+            if (beer.getPrice() != null) {
+                foundBeer.setPrice(beer.getPrice());
+            }
             beerMapper.beerToBeerDto(beerRepository.save(foundBeer));
         });
         return Optional.ofNullable(beerMapper.beerToBeerDto(beerRepository.findById(beerId).orElse(null)));
@@ -69,8 +99,4 @@ public class BeerServiceJpaImpl implements BeerService {
         return false;
     }
 
-    @Override
-    public BeerDTO patchBeer(UUID beerId, BeerDTO beer) {
-        return null;
-    }
 }
