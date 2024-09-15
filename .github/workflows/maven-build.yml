@@ -93,4 +93,4 @@ jobs:
             echo "::notice:: ### Build of Feature Branch ${BRANCH_NAME}. Version: $BRANCH_MVN_VERSION"
             mvn -B versions:set -e -DnewVersion="$BRANCH_MVN_VERSION"
           fi
-          mvn -B install
+          mvn -B -e install
