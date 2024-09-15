@@ -95,8 +95,8 @@ jobs:
           set -o pipefail    # don't hide errors within pipes
           set -o nounset     # abort on unbound variable
           set -o errexit     # abort on nonzero exit status
-          if [[ "${BRANCH_NAME}" == "main" ]]; then
-            echo "::notice:: ### Build of Main. Version: $BRANCH_MVN_VERSION"
+          if [[ "${BRANCH_NAME}" == "master" ]]; then
+            echo "::notice:: ### Build of Master. Version: $BRANCH_MVN_VERSION"
           else
             echo "::notice:: ### Build of Feature Branch ${BRANCH_NAME}. Version: $BRANCH_MVN_VERSION"
             mvn -B versions:set -e -DnewVersion="$BRANCH_MVN_VERSION"
