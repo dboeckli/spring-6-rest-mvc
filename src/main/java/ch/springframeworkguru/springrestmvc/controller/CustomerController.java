@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -23,8 +24,10 @@ public class CustomerController {
 
     @DeleteMapping(value = "/deleteCustomer/{customerId}")
     public ResponseEntity<CustomerDTO> deleteCustomer(@PathVariable("customerId") UUID customerId) {
-        CustomerDTO deletedCustomer = customerService.deleteCustomer(customerId);
-        return new ResponseEntity<>(deletedCustomer, HttpStatus.OK);
+        if (!customerService.deleteCustomer(customerId)) {
+            throw new NotfoundException();
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/listCustomer")
@@ -45,13 +48,21 @@ public class CustomerController {
 
     @PutMapping(value = "/editCustomer/{customerId}")
     public ResponseEntity<CustomerDTO> editCustomer(@RequestBody CustomerDTO customerToEdit, @PathVariable("customerId") UUID customerId) {
-        CustomerDTO customer = customerService.editCustomer(customerId, customerToEdit);
-        return new ResponseEntity<>(customer, HttpStatus.OK);
+        Optional<CustomerDTO> updatedCustomer = customerService.editCustomer(customerId, customerToEdit);
+        if (updatedCustomer.isEmpty()) {
+            throw new NotfoundException();
+        } else {
+            return new ResponseEntity<>(updatedCustomer.get(), HttpStatus.OK);
+        }
     }
 
     @PatchMapping(value = "/patchCustomer/{customerId}")
     public ResponseEntity<CustomerDTO> patchCustomer(@RequestBody CustomerDTO customer, @PathVariable("customerId") UUID customerId) {
-        CustomerDTO patchedCustomer = customerService.patchCustomer(customerId, customer);
-        return new ResponseEntity<>(patchedCustomer, HttpStatus.OK);
+        Optional<CustomerDTO> patchedCustomer = customerService.patchCustomer(customerId, customer);
+        if (patchedCustomer.isEmpty()) {
+            throw new NotfoundException();
+        } else {
+            return new ResponseEntity<>(patchedCustomer.get(), HttpStatus.OK);
+        }
     }
 }

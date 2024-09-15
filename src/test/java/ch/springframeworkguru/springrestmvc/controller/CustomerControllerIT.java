@@ -1,5 +1,7 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
+import ch.springframeworkguru.springrestmvc.entity.Customer;
+import ch.springframeworkguru.springrestmvc.mapper.CustomerMapper;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,99 @@ class CustomerControllerIT {
 
     @Autowired
     CustomerRepository customerRepository;
+    
+    @Autowired
+    CustomerMapper customerMapper;
+    
+    @Test
+    @Transactional
+    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    void testDeleteCustomer() {
+        UUID givenCustomerId = customerRepository.findAll().getFirst().getId();
+        
+        customerController.deleteCustomer(givenCustomerId);
+
+        assertFalse(customerRepository.findById(givenCustomerId).isPresent());
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    void testDeleteCustomerDoesNotExist() {
+        assertThrows(NotfoundException.class, () -> {
+            customerController.deleteCustomer(UUID.randomUUID());
+        });
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    void testUpdateCustomer() {
+        Customer givenCustomer = customerRepository.findAll().getFirst();
+        CustomerDTO customerDTO = customerMapper.customerToCustomerDto(givenCustomer);
+        customerDTO.setCustomerName("Hans");
+
+        CustomerDTO editedCustomerDTO = customerController.editCustomer(customerDTO, customerDTO.getId()).getBody();
+
+        assertAll(() -> {
+            assertNotNull(editedCustomerDTO);
+            assertEquals("Hans", editedCustomerDTO.getCustomerName());
+        });
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    void testUpdateCustomerDoesNotExist() {
+        CustomerDTO customerDTO = CustomerDTO.builder().build();
+
+        assertThrows(NotfoundException.class, () -> {
+            customerController.editCustomer(customerDTO, UUID.randomUUID());
+        });
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    void testPatchCustomer() {
+        Customer givenCustomer = customerRepository.findAll().getFirst();
+        CustomerDTO customerDTO = customerMapper.customerToCustomerDto(givenCustomer);
+        customerDTO.setCustomerName("Hans");
+
+        CustomerDTO editedCustomerDTO = customerController.patchCustomer(customerDTO, customerDTO.getId()).getBody();
+
+        assertAll(() -> {
+            assertNotNull(editedCustomerDTO);
+            assertEquals("Hans", editedCustomerDTO.getCustomerName());
+        });
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    void testPatchCustomerDoesNotExist() {
+        CustomerDTO customerDTO = CustomerDTO.builder().build();
+
+        assertThrows(NotfoundException.class, () -> {
+            customerController.patchCustomer(customerDTO, UUID.randomUUID());
+        });
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    void testCreateCustomer() {
+        CustomerDTO customerDTO = CustomerDTO.builder()
+            .customerName("Fridolin")
+            .build();
+
+        CustomerDTO createdCustomer = customerController.createCustomer(customerDTO).getBody();
+
+        assertAll(() -> {
+            assertNotNull(createdCustomer);
+            assertEquals("Fridolin", createdCustomer.getCustomerName());
+        });
+    }
 
     @Test
     void testListCustomer() {
@@ -37,7 +132,7 @@ class CustomerControllerIT {
                 }
         );
     }
-
+    
     @Test
     @Transactional
     @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling

@@ -111,7 +111,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public BeerDTO patchBeer(UUID beerId, BeerDTO beer) {
+    public Optional<BeerDTO> patchBeer(UUID beerId, BeerDTO beer) {
         BeerDTO beerToChange = beerMap.get(beerId);
         if (StringUtils.isNotEmpty(beer.getBeerName())) {
             beerToChange.setBeerName(beer.getBeerName());
@@ -135,6 +135,6 @@ public class BeerServiceImpl implements BeerService {
             beerToChange.setUpdateDate(LocalDateTime.now());
             beerMap.replace(beerId, beerToChange);
         }
-        return beerToChange;
+        return Optional.of(beerToChange);
     }
 }
