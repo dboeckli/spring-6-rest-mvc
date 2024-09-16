@@ -27,13 +27,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-        hbm2ddl:
-          auto: update
+        ddl-auto: validate
         # Show SQL  
         show_sql: true
         # Format SQL
-    
-        
+        format_sql: true
 
 # Show bind values
 logging:
