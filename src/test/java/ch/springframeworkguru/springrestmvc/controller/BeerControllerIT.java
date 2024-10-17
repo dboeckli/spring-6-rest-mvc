@@ -134,7 +134,7 @@ class BeerControllerIT {
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(3, beersDtos.size());
+            assertEquals(2413, beersDtos.size());
         });
     }
 
