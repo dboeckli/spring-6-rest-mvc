@@ -1,9 +1,13 @@
 spring:
   application:
     name: springRestMvc
-
-
+    
+  flyway:
+    enabled: false
+  
   jpa:
+    #hibernate:
+      #ddl-auto: create-drop
     properties:
       jakarta:
         persistence:
@@ -11,8 +15,8 @@ spring:
             scripts:
               #action: drop-and-create
               #create-source: metadata
-              #drop-target: drop-and-create.sql
-              #create-target: drop-and-create.sql
+              #drop-target: scripts/drop-and-create.sql
+              #create-target: scripts/drop-and-create.sql
 
 controllers:
   customer-controller:
