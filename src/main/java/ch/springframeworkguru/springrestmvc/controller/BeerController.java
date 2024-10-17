@@ -2,6 +2,7 @@ package ch.springframeworkguru.springrestmvc.controller;
 
 import ch.springframeworkguru.springrestmvc.service.BeerService;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +33,10 @@ public class BeerController {
     }
 
     @GetMapping(value="/listBears")
-    public ResponseEntity<List<BeerDTO>> listBeers() {
-        return new ResponseEntity<>(beerService.listBeers(), HttpStatus.OK);
+    public ResponseEntity<List<BeerDTO>> listBeers(@RequestParam(required = false) String beerName, 
+                                                   @RequestParam(required = false) BeerStyle beerStyle,
+                                                   @RequestParam(required = false) Boolean showInventory) {
+        return new ResponseEntity<>(beerService.listBeers(beerName, beerStyle, showInventory), HttpStatus.OK);
     }
 
     @GetMapping(value = "/getBeerById/{beerId}")
