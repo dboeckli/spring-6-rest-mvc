@@ -1,6 +1,9 @@
 spring:
   application:
     name: springRestMvc
+    
+  flyway:
+    enabled: false  
 
 controllers:
   customer-controller:
