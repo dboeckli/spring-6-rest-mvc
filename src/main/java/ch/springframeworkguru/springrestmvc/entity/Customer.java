@@ -2,7 +2,9 @@ package ch.springframeworkguru.springrestmvc.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -18,13 +20,17 @@ public class Customer {
     @GeneratedValue(generator = "UUID")
     @UuidGenerator
     //@GenericGenerator(name = "UUID", type = UuidGenerator.class) // Deprecated, has been replaced with above
-    @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
 
     @Version
     private Integer version;
 
     private String customerName;
+
+    @Column(length = 255)
+    private String customerEmail;
 
     private LocalDateTime createdDate;
 
