@@ -129,7 +129,7 @@ class BeerControllerIT {
 
     @Test
     void testListBeers() {
-        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers();
+        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null);
         List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
@@ -139,11 +139,22 @@ class BeerControllerIT {
     }
 
     @Test
+    void testListBeerByName() throws Exception {
+        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA");
+        List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+
+        assertAll(() -> {
+            assert beersDtos != null;
+            assertEquals(336, beersDtos.size()); 
+        });
+    }
+
+    @Test
     @Transactional
     @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
     void testEmtpyListBeer() {
         beerRepository.deleteAll();
-        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers();
+        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null);
         List<BeerDTO> beerDtos = beersDtoResponseEntity.getBody();
 
         assertAll(

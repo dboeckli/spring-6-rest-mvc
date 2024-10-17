@@ -1,5 +1,6 @@
 package ch.springframeworkguru.springrestmvc.service;
 
+import ch.springframeworkguru.springrestmvc.entity.Beer;
 import ch.springframeworkguru.springrestmvc.mapper.BeerMapper;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
@@ -28,13 +29,23 @@ public class BeerServiceJpaImpl implements BeerService {
     }
 
     @Override
-    public List<BeerDTO> listBeers() {
-        return beerRepository
-                .findAll()
+    public List<BeerDTO> listBeers(String beerName) {
+        List<Beer> beerList;
+        if (StringUtils.hasText(beerName)) {
+            beerList = listBeerByName(beerName);
+        } else {
+            beerList = beerRepository.findAll();
+        }
+        
+        return beerList
                 .stream()
                 .map(beerMapper::beerToBeerDto)
                 .collect(Collectors.toList());
     }
+    
+    private List<Beer> listBeerByName(String beerName) {
+        return beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%");
+    } 
 
     @Override
     public Optional<BeerDTO> getBeerById(UUID id) {

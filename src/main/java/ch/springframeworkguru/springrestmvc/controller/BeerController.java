@@ -32,8 +32,8 @@ public class BeerController {
     }
 
     @GetMapping(value="/listBears")
-    public ResponseEntity<List<BeerDTO>> listBeers() {
-        return new ResponseEntity<>(beerService.listBeers(), HttpStatus.OK);
+    public ResponseEntity<List<BeerDTO>> listBeers(@RequestParam(required = false) String beerName) {
+        return new ResponseEntity<>(beerService.listBeers(beerName), HttpStatus.OK);
     }
 
     @GetMapping(value = "/getBeerById/{beerId}")
