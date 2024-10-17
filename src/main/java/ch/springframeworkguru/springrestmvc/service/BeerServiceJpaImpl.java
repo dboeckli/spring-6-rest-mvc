@@ -4,6 +4,7 @@ import ch.springframeworkguru.springrestmvc.entity.Beer;
 import ch.springframeworkguru.springrestmvc.mapper.BeerMapper;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -29,12 +30,22 @@ public class BeerServiceJpaImpl implements BeerService {
     }
 
     @Override
-    public List<BeerDTO> listBeers(String beerName) {
+    public List<BeerDTO> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory) {
         List<Beer> beerList;
-        if (StringUtils.hasText(beerName)) {
+        if (StringUtils.hasText(beerName) && beerStyle != null) {
+            beerList = listBeerByNameAndBeerStyle(beerName, beerStyle);
+        } else if (StringUtils.hasText(beerName)) {
             beerList = listBeerByName(beerName);
+        } else if (beerStyle != null) {
+            beerList = listBeerByStyle(beerStyle);
         } else {
             beerList = beerRepository.findAll();
+        }
+        
+        if (showInventory == null || !showInventory) {
+            beerList.forEach(beer -> {
+                beer.setQuantityOnHand(null);
+            });
         }
         
         return beerList
@@ -45,7 +56,15 @@ public class BeerServiceJpaImpl implements BeerService {
     
     private List<Beer> listBeerByName(String beerName) {
         return beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%");
-    } 
+    }
+
+    private List<Beer> listBeerByStyle(BeerStyle beerStyle) {
+        return beerRepository.findAllByBeerStyle(beerStyle);
+    }
+
+    private List<Beer> listBeerByNameAndBeerStyle(String beerName, BeerStyle beerStyle) {
+        return beerRepository.findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(beerStyle, "%" + beerName + "%");
+    }
 
     @Override
     public Optional<BeerDTO> getBeerById(UUID id) {
