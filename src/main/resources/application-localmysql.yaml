@@ -2,6 +2,9 @@ spring:
   application:
     name: springRestMvc
     
+  flyway:
+    enabled: true  
+    
   datasource:
     username: restadmin
     password: password
@@ -29,7 +32,7 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         ddl-auto: validate
         # Show SQL  
-        show_sql: true
+        show_sql: false
         # Format SQL
         format_sql: true
 
