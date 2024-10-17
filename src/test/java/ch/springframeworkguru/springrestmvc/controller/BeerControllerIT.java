@@ -129,7 +129,7 @@ class BeerControllerIT {
 
     @Test
     void testListBeers() {
-        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null);
+        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null);
         List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
@@ -140,7 +140,7 @@ class BeerControllerIT {
 
     @Test
     void testListBeerByName() throws Exception {
-        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA");
+        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", null, null);
         List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
@@ -150,11 +150,72 @@ class BeerControllerIT {
     }
 
     @Test
+    void testListBeerByStyleAndBeerName() throws Exception {
+        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", BeerStyle.IPA, null);
+        List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+
+        assertAll(() -> {
+            assert beersDtos != null;
+            assertEquals(310, beersDtos.size());
+        });
+    }
+
+    @Test
+    void testListBeerNameWithShowInventory() throws Exception {
+        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, true);
+        List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+
+        assertAll(() -> {
+            assert beersDtos != null;
+            assertEquals(1, beersDtos.size());
+            assertEquals("Ninja Porter", beersDtos.getFirst().getBeerName());
+            assertEquals(140, beersDtos.getFirst().getQuantityOnHand());
+        });
+    }
+
+    @Test
+    void testListBeerNameWithoutShowInventory() throws Exception {
+        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, false);
+        List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+
+        assertAll(() -> {
+            assert beersDtos != null;
+            assertEquals(1, beersDtos.size());
+            assertEquals("Ninja Porter", beersDtos.getFirst().getBeerName());
+            assertNull(beersDtos.getFirst().getQuantityOnHand());
+        });
+    }
+
+    @Test
+    void testListBeerNameWithNullShowInventory() throws Exception {
+        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, null);
+        List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+
+        assertAll(() -> {
+            assert beersDtos != null;
+            assertEquals(1, beersDtos.size());
+            assertEquals("Ninja Porter", beersDtos.getFirst().getBeerName());
+            assertNull(beersDtos.getFirst().getQuantityOnHand());
+        });
+    }
+
+    @Test
+    void testListBeerByStyle() throws Exception {
+        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, BeerStyle.IPA, null);
+        List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+
+        assertAll(() -> {
+            assert beersDtos != null;
+            assertEquals(548, beersDtos.size());
+        });
+    }
+
+    @Test
     @Transactional
     @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
     void testEmtpyListBeer() {
         beerRepository.deleteAll();
-        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null);
+        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null);
         List<BeerDTO> beerDtos = beersDtoResponseEntity.getBody();
 
         assertAll(

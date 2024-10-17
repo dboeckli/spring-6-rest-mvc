@@ -69,6 +69,54 @@ class BeerRepositoryTest {
     }
 
     @Test
+    void findBeerByBeerStyle() {
+        Beer firstBeer = beerRepository.save(Beer.builder()
+            .beerName("hallo")
+            .beerStyle(BeerStyle.PALE_ALE)
+            .upc("123")
+            .price(BigDecimal.valueOf(10))
+            .build());
+
+        beerRepository.save(Beer.builder()
+            .beerName("hallo")
+            .beerStyle(BeerStyle.IPA)
+            .upc("123")
+            .price(BigDecimal.valueOf(10))
+            .build());
+
+        List<Beer> beerList = beerRepository.findAllByBeerStyle(BeerStyle.PALE_ALE);
+
+        assertAll(
+            () -> assertEquals(1, beerList.size()),
+            () -> assertEquals(firstBeer, beerList.getFirst())
+        );
+    }
+
+    @Test
+    void findAllByBeerStyleAndBeerNameIsLikeIgnoreCase() {
+        Beer firstBeer = beerRepository.save(Beer.builder()
+            .beerName("XXXhalloYYY")
+            .beerStyle(BeerStyle.PALE_ALE)
+            .upc("123")
+            .price(BigDecimal.valueOf(10))
+            .build());
+
+        beerRepository.save(Beer.builder()
+            .beerName("guguseli")
+            .beerStyle(BeerStyle.PALE_ALE)
+            .upc("123")
+            .price(BigDecimal.valueOf(10))
+            .build());
+
+        List<Beer> beerList = beerRepository.findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(BeerStyle.PALE_ALE, "%hallo%");
+
+        assertAll(
+            () -> assertEquals(1, beerList.size()),
+            () -> assertEquals(firstBeer, beerList.getFirst())
+        );
+    }
+
+    @Test
     void testSave() {
         Beer savedBeer = beerRepository.save(Beer.builder()
                 .beerName("hallo")
