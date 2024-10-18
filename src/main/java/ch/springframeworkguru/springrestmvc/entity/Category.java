@@ -41,7 +41,7 @@ public class Category {
     private String description;
 
     @Builder.Default
-    @ManyToMany
+    @ManyToMany()
     @JoinTable(name = "beer_category",
         joinColumns = @JoinColumn(name = "category_id"),
         inverseJoinColumns = @JoinColumn(name = "beer_id"))
