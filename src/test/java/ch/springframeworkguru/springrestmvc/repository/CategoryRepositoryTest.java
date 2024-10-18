@@ -27,30 +27,27 @@ class CategoryRepositoryTest {
 
     @Transactional
     @Test
-    void testAddCategory() {
+    void testAddCategoryUsingExistingBeer() {
         Beer testBeer = beerRepository.findAll().getFirst();
 
         Category newCategory = Category.builder()
             .description("Ales")
             .build();
 
-        testBeer.getCategories().add(newCategory);
-        //testBeer.addCategory(newCategory);
-        //newCategory.getBeers().add(testBeer);  // TODO: we get a constraint violation, because the join table is saved twice
+        testBeer.addCategory(newCategory);
 
         Category savedCategory = categoryRepository.save(newCategory);
         Beer savedBeer = beerRepository.save(testBeer);
 
         assertEquals(2413, beerRepository.count());
         assertEquals(1, categoryRepository.count());
-        assertEquals(0, categoryRepository.findAll().getFirst().getBeers().size()); // TODO: when above works then we should get one
+        assertEquals(1, categoryRepository.findAll().getFirst().getBeers().size()); 
         assertEquals(1, beerRepository.findAll().getFirst().getCategories().size());
     }
 
     @Transactional
     @Test
-    void testAddCategory2() {
-        //Beer testBeer = beerRepository.findAll().getFirst();
+    void testAddCategoryWithNewBeer() {
         Beer newBeer = Beer.builder()
             .beerName("guguseli")
             .upc("testupc")
@@ -62,14 +59,14 @@ class CategoryRepositoryTest {
             .build();
 
         newBeer.getCategories().add(newCategory);
-        //newCategory.getBeers().add(newBeer); // TODO: we get a constraint violation, because the join table is saved twice
+        newCategory.getBeers().add(newBeer); 
 
         Category savedCategory = categoryRepository.save(newCategory);
         Beer savedBeer = beerRepository.save(newBeer);
 
         assertEquals(2414, beerRepository.count());
         assertEquals(1, categoryRepository.count());
-        assertEquals(0, savedCategory.getBeers().size()); // TODO: when above works then we should get one
+        assertEquals(1, savedCategory.getBeers().size()); 
         assertEquals(1, savedBeer.getCategories().size());
     }
 

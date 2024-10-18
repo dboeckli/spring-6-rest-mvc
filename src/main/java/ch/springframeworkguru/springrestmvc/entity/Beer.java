@@ -65,10 +65,7 @@ public class Beer {
     private Set<BeerOrderLine> beerOrderLines;
 
     @Builder.Default
-    @ManyToMany
-    @JoinTable(name = "beer_category",
-        joinColumns = @JoinColumn(name = "beer_id"),
-        inverseJoinColumns = @JoinColumn(name = "category_id"))
+    @ManyToMany(mappedBy = "beers")
     private Set<Category> categories = new HashSet<>();
     
     public void addCategory(Category category) {
