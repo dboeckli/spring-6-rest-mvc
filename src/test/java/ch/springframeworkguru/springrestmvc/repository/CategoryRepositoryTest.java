@@ -27,7 +27,7 @@ class CategoryRepositoryTest {
 
     @Transactional
     @Test
-    void testAddCategory() {
+    void testAddCategoryUsingExistingBeer() {
         Beer testBeer = beerRepository.findAll().getFirst();
 
         Category newCategory = Category.builder()
@@ -47,8 +47,7 @@ class CategoryRepositoryTest {
 
     @Transactional
     @Test
-    void testAddCategory2() {
-        //Beer testBeer = beerRepository.findAll().getFirst();
+    void testAddCategoryWithNewBeer() {
         Beer newBeer = Beer.builder()
             .beerName("guguseli")
             .upc("testupc")
