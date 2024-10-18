@@ -35,6 +35,7 @@ class CategoryRepositoryTest {
             .build();
 
         testBeer.getCategories().add(newCategory);
+        //testBeer.addCategory(newCategory);
         //newCategory.getBeers().add(testBeer);  // TODO: we get a constraint violation, because the join table is saved twice
 
         Category savedCategory = categoryRepository.save(newCategory);
