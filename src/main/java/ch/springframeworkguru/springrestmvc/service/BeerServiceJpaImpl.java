@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -78,8 +79,10 @@ public class BeerServiceJpaImpl implements BeerService {
                 pageSizeParameter = pageSize;
             }
         }
+
+        Sort sort = Sort.by(Sort.Direction.ASC, "beerName");
         
-        return PageRequest.of(pageNumberParameter, pageSizeParameter);
+        return PageRequest.of(pageNumberParameter, pageSizeParameter, sort);
     }
     
     private Page<Beer> listBeerByName(String beerName, PageRequest pageRequest) {
