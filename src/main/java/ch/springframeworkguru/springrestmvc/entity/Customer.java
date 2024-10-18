@@ -2,11 +2,15 @@ package ch.springframeworkguru.springrestmvc.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -32,7 +36,14 @@ public class Customer {
     @Column(length = 255)
     private String customerEmail;
 
+    @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdDate;
 
+    @UpdateTimestamp
     private LocalDateTime lastModifiedDate;
+    
+    @Builder.Default
+    @OneToMany(mappedBy = "customer")
+    private Set<BeerOrder> beerOrders = new HashSet<>();
 }
