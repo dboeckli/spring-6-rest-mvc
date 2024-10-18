@@ -37,6 +37,31 @@
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <opencsv.version>5.9</opencsv.version>
     </properties>
+    <profiles>
+        <profile>
+            <id>github</id>
+            <repositories>
+                <repository>
+                    <id>central</id>
+                    <url>https://repo1.maven.org/maven2</url>
+                </repository>
+                <repository>
+                    <id>github</id>
+                    <url>https://maven.pkg.github.com/dboeckli/springGuruRestMvc</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub dboeckli Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/dboeckli/springGuruRestMvc</url>
+        </repository>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
