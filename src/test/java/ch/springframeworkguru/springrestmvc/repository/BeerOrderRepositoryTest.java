@@ -28,7 +28,7 @@ class BeerOrderRepositoryTest {
     
     @Test
     @Transactional
-    void testGetBeerOrder() {
+    void testAddBeerOrder() {
         Customer testCustomer = customerRepository.findAll().getFirst();
 
         BeerOrder newBeerOrder = BeerOrder.builder()
