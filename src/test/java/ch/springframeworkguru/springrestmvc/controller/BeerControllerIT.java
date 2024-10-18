@@ -8,15 +8,16 @@ import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
+import static ch.springframeworkguru.springrestmvc.service.BeerServiceJpaImpl.MAX_PAGE_SIZE;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -46,9 +47,7 @@ class BeerControllerIT {
     @Transactional
     @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
     void testDeleteBeerByIdNotFound() {
-        assertThrows(NotfoundException.class, () -> {
-            beerController.deleteBeer(UUID.randomUUID());
-        });
+        assertThrows(NotfoundException.class, () -> beerController.deleteBeer(UUID.randomUUID()));
     }
 
     @Test
@@ -95,9 +94,8 @@ class BeerControllerIT {
     @Transactional
     @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
     void testUpdateExistingBeerButNotFound() {
-        assertThrows(NotfoundException.class, () -> {
-            beerController.editBeer(BeerDTO.builder().build(), UUID.randomUUID());
-        });
+        assertThrows(NotfoundException.class, () -> 
+            beerController.editBeer(BeerDTO.builder().build(), UUID.randomUUID()));
     }
 
     @Test
@@ -122,91 +120,120 @@ class BeerControllerIT {
     void testPatchBeerDoesNotExist() {
         BeerDTO beerDTO = BeerDTO.builder().build();
 
-        assertThrows(NotfoundException.class, () -> {
-            beerController.patchBeer(beerDTO, UUID.randomUUID());
-        });
+        assertThrows(NotfoundException.class, () -> beerController.patchBeer(beerDTO, UUID.randomUUID()));
     }
 
     @Test
     void testListBeers() {
-        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null);
-        List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, null);
+        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(2413, beersDtos.size());
+            assertEquals(2413, beersDtos.getTotalElements()); 
+            assertEquals(97, beersDtos.getTotalPages());
+            assertEquals(25, beersDtos.getNumberOfElements());
+            assertEquals(0, beersDtos.getNumber());
         });
     }
 
     @Test
-    void testListBeerByName() throws Exception {
-        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", null, null);
-        List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+    void testListBeersWithMaxPageSize() {
+        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, MAX_PAGE_SIZE+1);
+        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(336, beersDtos.size()); 
+            assertEquals(2413, beersDtos.getTotalElements());
+            assertEquals(3, beersDtos.getTotalPages());
+            assertEquals(MAX_PAGE_SIZE, beersDtos.getNumberOfElements());
+            assertEquals(0, beersDtos.getNumber());
         });
     }
 
     @Test
-    void testListBeerByStyleAndBeerName() throws Exception {
-        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", BeerStyle.IPA, null);
-        List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+    void testListBeerByName() {
+        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", null, null, null, null);
+        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(310, beersDtos.size());
+            assertEquals(336, beersDtos.getTotalElements()); 
         });
     }
 
     @Test
-    void testListBeerNameWithShowInventory() throws Exception {
-        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, true);
-        List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+    void testListBeerByNamePage2() {
+        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", null, null, 2, 50);
+        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(1, beersDtos.size());
-            assertEquals("Ninja Porter", beersDtos.getFirst().getBeerName());
-            assertEquals(140, beersDtos.getFirst().getQuantityOnHand());
+            assertEquals(336, beersDtos.getTotalElements());
+            assertEquals(1, beersDtos.getNumber());
+            assertEquals(7, beersDtos.getTotalPages());
+            assertEquals(50, beersDtos.getNumberOfElements());
         });
     }
 
     @Test
-    void testListBeerNameWithoutShowInventory() throws Exception {
-        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, false);
-        List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+    void testListBeerByStyleAndBeerName() {
+        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", BeerStyle.IPA, null, null, null);
+        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(1, beersDtos.size());
-            assertEquals("Ninja Porter", beersDtos.getFirst().getBeerName());
-            assertNull(beersDtos.getFirst().getQuantityOnHand());
+            assertEquals(310, beersDtos.getTotalElements());
         });
     }
 
     @Test
-    void testListBeerNameWithNullShowInventory() throws Exception {
-        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, null);
-        List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+    void testListBeerNameWithShowInventory() {
+        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, true, null, null);
+        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(1, beersDtos.size());
-            assertEquals("Ninja Porter", beersDtos.getFirst().getBeerName());
-            assertNull(beersDtos.getFirst().getQuantityOnHand());
+            assertEquals(1, beersDtos.getTotalElements());
+            assertEquals("Ninja Porter", beersDtos.getContent().getFirst().getBeerName());
+            assertEquals(140, beersDtos.getContent().getFirst().getQuantityOnHand());
         });
     }
 
     @Test
-    void testListBeerByStyle() throws Exception {
-        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, BeerStyle.IPA, null);
-        List<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+    void testListBeerNameWithoutShowInventory() {
+        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, false, null, null);
+        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(548, beersDtos.size());
+            assertEquals(1, beersDtos.getTotalElements());
+            assertEquals("Ninja Porter", beersDtos.getContent().getFirst().getBeerName());
+            assertNull(beersDtos.getContent().getFirst().getQuantityOnHand());
+        });
+    }
+
+    @Test
+    void testListBeerNameWithNullShowInventory() {
+        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, null, null, null);
+        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+
+        assertAll(() -> {
+            assert beersDtos != null;
+            assertEquals(1, beersDtos.getTotalElements());
+            assertEquals("Ninja Porter", beersDtos.getContent().getFirst().getBeerName());
+            assertNull(beersDtos.getContent().getFirst().getQuantityOnHand());
+        });
+    }
+
+    @Test
+    void testListBeerByStyle() {
+        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, BeerStyle.IPA, null, null, null);
+        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+
+        assertAll(() -> {
+            assert beersDtos != null;
+            assertEquals(548, beersDtos.getTotalElements());
         });
     }
 
@@ -215,13 +242,13 @@ class BeerControllerIT {
     @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
     void testEmtpyListBeer() {
         beerRepository.deleteAll();
-        ResponseEntity<List<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null);
-        List<BeerDTO> beerDtos = beersDtoResponseEntity.getBody();
+        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, null);
+        Page<BeerDTO> beerDtos = beersDtoResponseEntity.getBody();
 
         assertAll(
                 () -> {
                     assert beerDtos != null;
-                    assertEquals(0, beerDtos.size());
+                    assertEquals(0, beerDtos.getTotalElements());
                 }
         );
     }

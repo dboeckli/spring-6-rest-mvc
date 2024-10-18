@@ -4,12 +4,12 @@ import ch.springframeworkguru.springrestmvc.service.BeerService;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,10 +33,12 @@ public class BeerController {
     }
 
     @GetMapping(value="/listBears")
-    public ResponseEntity<List<BeerDTO>> listBeers(@RequestParam(required = false) String beerName, 
+    public ResponseEntity<Page<BeerDTO>> listBeers(@RequestParam(required = false) String beerName,
                                                    @RequestParam(required = false) BeerStyle beerStyle,
-                                                   @RequestParam(required = false) Boolean showInventory) {
-        return new ResponseEntity<>(beerService.listBeers(beerName, beerStyle, showInventory), HttpStatus.OK);
+                                                   @RequestParam(required = false) Boolean showInventory,
+                                                   @RequestParam(required = false) Integer pageNumber,
+                                                   @RequestParam(required = false) Integer pageSize) {
+        return new ResponseEntity<>(beerService.listBeers(beerName, beerStyle, showInventory, pageNumber, pageSize), HttpStatus.OK);
     }
 
     @GetMapping(value = "/getBeerById/{beerId}")
