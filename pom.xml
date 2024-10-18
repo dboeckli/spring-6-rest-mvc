@@ -8,8 +8,9 @@
         <version>3.3.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>ch.dboeckli.springframeworkguru.springRestMvc2</groupId>
-    <artifactId>springRestMvc2</artifactId>
+    <!-- artifacId should be lowercase to be able to push to github packages -->
+    <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
+    <artifactId>spring-rest-mvc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>springRestMvc</name>
     <description>springRestMvc</description>
