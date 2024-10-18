@@ -8,7 +8,7 @@
         <version>3.3.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>ch.springframeworkguru.springRestMvc</groupId>
+    <groupId>ch.dboeckli.springframeworkguru.springRestMvc</groupId>
     <artifactId>springRestMvc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>springRestMvc</name>
