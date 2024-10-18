@@ -2,17 +2,18 @@ package ch.springframeworkguru.springrestmvc.repository;
 
 import ch.springframeworkguru.springrestmvc.entity.Beer;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface BeerRepository extends JpaRepository<Beer, UUID> {
     
-    List<Beer> findAllByBeerNameIsLikeIgnoreCase(String beerName);
+    Page<Beer> findAllByBeerNameIsLikeIgnoreCase(String beerName, Pageable pageable);
 
-    List<Beer> findAllByBeerStyle(BeerStyle beerStyle);
-    
-    List<Beer> findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(BeerStyle beerStyle, String beerName);
+    Page<Beer> findAllByBeerStyle(BeerStyle beerStyle, Pageable pageable);
+
+    Page<Beer> findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(BeerStyle beerStyle, String beerName, Pageable pageable);
     
 }

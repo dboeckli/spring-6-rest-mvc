@@ -6,9 +6,11 @@ import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,11 +29,13 @@ class BeerRepositoryTest {
             .price(BigDecimal.valueOf(10))
             .build());
 
-        List<Beer> beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCase("hallo");
-        
+        Page<Beer> beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCase("hallo", Pageable.unpaged());
+
         assertAll(
-            () -> assertEquals(1, beerList.size()),
-            () -> assertEquals(savedBeer, beerList.getFirst())
+            () -> assertEquals(1, beerList.getTotalElements()),
+            () -> assertEquals(1, beerList.getTotalPages()),
+            () -> assertEquals(0, beerList.getNumber()),
+            () -> assertEquals(savedBeer, beerList.getContent().getFirst())
         );
     }
 
@@ -58,13 +62,57 @@ class BeerRepositoryTest {
             .price(BigDecimal.valueOf(10))
             .build());
 
-        List<Beer> beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%");
+        Page<Beer> beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%", Pageable.unpaged());
 
         assertAll(
-            () -> assertEquals(2, beerList.size()),
-            () -> assertTrue(beerList.contains(firstBeer)),
-            () -> assertTrue(beerList.contains(secondBeer)),
-            () -> assertFalse(beerList.contains(thirdBeer))
+            () -> assertEquals(2, beerList.getTotalElements()),
+            () -> assertEquals(1, beerList.getTotalPages()),
+            () -> assertEquals(0, beerList.getNumber()),
+            () -> assertTrue(beerList.getContent().contains(firstBeer)),
+            () -> assertTrue(beerList.getContent().contains(secondBeer)),
+            () -> assertFalse(beerList.getContent().contains(thirdBeer))
+        );
+    }
+
+    @Test
+    void findBeerByNameWithSeveralBeersByWildCardPaged() {
+        Beer firstBeer = beerRepository.save(Beer.builder()
+            .beerName("YYYYYYYYhalloXXXXXXX")
+            .beerStyle(BeerStyle.PALE_ALE)
+            .upc("123")
+            .price(BigDecimal.valueOf(10))
+            .build());
+
+        Beer secondBeer = beerRepository.save(Beer.builder()
+            .beerName("hallo")
+            .beerStyle(BeerStyle.PALE_ALE)
+            .upc("123")
+            .price(BigDecimal.valueOf(10))
+            .build());
+
+        Beer thirdBeer = beerRepository.save(Beer.builder()
+            .beerName("guguseli")
+            .beerStyle(BeerStyle.PALE_ALE)
+            .upc("123")
+            .price(BigDecimal.valueOf(10))
+            .build());
+
+        Page<Beer> beerLisPage1 = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%", PageRequest.of(0, 1));
+        Page<Beer> beerListPage2 = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%", PageRequest.of(1, 1));
+
+        assertAll(
+            () -> assertEquals(2, beerLisPage1.getTotalElements()),
+            () -> assertEquals(2, beerLisPage1.getTotalPages()),
+            
+            () -> assertEquals(0, beerLisPage1.getNumber()),
+            () -> assertEquals(1, beerLisPage1.getNumberOfElements()),
+            () -> assertTrue(beerLisPage1.getContent().contains(firstBeer)),
+            () -> assertFalse(beerLisPage1.getContent().contains(thirdBeer)),
+
+            () -> assertEquals(1, beerListPage2.getNumber()),
+            () -> assertEquals(1, beerListPage2.getNumberOfElements()),
+            () -> assertTrue(beerListPage2.getContent().contains(secondBeer)),
+            () -> assertFalse(beerLisPage1.getContent().contains(thirdBeer))
         );
     }
 
@@ -84,11 +132,13 @@ class BeerRepositoryTest {
             .price(BigDecimal.valueOf(10))
             .build());
 
-        List<Beer> beerList = beerRepository.findAllByBeerStyle(BeerStyle.PALE_ALE);
+        Page<Beer> beerList = beerRepository.findAllByBeerStyle(BeerStyle.PALE_ALE, Pageable.unpaged());
 
         assertAll(
-            () -> assertEquals(1, beerList.size()),
-            () -> assertEquals(firstBeer, beerList.getFirst())
+            () -> assertEquals(1, beerList.getTotalElements()),
+            () -> assertEquals(1, beerList.getTotalPages()),
+            () -> assertEquals(0, beerList.getNumber()),
+            () -> assertEquals(firstBeer, beerList.getContent().getFirst())
         );
     }
 
@@ -108,11 +158,13 @@ class BeerRepositoryTest {
             .price(BigDecimal.valueOf(10))
             .build());
 
-        List<Beer> beerList = beerRepository.findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(BeerStyle.PALE_ALE, "%hallo%");
+        Page<Beer> beerList = beerRepository.findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(BeerStyle.PALE_ALE, "%hallo%", Pageable.unpaged());
 
         assertAll(
-            () -> assertEquals(1, beerList.size()),
-            () -> assertEquals(firstBeer, beerList.getFirst())
+            () -> assertEquals(1, beerList.getTotalElements()),
+            () -> assertEquals(1, beerList.getTotalPages()),
+            () -> assertEquals(0, beerList.getNumber()),
+            () -> assertEquals(firstBeer, beerList.getContent().getFirst())
         );
     }
 
