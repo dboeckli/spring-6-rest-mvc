@@ -2,6 +2,7 @@ package ch.springframeworkguru.springrestmvc.repository;
 
 import ch.springframeworkguru.springrestmvc.bootstrap.BootstrapData;
 import ch.springframeworkguru.springrestmvc.entity.BeerOrder;
+import ch.springframeworkguru.springrestmvc.entity.BeerOrderShipment;
 import ch.springframeworkguru.springrestmvc.entity.Customer;
 import ch.springframeworkguru.springrestmvc.service.BeerCsvServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,9 @@ class BeerOrderRepositoryTest {
         BeerOrder newBeerOrder = BeerOrder.builder()
             .customerRef("Test Order")
             .customer(testCustomer)
+            .beerOrderShipment(BeerOrderShipment.builder()
+                .trackingNumber("123456789")
+                .build())
             .build();
 
         BeerOrder savedBeerOrder = beerOrderRepository.save(newBeerOrder);

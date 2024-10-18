@@ -1,6 +1,7 @@
 package ch.springframeworkguru.springrestmvc.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
 import lombok.*;
 import org.hibernate.annotations.*;
 import org.hibernate.type.SqlTypes;
@@ -31,7 +32,7 @@ public class BeerOrder {
         this.customerRef = customerRef;
         this.setCustomer(customer);
         this.beerOrderLines = beerOrderLines;
-        this.beerOrderShipment = beerOrderShipment;
+        this.setBeerOrderShipment(beerOrderShipment);
     }
 
     @Id
@@ -68,6 +69,11 @@ public class BeerOrder {
         customer.getBeerOrders().add(this);
     }
 
-    @OneToOne
+    public void setBeerOrderShipment(BeerOrderShipment beerOrderShipment) {
+        this.beerOrderShipment = beerOrderShipment;
+        beerOrderShipment.setBeerOrder(BeerOrder.this);
+    }
+
+    @OneToOne(cascade = CascadeType.PERSIST)
     private BeerOrderShipment beerOrderShipment;
 }
