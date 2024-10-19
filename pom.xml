@@ -10,10 +10,10 @@
     </parent>
     <!-- artifacId should be lowercase to be able to push to github packages -->
     <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
-    <artifactId>spring-rest-mvc</artifactId>
+    <artifactId>spring-6-rest-mvc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>springRestMvc</name>
-    <description>springRestMvc</description>
+    <name>spring-6-rest-mvc</name>
+    <description>spring-6-rest-mvc</description>
     <url/>
     <licenses>
         <license/>
@@ -34,7 +34,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
 
-        <org.mapstruct.version>1.6.0</org.mapstruct.version>
+        <org.mapstruct.version>1.6.2</org.mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <opencsv.version>5.9</opencsv.version>
     </properties>
@@ -48,7 +48,7 @@
                 </repository>
                 <repository>
                     <id>github</id>
-                    <url>https://maven.pkg.github.com/dboeckli/springGuruRestMvc</url>
+                    <url>https://maven.pkg.github.com/dboeckli/${project.artifactId}</url>
                     <snapshots>
                         <enabled>true</enabled>
                     </snapshots>
@@ -60,7 +60,7 @@
         <repository>
             <id>github</id>
             <name>GitHub dboeckli Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/dboeckli/springGuruRestMvc</url>
+            <url>https://maven.pkg.github.com/dboeckli/${project.artifactId}</url>
         </repository>
     </distributionManagement>
     <dependencies>
