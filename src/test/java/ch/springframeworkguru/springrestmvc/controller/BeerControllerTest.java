@@ -68,7 +68,7 @@ class BeerControllerTest {
     }
 
     @Test
-    void testGetBearByIdAndThrowsNotFoundException() throws Exception {
+    void testGetBeerByIdAndThrowsNotFoundException() throws Exception {
         //given(beerService.getBeerById(any())).willThrow(NotfoundException.class);
         given(beerService.getBeerById(any())).willReturn(Optional.empty());
 
@@ -82,7 +82,7 @@ class BeerControllerTest {
         Page<BeerDTO> givenBeers = beerServiceImpl.listBeers(null, null, null, null, null);
         given(beerService.listBeers(null, null, null, null, null)).willReturn(givenBeers);
 
-        mockMvc.perform(get(requestPath + "/listBears")
+        mockMvc.perform(get(requestPath + "/listBeers")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -94,7 +94,7 @@ class BeerControllerTest {
         Page<BeerDTO> givenBeers = beerServiceImpl.listBeers(null, null, null, null, null);
         given(beerService.listBeers("IPA", null, null, null, null)).willReturn(givenBeers);
         
-        mockMvc.perform(get(requestPath + "/listBears")
+        mockMvc.perform(get(requestPath + "/listBeers")
                 .queryParam("beerName", "IPA"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -105,7 +105,7 @@ class BeerControllerTest {
     void testCreateBeer() throws Exception {
         BeerDTO givenBeer = beerServiceImpl.listBeers(null, null, null, null, null).getContent().getFirst();
         givenBeer.setVersion(null);
-        givenBeer.setId(null);
+        givenBeer.setId(UUID.randomUUID());
 
         given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(givenBeer);
 
@@ -114,8 +114,9 @@ class BeerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(givenBeer)))
             .andExpect(status().isCreated())
+            .andExpect(header().exists("Location"))
+            .andExpect(header().string("Location", "/api/v1/beer/getBeerById/" + givenBeer.getId().toString()))
             .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-
     }
 
     @Test
@@ -183,7 +184,7 @@ class BeerControllerTest {
     @Test
     void testEditBeer() throws Exception {
         BeerDTO givenBeerToEdit = beerServiceImpl.listBeers(null, null, null, null, null).getContent().getFirst();
-        givenBeerToEdit.setBeerName("veryveryNew Bear");
+        givenBeerToEdit.setBeerName("veryveryNew Beer");
 
         given(beerService.editBeer(givenBeerToEdit.getId(), givenBeerToEdit)).willReturn(Optional.of(givenBeerToEdit));
 

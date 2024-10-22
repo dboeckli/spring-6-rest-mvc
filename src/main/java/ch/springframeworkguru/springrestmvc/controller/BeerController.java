@@ -4,7 +4,9 @@ import ch.springframeworkguru.springrestmvc.service.BeerService;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +20,9 @@ import java.util.UUID;
 @Slf4j
 public class BeerController {
 
+    @Value("${controllers.beer-controller.request-path}")
+    private String requestPath;
+
     private final BeerService beerService;
 
     public BeerController(BeerService beerService) {
@@ -25,14 +30,14 @@ public class BeerController {
     }
 
     @DeleteMapping(value="/deleteBeer/{beerId}")
-    public ResponseEntity deleteBeer(@PathVariable("beerId") UUID beerId) {
+    public ResponseEntity<BeerDTO> deleteBeer(@PathVariable("beerId") UUID beerId) {
         if (!beerService.deleteBeer(beerId)) {
             throw new NotfoundException();
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping(value="/listBears")
+    @GetMapping(value="/listBeers")
     public ResponseEntity<Page<BeerDTO>> listBeers(@RequestParam(required = false) String beerName,
                                                    @RequestParam(required = false) BeerStyle beerStyle,
                                                    @RequestParam(required = false) Boolean showInventory,
@@ -48,8 +53,12 @@ public class BeerController {
 
     @PostMapping(value = "/createBeer")
     public ResponseEntity<BeerDTO> createBeer(@Validated @RequestBody BeerDTO newBeer) {
-        BeerDTO beer = beerService.saveNewBeer(newBeer);
-        return new ResponseEntity<>(beer, HttpStatus.CREATED);
+        BeerDTO savedBeer = beerService.saveNewBeer(newBeer);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", requestPath + "/getBeerById/" + savedBeer.getId().toString());
+
+        return new ResponseEntity<>(savedBeer, headers, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/editBeer/{beerId}")
