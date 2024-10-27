@@ -18,6 +18,11 @@ spring:
               #drop-target: scripts/drop-and-create.sql
               #create-target: scripts/drop-and-create.sql
 
+  security:
+    user:
+      name: master
+      password: password          
+
 controllers:
   customer-controller:
     request-path: "/api/v1/customer"

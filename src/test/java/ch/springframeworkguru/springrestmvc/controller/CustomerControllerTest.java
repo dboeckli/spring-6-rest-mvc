@@ -1,5 +1,6 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
+import ch.springframeworkguru.springrestmvc.config.SpringSecurityConfigRest;
 import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import ch.springframeworkguru.springrestmvc.service.CustomerService;
 import ch.springframeworkguru.springrestmvc.service.CustomerServiceImpl;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,10 +22,12 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CustomerController.class)
+@Import(SpringSecurityConfigRest.class)
 @ActiveProfiles("test")
 class CustomerControllerTest {
 
@@ -38,6 +42,12 @@ class CustomerControllerTest {
 
     @Value("${controllers.customer-controller.request-path}")
     private String requestPath;
+
+    @Value("${spring.security.user.name}")
+    private String username;
+
+    @Value("${spring.security.user.password}")
+    private String password;
 
     CustomerServiceImpl customerServiceImpl;
 
@@ -79,6 +89,7 @@ class CustomerControllerTest {
         given(customerService.saveNewCustomer(any(CustomerDTO.class))).willReturn(givenCustomer);
 
         mockMvc.perform(post(requestPath + "/createCustomer")
+                .with(httpBasic(username,password))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(givenCustomer)))
@@ -95,6 +106,7 @@ class CustomerControllerTest {
         given(customerService.editCustomer(givenCustomerToEdit.getId(), givenCustomerToEdit)).willReturn(Optional.of(givenCustomerToEdit));
 
         mockMvc.perform(put(requestPath + "/editCustomer/" + givenCustomerToEdit.getId())
+                .with(httpBasic(username,password))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(givenCustomerToEdit)))
@@ -110,6 +122,7 @@ class CustomerControllerTest {
         given(customerService.deleteCustomer(givenCustomerToDelete.getId())).willReturn(true);
 
         mockMvc.perform(delete(requestPath + "/deleteCustomer/" + givenCustomerToDelete.getId())
+                .with(httpBasic(username,password))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(givenCustomerToDelete)))
@@ -128,6 +141,7 @@ class CustomerControllerTest {
         given(customerService.patchCustomer(givenCustomerToPatch.getId(), givenCustomerToPatch)).willReturn(Optional.of(givenCustomerToPatch));
 
         mockMvc.perform(patch(requestPath + "/patchCustomer/" + givenCustomerToPatch.getId())
+                .with(httpBasic(username,password))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(givenCustomerToPatch)))
