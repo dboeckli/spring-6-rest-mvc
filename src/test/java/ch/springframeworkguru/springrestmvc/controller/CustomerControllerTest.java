@@ -1,9 +1,9 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
 import ch.springframeworkguru.springrestmvc.config.SpringSecurityConfigRest;
-import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import ch.springframeworkguru.springrestmvc.service.CustomerService;
 import ch.springframeworkguru.springrestmvc.service.CustomerServiceImpl;
+import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,6 +62,7 @@ class CustomerControllerTest {
         given(customerService.getCustomerById(givenCustomer.getId())).willReturn(Optional.of(givenCustomer));
 
         mockMvc.perform(get(requestPath + "/getCustomerById/" + givenCustomer.getId())
+                .with(httpBasic(username,password))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -71,11 +72,23 @@ class CustomerControllerTest {
     }
 
     @Test
+    void testGetCustomerByIdWithWrongUsernameAndPassword() throws Exception {
+        CustomerDTO givenCustomer = customerServiceImpl.listCustomers().getFirst();
+        given(customerService.getCustomerById(givenCustomer.getId())).willReturn(Optional.of(givenCustomer));
+
+        mockMvc.perform(get(requestPath + "/getCustomerById/" + givenCustomer.getId())
+                .with(httpBasic("wrongusername","wrongpassword"))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isUnauthorized()); 
+    }
+
+    @Test
     void testGetCustomerByIdAndThrowsNotFoundException() throws Exception {
         //given(customerService.getCustomerById(any())).willThrow(NotfoundException.class);
         given(customerService.getCustomerById(any())).willReturn(Optional.empty());
 
         mockMvc.perform(get(requestPath + "/getCustomerById/" + UUID.randomUUID())
+                .with(httpBasic(username,password))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }

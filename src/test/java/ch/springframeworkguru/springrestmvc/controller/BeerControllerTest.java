@@ -70,12 +70,24 @@ class BeerControllerTest {
         given(beerService.getBeerById(givenBeer.getId())).willReturn(Optional.of(givenBeer));
 
         mockMvc.perform(get(requestPath + "/getBeerById/" + givenBeer.getId())
+                .with(httpBasic(username,password))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(givenBeer.getId().toString())))
                 .andExpect(jsonPath("$.beerName", is(givenBeer.getBeerName())))
                 .andExpect(content().json(objectMapper.writeValueAsString(givenBeer)));  // oder das ganze Object
+    }
+
+    @Test
+    void testGetBeerByIdWithWrongUsernameAndPassword() throws Exception {
+        BeerDTO givenBeer = beerServiceImpl.listBeers(null, null, null, null, null).getContent().getFirst();
+        given(beerService.getBeerById(givenBeer.getId())).willReturn(Optional.of(givenBeer));
+
+        mockMvc.perform(get(requestPath + "/getBeerById/" + givenBeer.getId())
+                .with(httpBasic("wrongusername","wrongpassword"))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isUnauthorized());  
     }
 
     @Test

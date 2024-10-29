@@ -5,20 +5,40 @@ import ch.springframeworkguru.springrestmvc.mapper.BeerMapper;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.core.IsNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static ch.springframeworkguru.springrestmvc.service.BeerServiceJpaImpl.MAX_PAGE_SIZE;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -32,6 +52,18 @@ class BeerControllerIT {
 
     @Autowired
     BeerMapper beerMapper;
+
+    @Value("${spring.security.user.name}")
+    private String username;
+
+    @Value("${spring.security.user.password}")
+    private String password;
+
+    @Value("${controllers.beer-controller.request-path}")
+    private String requestPath;
+
+    @Autowired
+    WebApplicationContext webApplicationContext;
 
     @Test
     @Transactional
@@ -160,6 +192,31 @@ class BeerControllerIT {
             assert beersDtos != null;
             assertEquals(336, beersDtos.getTotalElements()); 
         });
+    }
+
+    @Test
+    // TODO: add tests for the others
+    void testListBeersByName() throws Exception {
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
+        
+        mockMvc.perform(get(requestPath + "/listBeers")
+                .with(httpBasic(username, password))
+                .queryParam("beerName", "IPA")
+                .queryParam("pageSize", "800"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.content.size()", is(336)));
+    }
+
+    @Test
+    // TODO: add tests for the others
+    void testListBeersByNameWithWrongCredentials() throws Exception {
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
+
+        mockMvc.perform(get(requestPath + "/listBeers")
+                .with(httpBasic("wrongwusername", "wrongpassword"))
+                .queryParam("beerName", "IPA")
+                .queryParam("pageSize", "800"))
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
