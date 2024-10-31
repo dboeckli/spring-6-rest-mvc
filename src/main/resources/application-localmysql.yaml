@@ -35,6 +35,11 @@ spring:
         show_sql: false
         # Format SQL
         format_sql: true
+        
+  security:
+    user:
+      name: master
+      password: password        
 
 # Show bind values
 logging:
@@ -44,7 +49,7 @@ logging:
         orm:
           jdbc:
             bind: INFO
-
+  
 controllers:
   customer-controller:
     request-path: "/api/v1/customer"

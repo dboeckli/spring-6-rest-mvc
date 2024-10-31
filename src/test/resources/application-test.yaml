@@ -4,6 +4,17 @@ spring:
     
   flyway:
     enabled: false  
+    
+  security:
+    user:
+      name: master
+      password: password  
+      
+logging:
+  level:
+    org:
+      springframework:
+        security: INFO    
 
 controllers:
   customer-controller:
