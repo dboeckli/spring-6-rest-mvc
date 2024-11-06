@@ -4,6 +4,19 @@ Accept: application/json
 Content-Type: application/json
 Authorization: Basic master password
 
+### this retrieves the bearer token. use the token in the request below
+POST http://localhost:9000/oauth2/token
+Authorization: Basic messaging-client secret
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&client_id=user&client_secret=password&scope=message.read message.write
+
+###
+GET http://localhost:8080/api/v1/beer/listBeers
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJraWQiOiI5ZTE2M2Q5YS1mMGVmLTRmYTAtOTVmOC03ZTgwYjFjY2I1ZDYiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJtZXNzYWdpbmctY2xpZW50IiwiYXVkIjoibWVzc2FnaW5nLWNsaWVudCIsIm5iZiI6MTczMDgxMjQ0Mywic2NvcGUiOlsibWVzc2FnZS5yZWFkIiwibWVzc2FnZS53cml0ZSJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjkwMDAiLCJleHAiOjE3MzA4MTI3NDMsImlhdCI6MTczMDgxMjQ0MywianRpIjoiMzFhNjBjM2UtYzE3Zi00MzQ4LWEyMDAtOTk5NTZhZGQ0YzJlIn0.nxMWPtWO4mKVMlSfWPT8A-JvRncbq4CGuy8OaTy-odXHaWdEgwVHC7XSCX8q9OvJiKy0r_oGCPya4UfsdpNRRGkl0gWp9iuLuMebaRc1803fkEKDeALu7NHjurW12oRjzmJFBlrKlXK9cMpRWeSJV4Qxs1AMUB866k014ugK56JxE2dq2AuccVBRpw5_awYzXPQGYkm765PMJgKvvXXaYPAkztVSdSG9U2YwEmOWgdiEa7pSInF4EMcko04X0cDUIRw8AqdMMVeEIPkA5n4d-GrTAsfAT2A6U1hvFYq15m1su5WfFUOFCyGjU81A9ONaiCJkdkHRtOiXI3rkdQihkg
+
 ###
 GET http://localhost:8080/api/v1/beer/getBeerById/0cb49969-8f19-4fe7-90bb-c2a1b9456bb3
 Accept: application/json
