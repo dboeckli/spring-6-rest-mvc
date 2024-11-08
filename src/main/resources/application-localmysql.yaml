@@ -44,11 +44,7 @@ spring:
 # Show bind values
 logging:
   level: 
-    org:
-      hibernate:
-        orm:
-          jdbc:
-            bind: INFO
+    org.hibernate.orm.jdbc.bind: INFO
   
 controllers:
   customer-controller:
