@@ -19,9 +19,14 @@ spring:
               #create-target: scripts/drop-and-create.sql
 
   security:
-    user:
-      name: master
-      password: password          
+    # basic auth disabled and replace by resource server
+    #user:
+    #  name: master
+    #  password: password 
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9000
 
 controllers:
   customer-controller:
