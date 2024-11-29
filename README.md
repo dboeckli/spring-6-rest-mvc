@@ -1,7 +1,9 @@
 # Spring Framework 6: Beginner to Guru
 ## Spring 6 Rest MVC API
 
-This is the Backend Part.
+This is the Backend Part. Application is listening on port 8081
+* default profile: runs with a in memory h2 database
+* localmysql: requires a local mysql installation
 
 When Testing this module requires that the authentication server is up and running at localhost on port 9000. 
 
