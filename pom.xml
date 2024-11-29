@@ -8,7 +8,7 @@
         <version>3.4.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <!-- artifacId should be lowercase to be able to push to github packages -->
+    <!-- artifactId should be lowercase to be able to push to gitHub packages -->
     <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
     <artifactId>spring-6-rest-mvc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -25,6 +25,8 @@
         <org.mapstruct.version>1.6.2</org.mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <opencsv.version>5.9</opencsv.version>
+        <!-- https://springdoc.org/#what-is-the-compatibility-matrix-of-springdoc-openapi-with-spring-boot -->
+        <springdoc.openapi.version>2.7.0</springdoc.openapi.version> 
     </properties>
     
     <profiles>
@@ -110,6 +112,18 @@
             <version>${opencsv.version}</version>
         </dependency>
 
+        <!-- springdoc openapi -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.openapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-common</artifactId>
+            <version>${springdoc.openapi.version}</version>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -137,6 +151,23 @@
                         </exclude>
                     </excludes>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>add-build-infos</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                        <configuration>
+                            <additionalProperties>
+                                <mavenUser>${user.name}</mavenUser>
+                                <javaVersion>${java.version}</javaVersion>
+                                <javaVendor>${java.vendor}</javaVendor>
+                                <!--<commit-id>${buildNumber}</commit-id>-->
+                                <!--<docker-repository>${docker.push.repository}/${docker.image.prefix}/${project.artifactId}</docker-repository>-->
+                            </additionalProperties>
+                        </configuration>
+                    </execution>
+                </executions>    
             </plugin>
 
             <plugin>
