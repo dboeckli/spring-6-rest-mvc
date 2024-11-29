@@ -1,0 +1,4 @@
+### 
+GET http://localhost:8081/v3/api-docs
+Accept: application/json
+Content-Type: application/json

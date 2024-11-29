@@ -36,3 +36,10 @@ controllers:
     request-path: "/api/v1/customer"
   beer-controller:
     request-path: "/api/v1/beer"  
+    
+springdoc:
+  api-docs:
+    enabled: true
+    path: "/v3/api-docs"
+      
+    
