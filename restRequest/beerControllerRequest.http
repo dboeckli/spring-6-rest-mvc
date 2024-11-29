@@ -1,5 +1,5 @@
-###
-GET http://localhost:8080/api/v1/beer/listBeers
+### this one does not work anymore. we need a jwt token
+GET http://localhost:8081/api/v1/beer/listBeers
 Accept: application/json
 Content-Type: application/json
 Authorization: Basic master password
@@ -12,19 +12,19 @@ Content-Type: application/x-www-form-urlencoded
 grant_type=client_credentials&client_id=user&client_secret=password&scope=message.read message.write
 
 ###
-GET http://localhost:8080/api/v1/beer/listBeers
+GET http://localhost:8081/api/v1/beer/listBeers
 Accept: application/json
 Content-Type: application/json
-Authorization: Bearer eyJraWQiOiI5ZTE2M2Q5YS1mMGVmLTRmYTAtOTVmOC03ZTgwYjFjY2I1ZDYiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJtZXNzYWdpbmctY2xpZW50IiwiYXVkIjoibWVzc2FnaW5nLWNsaWVudCIsIm5iZiI6MTczMDgxMjQ0Mywic2NvcGUiOlsibWVzc2FnZS5yZWFkIiwibWVzc2FnZS53cml0ZSJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjkwMDAiLCJleHAiOjE3MzA4MTI3NDMsImlhdCI6MTczMDgxMjQ0MywianRpIjoiMzFhNjBjM2UtYzE3Zi00MzQ4LWEyMDAtOTk5NTZhZGQ0YzJlIn0.nxMWPtWO4mKVMlSfWPT8A-JvRncbq4CGuy8OaTy-odXHaWdEgwVHC7XSCX8q9OvJiKy0r_oGCPya4UfsdpNRRGkl0gWp9iuLuMebaRc1803fkEKDeALu7NHjurW12oRjzmJFBlrKlXK9cMpRWeSJV4Qxs1AMUB866k014ugK56JxE2dq2AuccVBRpw5_awYzXPQGYkm765PMJgKvvXXaYPAkztVSdSG9U2YwEmOWgdiEa7pSInF4EMcko04X0cDUIRw8AqdMMVeEIPkA5n4d-GrTAsfAT2A6U1hvFYq15m1su5WfFUOFCyGjU81A9ONaiCJkdkHRtOiXI3rkdQihkg
+Authorization: Bearer eyJraWQiOiIzOGIzYTFmYi0zNDU2LTRlMTktYjVmYi0yMjRiMDcwYTE5YWUiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJtZXNzYWdpbmctY2xpZW50IiwiYXVkIjoibWVzc2FnaW5nLWNsaWVudCIsIm5iZiI6MTczMjg3OTQ2Miwic2NvcGUiOlsibWVzc2FnZS5yZWFkIiwibWVzc2FnZS53cml0ZSJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjkwMDAiLCJleHAiOjE3MzI4Nzk3NjIsImlhdCI6MTczMjg3OTQ2MiwianRpIjoiMGI4YjY3YTAtNTBlZC00MDI0LWIxOGQtZDAzNTIwYmMyNWM5In0.BdxBycfOmaiNaOkGJufGPnvgzInvOx-QdtMUbwXc8tF-DkOtV95PnPrps30a6QINWOrQYy-NOkPdxYbhTleZhfCKDO4GcPfyHKsOr1TB0l8HwFwgPbgoIPpFudzYjjk0sKQt1VDIG_iWJ7kHZ6yV-PxxWHGxu8zYNOVjqO-fgyUqOeXanF20rraV-T4g5HEn_PmFbUbbwu3QCF3L6ZE8GZhNFnUSDFQDQex5YlEvSRV52Bq8-_UaWw3aGhk65-jmGpVWGi_GmExiSTwXv9jZ6DBW4Ta8mJrWobomgReWx0naneLIKJUkBO4fploFGl0qiKPN8f7htzhTupQwAkHR2g
 
 ###
-GET http://localhost:8080/api/v1/beer/getBeerById/0cb49969-8f19-4fe7-90bb-c2a1b9456bb3
+GET http://localhost:8081/api/v1/beer/getBeerById/0cb49969-8f19-4fe7-90bb-c2a1b9456bb3
 Accept: application/json
 Content-Type: application/json
 Authorization: Basic master password
 
 ###
-POST http://localhost:8080/api/v1/beer/createBeer
+POST http://localhost:8081/api/v1/beer/createBeer
 Accept: application/json
 Content-Type: application/json
 Authorization: Basic master password
@@ -39,7 +39,7 @@ Authorization: Basic master password
 }
 
 ###
-PUT http://localhost:8080/api/v1/beer/editBeer/4908886e-8df4-4df1-bdb0-6ac0bae289af
+PUT http://localhost:8081/api/v1/beer/editBeer/4908886e-8df4-4df1-bdb0-6ac0bae289af
 Accept: application/json
 Content-Type: application/json
 Authorization: Basic master password
@@ -54,7 +54,7 @@ Authorization: Basic master password
 }
 
 ###
-PATCH http://localhost:8080/api/v1/beer/patchBeer/9d07c34b-36fb-4108-b9ca-0de3393ea2ab
+PATCH http://localhost:8081/api/v1/beer/patchBeer/9d07c34b-36fb-4108-b9ca-0de3393ea2ab
 Accept: application/json
 Content-Type: application/json
 Authorization: Basic master password
@@ -64,7 +64,7 @@ Authorization: Basic master password
 }
 
 ###
-DELETE http://localhost:8080/api/v1/beer/deleteBeer/6ab05faf-743d-443b-8ad6-5e8ae531d12d
+DELETE http://localhost:8081/api/v1/beer/deleteBeer/6ab05faf-743d-443b-8ad6-5e8ae531d12d
 Accept: application/json
 Content-Type: application/json
 Authorization: Basic master password
