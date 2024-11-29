@@ -7,6 +7,10 @@ This is the Backend Part. Application is listening on port 8081
 
 When Testing this module requires that the authentication server is up and running at localhost on port 9000. 
 
+openapi api-docs: http://localhost:8081/v3/api-docs
+openapi gui: http://localhost:8081/swagger-ui/index.html
+openapi-yaml: http://localhost:8081/v3/api-docs.yaml
+
 Chapter 1-17
 
 This repository is for an example application built in my [Spring Framework 6 - Beginner to Guru](https://www.udemy.com/course/spring-framework-6-beginner-to-guru/?referralCode=2BD0B7B7B6B511D699A9) online course
