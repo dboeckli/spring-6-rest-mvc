@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: springRestMvc
+    name: spring-6-rest-mvc
     
   flyway:
     enabled: true  

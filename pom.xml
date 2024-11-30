@@ -28,6 +28,8 @@
         <!-- https://springdoc.org/#what-is-the-compatibility-matrix-of-springdoc-openapi-with-spring-boot -->
         <springdoc.openapi.version>2.7.0</springdoc.openapi.version> 
         <springdoc-openapi-maven-plugin.version>1.4</springdoc-openapi-maven-plugin.version>
+        
+        <swagger-request-validator.version>2.43.0</swagger-request-validator.version>
     </properties>
     
     <profiles>
@@ -136,6 +138,17 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.oai</groupId>
+            <artifactId>swagger-request-validator-restassured</artifactId>
+            <version>${swagger-request-validator.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -190,7 +203,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>start-springbott-app-for-springdoc</id>
+                        <id>start-springboot-app-for-springdoc</id>
                         <goals>
                             <goal>start</goal>
                             <goal>stop</goal>
@@ -214,8 +227,8 @@
                 <artifactId>springdoc-openapi-maven-plugin</artifactId>
                 <version>${springdoc-openapi-maven-plugin.version}</version>
                 <configuration>
-                    <apiDocsUrl>http://localhost:${tomcat.http.port}/v3/api-docs.yaml</apiDocsUrl>
-                    <outputFileName>api-docs.yml</outputFileName>
+                    <apiDocsUrl>http://localhost:${tomcat.http.port}/v3/api-docs</apiDocsUrl>
+                    <outputFileName>openapi.json</outputFileName>
                     <attachArtifact>true</attachArtifact>
                 </configuration>
                 <executions>
