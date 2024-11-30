@@ -30,6 +30,7 @@ class BeerControllerRestAssuredTest {
         .createForSpecificationUrl("openapi.json")
         .withWhitelist(ValidationErrorsWhitelist.create()
             // we get an validation error for date format, so we ignore it
+            // TODO: instead of ignoring it, consider fixing the date format in the API specification
             .withRule("Ignore date format", messageHasKey("validation.response.body.schema.format.date-time"))
             .withRule("Ignore Instance type (null)", messageHasKey("validation.response.body.schema.type"))
         )  
