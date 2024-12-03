@@ -32,6 +32,7 @@
         <swagger-request-validator.version>2.43.0</swagger-request-validator.version>
         
         <logbook.version>3.10.0</logbook.version>
+        <logstash-logback.version>8.0</logstash-logback.version>
     </properties>
     
     <profiles>
@@ -88,6 +89,16 @@
             <groupId>org.zalando</groupId>
             <artifactId>logbook-spring-boot-starter</artifactId>
             <version>${logbook.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.zalando</groupId>
+            <artifactId>logbook-logstash</artifactId>
+            <version>${logbook.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash-logback.version}</version>
         </dependency>
         
         <dependency>
