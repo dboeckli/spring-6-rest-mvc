@@ -16,6 +16,7 @@ management:
       probes:
         enabled: true
       show-details: always
+            
 
 spring:
   application:
@@ -57,5 +58,7 @@ springdoc:
   api-docs:
     enabled: true
     path: "/v3/api-docs"
-      
-    
+
+logging:
+  level:
+    org.zalando.logbook: TRACE
