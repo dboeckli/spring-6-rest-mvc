@@ -4,6 +4,7 @@ import ch.springframeworkguru.springrestmvc.mapper.CustomerMapper;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -29,6 +30,7 @@ public class CustomerServiceJpaImpl implements CustomerService {
     }
 
     @Override
+    @Cacheable(cacheNames = "customerListCache")
     public List<CustomerDTO> listCustomers() {
         return customerRepository
                 .findAll()
@@ -38,6 +40,7 @@ public class CustomerServiceJpaImpl implements CustomerService {
     }
 
     @Override
+    @Cacheable(cacheNames = "customerCache")
     public Optional<CustomerDTO> getCustomerById(UUID id) {
         return Optional.ofNullable(customerMapper
                 .customerToCustomerDto(customerRepository

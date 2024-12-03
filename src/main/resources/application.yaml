@@ -49,7 +49,7 @@ spring:
           issuer-uri: http://localhost:9000
           
   cache:
-    cache-names: "beerCache,beerListCache"
+    cache-names: "beerCache,beerListCache,customerCache,customerListCache"
 
 controllers:
   customer-controller:
