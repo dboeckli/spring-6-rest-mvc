@@ -64,6 +64,7 @@ spring:
 logging:
   level: 
     org.hibernate.orm.jdbc.bind: INFO
+    org.zalando.logbook: TRACE
   
 controllers:
   customer-controller:
