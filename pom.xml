@@ -12,6 +12,7 @@
     <groupId>ch.dboeckli.springframeworkguru.spring-rest-mvc</groupId>
     <artifactId>spring-6-rest-mvc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    
     <name>spring-6-rest-mvc</name>
     <description>spring-6-rest-mvc</description>
 
@@ -53,6 +54,7 @@
             </repositories>
         </profile>
     </profiles>
+    
     <distributionManagement>
         <repository>
             <id>github</id>
@@ -103,6 +105,11 @@
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
             <version>${logstash-logback.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         
         <dependency>

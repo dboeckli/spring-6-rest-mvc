@@ -10,6 +10,8 @@ import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
@@ -30,6 +32,12 @@ public class BootstrapData implements CommandLineRunner {
 
     @Override
     @Transactional
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "customerCache"),
+        @CacheEvict(cacheNames = "customerListCache"),
+        @CacheEvict(cacheNames = "beerCache"),
+        @CacheEvict(cacheNames = "beerListCache")
+    })
     public void run(String... args) throws Exception {
         loadBeerData();
         loadBeerCsvData();

@@ -32,7 +32,7 @@ class CustomerControllerIT {
     
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testDeleteCustomer() {
         UUID givenCustomerId = customerRepository.findAll().getFirst().getId();
         
@@ -52,7 +52,7 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testUpdateCustomer() {
         Customer givenCustomer = customerRepository.findAll().getFirst();
         CustomerDTO customerDTO = customerMapper.customerToCustomerDto(givenCustomer);
@@ -68,7 +68,7 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testUpdateCustomerDoesNotExist() {
         CustomerDTO customerDTO = CustomerDTO.builder().build();
 
@@ -79,7 +79,7 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testPatchCustomer() {
         Customer givenCustomer = customerRepository.findAll().getFirst();
         CustomerDTO customerDTO = customerMapper.customerToCustomerDto(givenCustomer);
@@ -95,7 +95,7 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testPatchCustomerDoesNotExist() {
         CustomerDTO customerDTO = CustomerDTO.builder().build();
 
@@ -106,7 +106,7 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testCreateCustomer() {
         CustomerDTO customerDTO = CustomerDTO.builder()
             .customerName("Fridolin")
@@ -135,8 +135,8 @@ class CustomerControllerIT {
     
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
-    void testEmtpyListCustomer() {
+    @Rollback(true) // we roll back the deletion to assure that the other tests are not failing
+    void testEmptyListCustomer() {
         customerRepository.deleteAll();
         ResponseEntity<List<CustomerDTO>> customersDtoResponseEntity = customerController.listCustomer();
         List<CustomerDTO> customerDtos = customersDtoResponseEntity.getBody();

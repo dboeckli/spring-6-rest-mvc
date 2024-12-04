@@ -6,7 +6,9 @@ import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -112,11 +114,19 @@ public class BeerServiceJpaImpl implements BeerService {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "beerCache"),
+        @CacheEvict(cacheNames = "beerListCache")
+    })
     public BeerDTO saveNewBeer(BeerDTO newBeer) {
         return beerMapper.beerToBeerDto(beerRepository.save(beerMapper.beerDtoToBeer(newBeer)));
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "beerCache"),
+        @CacheEvict(cacheNames = "beerListCache")
+    })
     public Optional<BeerDTO> editBeer(UUID beerId, BeerDTO beer) {
         beerRepository.findById(beerId).ifPresent(foundBeer -> {
             if (StringUtils.hasText(beer.getBeerName())) {
@@ -138,6 +148,10 @@ public class BeerServiceJpaImpl implements BeerService {
 
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "beerCache"),
+        @CacheEvict(cacheNames = "beerListCache")
+    })
     public Optional<BeerDTO> patchBeer(UUID beerId, BeerDTO beer) {
         beerRepository.findById(beerId).ifPresent(foundBeer -> {
             if (StringUtils.hasText(beer.getBeerName())) {
@@ -158,6 +172,10 @@ public class BeerServiceJpaImpl implements BeerService {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "beerCache"),
+        @CacheEvict(cacheNames = "beerListCache")
+    })
     public Boolean deleteBeer(UUID beerId) {
         if (beerRepository.existsById(beerId)) {
             beerRepository.deleteById(beerId);

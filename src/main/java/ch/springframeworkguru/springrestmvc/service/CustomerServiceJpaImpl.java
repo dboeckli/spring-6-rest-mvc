@@ -4,7 +4,9 @@ import ch.springframeworkguru.springrestmvc.mapper.CustomerMapper;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -49,11 +51,19 @@ public class CustomerServiceJpaImpl implements CustomerService {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "customerCache"),
+        @CacheEvict(cacheNames = "customerListCache")
+    })
     public CustomerDTO saveNewCustomer(CustomerDTO newCustomer) {
         return customerMapper.customerToCustomerDto(customerRepository.save(customerMapper.customerDtoToCustomer(newCustomer)));
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "customerCache"),
+        @CacheEvict(cacheNames = "customerListCache")
+    })
     public Optional<CustomerDTO> editCustomer(UUID customerId, CustomerDTO customerToEdit) {
         customerRepository.findById(customerId).ifPresent(foundCustomer -> {
             if (StringUtils.hasText(customerToEdit.getCustomerName())) {
@@ -66,6 +76,10 @@ public class CustomerServiceJpaImpl implements CustomerService {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "customerCache"),
+        @CacheEvict(cacheNames = "customerListCache")
+    })
     public Optional<CustomerDTO> patchCustomer(UUID customerId, CustomerDTO customerToPatch) {
         customerRepository.findById(customerId).ifPresent(foundCustomer -> {
             if (StringUtils.hasText(customerToPatch.getCustomerName())) {
@@ -78,6 +92,10 @@ public class CustomerServiceJpaImpl implements CustomerService {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "customerCache"),
+        @CacheEvict(cacheNames = "customerListCache")
+    })
     public Boolean deleteCustomer(UUID customerId) {
         if (customerRepository.existsById(customerId)) {
             customerRepository.deleteById(customerId);

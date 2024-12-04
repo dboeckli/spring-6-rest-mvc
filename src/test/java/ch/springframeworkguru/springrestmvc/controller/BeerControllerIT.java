@@ -70,7 +70,7 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testDeleteBeerById() {
         Beer beer = beerRepository.findAll().getFirst();
         beerController.deleteBeer(beer.getId());
@@ -80,7 +80,7 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testDeleteBeerByIdNotFound() {
         assertThrows(NotfoundException.class, () -> beerController.deleteBeer(UUID.randomUUID()));
     }
@@ -107,7 +107,7 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testUpdateExistingBeer() {
         Beer beer = beerRepository.findAll().getFirst();
         BeerDTO beerDTO = beerMapper.beerToBeerDto(beer);
@@ -127,7 +127,7 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testUpdateExistingBeerButNotFound() {
         assertThrows(NotfoundException.class, () -> 
             beerController.editBeer(BeerDTO.builder().build(), UUID.randomUUID()));
@@ -135,7 +135,7 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testPatchBeer() {
         Beer givenBeer = beerRepository.findAll().getFirst();
         BeerDTO beerDTO = beerMapper.beerToBeerDto(givenBeer);
@@ -151,7 +151,7 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testPatchBeerDoesNotExist() {
         BeerDTO beerDTO = BeerDTO.builder().build();
 
@@ -300,8 +300,8 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
-    void testEmtpyListBeer() {
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
+    void testEmptyListBeer() {
         beerRepository.deleteAll();
         ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, null);
         Page<BeerDTO> beerDtos = beersDtoResponseEntity.getBody();
