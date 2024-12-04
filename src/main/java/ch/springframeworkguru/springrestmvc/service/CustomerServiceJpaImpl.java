@@ -60,6 +60,9 @@ public class CustomerServiceJpaImpl implements CustomerService {
         @CacheEvict(cacheNames = "customerListCache")
     })
     public CustomerDTO saveNewCustomer(CustomerDTO newCustomer) {
+        if (cacheManager.getCache("customerListCache") != null) {
+            cacheManager.getCache("customerListCache").clear();
+        }
         cacheManager.getCache("customerListCache").clear();
         return customerMapper.customerToCustomerDto(customerRepository.save(customerMapper.customerDtoToCustomer(newCustomer)));
     }
@@ -118,7 +121,11 @@ public class CustomerServiceJpaImpl implements CustomerService {
     }
 
     private void clearCache(UUID customerId) {
-        cacheManager.getCache("customerCache").evict(customerId);
-        cacheManager.getCache("customerListCache").clear();
+        if (cacheManager.getCache("customerCache") != null) {
+            cacheManager.getCache("customerCache").evict(customerId);
+        }
+        if (cacheManager.getCache("customerListCache") != null) {
+            cacheManager.getCache("customerListCache").clear();
+        }
     }
 }
