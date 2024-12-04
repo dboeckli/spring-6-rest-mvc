@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
@@ -21,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.UUID;
 
 import static ch.springframeworkguru.springrestmvc.service.BeerServiceJpaImpl.MAX_PAGE_SIZE;
@@ -46,6 +48,9 @@ class BeerControllerIT {
     @Autowired
     BeerMapper beerMapper;
 
+    @Autowired
+    private CacheManager cacheManager;
+
     @Value("${spring.security.user.name}")
     private String username;
 
@@ -70,7 +75,7 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testDeleteBeerById() {
         Beer beer = beerRepository.findAll().getFirst();
         beerController.deleteBeer(beer.getId());
@@ -80,7 +85,7 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testDeleteBeerByIdNotFound() {
         assertThrows(NotfoundException.class, () -> beerController.deleteBeer(UUID.randomUUID()));
     }
@@ -107,7 +112,7 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testUpdateExistingBeer() {
         Beer beer = beerRepository.findAll().getFirst();
         BeerDTO beerDTO = beerMapper.beerToBeerDto(beer);
@@ -127,7 +132,7 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testUpdateExistingBeerButNotFound() {
         assertThrows(NotfoundException.class, () -> 
             beerController.editBeer(BeerDTO.builder().build(), UUID.randomUUID()));
@@ -135,7 +140,7 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testPatchBeer() {
         Beer givenBeer = beerRepository.findAll().getFirst();
         BeerDTO beerDTO = beerMapper.beerToBeerDto(givenBeer);
@@ -151,7 +156,7 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testPatchBeerDoesNotExist() {
         BeerDTO beerDTO = BeerDTO.builder().build();
 
@@ -300,9 +305,14 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
-    void testEmtpyListBeer() {
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
+    void testEmptyListBeer() {
         beerRepository.deleteAll();
+
+        // we need to clear the cache, because the deleteAll (in the repository class) does not evict the cache
+        Collection<String> cacheNames = cacheManager.getCacheNames();
+        cacheNames.forEach(cacheName -> cacheManager.getCache(cacheName).clear());
+        
         ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, null);
         Page<BeerDTO> beerDtos = beersDtoResponseEntity.getBody();
 

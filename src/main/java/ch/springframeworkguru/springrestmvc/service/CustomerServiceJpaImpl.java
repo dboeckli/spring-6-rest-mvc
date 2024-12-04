@@ -4,6 +4,10 @@ import ch.springframeworkguru.springrestmvc.mapper.CustomerMapper;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -22,13 +26,17 @@ public class CustomerServiceJpaImpl implements CustomerService {
     CustomerRepository customerRepository;
 
     CustomerMapper customerMapper;
+    
+    CacheManager cacheManager;
 
-    public CustomerServiceJpaImpl(CustomerRepository customerRepository, CustomerMapper customerMapper) {
+    public CustomerServiceJpaImpl(CustomerRepository customerRepository, CustomerMapper customerMapper, CacheManager cacheManager) {
         this.customerRepository = customerRepository;
         this.customerMapper = customerMapper;
+        this.cacheManager = cacheManager;
     }
 
     @Override
+    @Cacheable(cacheNames = "customerListCache")
     public List<CustomerDTO> listCustomers() {
         return customerRepository
                 .findAll()
@@ -38,6 +46,7 @@ public class CustomerServiceJpaImpl implements CustomerService {
     }
 
     @Override
+    @Cacheable(cacheNames = "customerCache")
     public Optional<CustomerDTO> getCustomerById(UUID id) {
         return Optional.ofNullable(customerMapper
                 .customerToCustomerDto(customerRepository
@@ -46,12 +55,26 @@ public class CustomerServiceJpaImpl implements CustomerService {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "customerCache"),
+        @CacheEvict(cacheNames = "customerListCache")
+    })
     public CustomerDTO saveNewCustomer(CustomerDTO newCustomer) {
+        if (cacheManager.getCache("customerListCache") != null) {
+            cacheManager.getCache("customerListCache").clear();
+        }
+        cacheManager.getCache("customerListCache").clear();
         return customerMapper.customerToCustomerDto(customerRepository.save(customerMapper.customerDtoToCustomer(newCustomer)));
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "customerCache"),
+        @CacheEvict(cacheNames = "customerListCache")
+    })
     public Optional<CustomerDTO> editCustomer(UUID customerId, CustomerDTO customerToEdit) {
+        clearCache(customerId);
+        
         customerRepository.findById(customerId).ifPresent(foundCustomer -> {
             if (StringUtils.hasText(customerToEdit.getCustomerName())) {
                 foundCustomer.setCustomerName(customerToEdit.getCustomerName());
@@ -63,7 +86,13 @@ public class CustomerServiceJpaImpl implements CustomerService {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "customerCache"),
+        @CacheEvict(cacheNames = "customerListCache")
+    })
     public Optional<CustomerDTO> patchCustomer(UUID customerId, CustomerDTO customerToPatch) {
+        clearCache(customerId);
+        
         customerRepository.findById(customerId).ifPresent(foundCustomer -> {
             if (StringUtils.hasText(customerToPatch.getCustomerName())) {
                 foundCustomer.setCustomerName(customerToPatch.getCustomerName());
@@ -75,11 +104,28 @@ public class CustomerServiceJpaImpl implements CustomerService {
     }
 
     @Override
+    // Eviction does not work. We are using explicitly the cachemanager
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "customerCache"),
+        @CacheEvict(cacheNames = "customerListCache")
+    })
     public Boolean deleteCustomer(UUID customerId) {
         if (customerRepository.existsById(customerId)) {
+            
+            this.clearCache(customerId);
+            
             customerRepository.deleteById(customerId);
             return true;
         }
         return false;
+    }
+
+    private void clearCache(UUID customerId) {
+        if (cacheManager.getCache("customerCache") != null) {
+            cacheManager.getCache("customerCache").evict(customerId);
+        }
+        if (cacheManager.getCache("customerListCache") != null) {
+            cacheManager.getCache("customerListCache").clear();
+        }
     }
 }

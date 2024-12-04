@@ -4,6 +4,7 @@ import ch.springframeworkguru.springrestmvc.config.SpringSecurityConfigRest;
 import ch.springframeworkguru.springrestmvc.service.CustomerService;
 import ch.springframeworkguru.springrestmvc.service.CustomerServiceImpl;
 import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,12 +17,15 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
@@ -161,7 +165,23 @@ class CustomerControllerTest {
     }
 
     @Test
-    void listCustomer() {
+    void testListCustomer() throws Exception {
+        List<CustomerDTO> givenCustomers = customerServiceImpl.listCustomers();
+        given(customerService.listCustomers()).willReturn(givenCustomers);
+
+        MvcResult result = mockMvc.perform(get(requestPath + "/listCustomer")
+                .with(jwtRequestPostProcessor)
+                //.with(httpBasic(username,password))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(3))
+            .andReturn();
+
+        String jsonResponse = result.getResponse().getContentAsString();
+        List<CustomerDTO> customerList = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
+
+        // Manuelle Assertions
+        assertEquals(3, customerList.size());
     }
 
     @Test

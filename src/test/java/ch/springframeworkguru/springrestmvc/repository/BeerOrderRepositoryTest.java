@@ -1,6 +1,7 @@
 package ch.springframeworkguru.springrestmvc.repository;
 
 import ch.springframeworkguru.springrestmvc.bootstrap.BootstrapData;
+import ch.springframeworkguru.springrestmvc.config.CacheConfiguration;
 import ch.springframeworkguru.springrestmvc.entity.BeerOrder;
 import ch.springframeworkguru.springrestmvc.entity.BeerOrderShipment;
 import ch.springframeworkguru.springrestmvc.entity.Customer;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
-@Import({BootstrapData.class, BeerCsvServiceImpl.class})
+@Import({BootstrapData.class, BeerCsvServiceImpl.class, CacheConfiguration.class})
 class BeerOrderRepositoryTest {
     
     @Autowired

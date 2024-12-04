@@ -7,11 +7,13 @@ import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,9 +32,12 @@ class CustomerControllerIT {
     @Autowired
     CustomerMapper customerMapper;
     
+    @Autowired
+    private CacheManager cacheManager;
+
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testDeleteCustomer() {
         UUID givenCustomerId = customerRepository.findAll().getFirst().getId();
         
@@ -52,7 +57,7 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testUpdateCustomer() {
         Customer givenCustomer = customerRepository.findAll().getFirst();
         CustomerDTO customerDTO = customerMapper.customerToCustomerDto(givenCustomer);
@@ -68,7 +73,7 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testUpdateCustomerDoesNotExist() {
         CustomerDTO customerDTO = CustomerDTO.builder().build();
 
@@ -79,7 +84,7 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testPatchCustomer() {
         Customer givenCustomer = customerRepository.findAll().getFirst();
         CustomerDTO customerDTO = customerMapper.customerToCustomerDto(givenCustomer);
@@ -95,7 +100,7 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testPatchCustomerDoesNotExist() {
         CustomerDTO customerDTO = CustomerDTO.builder().build();
 
@@ -106,7 +111,7 @@ class CustomerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testCreateCustomer() {
         CustomerDTO customerDTO = CustomerDTO.builder()
             .customerName("Fridolin")
@@ -135,9 +140,14 @@ class CustomerControllerIT {
     
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
-    void testEmtpyListCustomer() {
+    @Rollback(true) // we roll back the deletion to assure that the other tests are not failing
+    void testEmptyListCustomer() {
         customerRepository.deleteAll();
+        
+        // we need to clear the cache, because the deleteAll (in the repository class) does not evict the cache
+        Collection<String> cacheNames = cacheManager.getCacheNames();
+        cacheNames.forEach(cacheName -> cacheManager.getCache(cacheName).clear());
+            
         ResponseEntity<List<CustomerDTO>> customersDtoResponseEntity = customerController.listCustomer();
         List<CustomerDTO> customerDtos = customersDtoResponseEntity.getBody();
 

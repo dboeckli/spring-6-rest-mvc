@@ -1,5 +1,6 @@
 package ch.springframeworkguru.springrestmvc.bootstrap;
 
+import ch.springframeworkguru.springrestmvc.config.CacheConfiguration;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
 import ch.springframeworkguru.springrestmvc.service.BeerCsvService;
@@ -8,13 +9,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Import;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-@Import({BeerCsvServiceImpl.class})
+@Import({BeerCsvServiceImpl.class, CacheConfiguration.class})
 class BootstrapDataTest {
 
     @Autowired
@@ -26,11 +28,14 @@ class BootstrapDataTest {
     @Autowired
     CustomerRepository customerRepository;
 
+    @Autowired
+    CacheManager cacheManager;
+
     BootstrapData bootstrapData;
 
     @BeforeEach
     void setUp() {
-        bootstrapData = new BootstrapData(beerRepository, customerRepository, beerCsvService);
+        bootstrapData = new BootstrapData(beerRepository, customerRepository, beerCsvService, cacheManager);
     }
 
     @Test

@@ -47,6 +47,13 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:9000
+          
+  cache:
+    cache-names: "beerCache,beerListCache,customerCache,customerListCache"
+
+appconfig:
+  cache:
+    enabled: true
 
 controllers:
   customer-controller:

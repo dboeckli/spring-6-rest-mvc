@@ -10,6 +10,9 @@ import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
@@ -19,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -27,13 +31,28 @@ public class BootstrapData implements CommandLineRunner {
     private final BeerRepository beerRepository;
     private final CustomerRepository customerRepository;
     private final BeerCsvService beerCsvService;
+    
+    private final CacheManager cacheManager;
 
     @Override
     @Transactional
+    // Eviction does not work. We are using explicitly the cachemanager
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "customerCache"),
+        @CacheEvict(cacheNames = "customerListCache"),
+        @CacheEvict(cacheNames = "beerCache"),
+        @CacheEvict(cacheNames = "beerListCache")
+    })
     public void run(String... args) throws Exception {
+        clearCache();
         loadBeerData();
         loadBeerCsvData();
         loadCustomerData();
+    }
+    
+    private void clearCache() {
+        Collection<String> cacheNames = cacheManager.getCacheNames();
+        cacheNames.forEach(cacheName -> cacheManager.getCache(cacheName).clear());
     }
 
     private void loadBeerCsvData() throws FileNotFoundException {
