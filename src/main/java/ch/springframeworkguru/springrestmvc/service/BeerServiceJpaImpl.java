@@ -6,6 +6,7 @@ import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -27,14 +28,17 @@ public class BeerServiceJpaImpl implements BeerService {
     BeerRepository beerRepository;
 
     BeerMapper beerMapper;
+
+    CacheManager cacheManager;
     
     public static final int DEFAULT_PAGE_SIZE = 25;
     public static final int MAX_PAGE_SIZE = 1000;
     public static final int DEFAULT_PAGE_NUMBER = 0;
 
-    public BeerServiceJpaImpl(BeerRepository beerRepository, BeerMapper beerMapper) {
+    public BeerServiceJpaImpl(BeerRepository beerRepository, BeerMapper beerMapper ,CacheManager cacheManager) {
         this.beerRepository = beerRepository;
         this.beerMapper = beerMapper;
+        this.cacheManager = cacheManager;
     }
 
     @Override
@@ -119,6 +123,7 @@ public class BeerServiceJpaImpl implements BeerService {
         @CacheEvict(cacheNames = "beerListCache")
     })
     public BeerDTO saveNewBeer(BeerDTO newBeer) {
+        cacheManager.getCache("beerListCache").clear();
         return beerMapper.beerToBeerDto(beerRepository.save(beerMapper.beerDtoToBeer(newBeer)));
     }
 
@@ -128,6 +133,8 @@ public class BeerServiceJpaImpl implements BeerService {
         @CacheEvict(cacheNames = "beerListCache")
     })
     public Optional<BeerDTO> editBeer(UUID beerId, BeerDTO beer) {
+        clearCache(beerId);
+        
         beerRepository.findById(beerId).ifPresent(foundBeer -> {
             if (StringUtils.hasText(beer.getBeerName())) {
                 foundBeer.setBeerName(beer.getBeerName());
@@ -153,6 +160,8 @@ public class BeerServiceJpaImpl implements BeerService {
         @CacheEvict(cacheNames = "beerListCache")
     })
     public Optional<BeerDTO> patchBeer(UUID beerId, BeerDTO beer) {
+        clearCache(beerId);
+        
         beerRepository.findById(beerId).ifPresent(foundBeer -> {
             if (StringUtils.hasText(beer.getBeerName())) {
                 foundBeer.setBeerName(beer.getBeerName());
@@ -178,10 +187,16 @@ public class BeerServiceJpaImpl implements BeerService {
     })
     public Boolean deleteBeer(UUID beerId) {
         if (beerRepository.existsById(beerId)) {
+            clearCache(beerId);
             beerRepository.deleteById(beerId);
             return true;
         }
         return false;
+    }
+
+    private void clearCache(UUID beerId) {
+        cacheManager.getCache("beerCache").evict(beerId);
+        cacheManager.getCache("beerListCache").clear();
     }
 
 }

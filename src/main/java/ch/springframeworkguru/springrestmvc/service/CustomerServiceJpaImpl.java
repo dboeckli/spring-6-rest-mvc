@@ -60,6 +60,7 @@ public class CustomerServiceJpaImpl implements CustomerService {
         @CacheEvict(cacheNames = "customerListCache")
     })
     public CustomerDTO saveNewCustomer(CustomerDTO newCustomer) {
+        cacheManager.getCache("customerListCache").clear();
         return customerMapper.customerToCustomerDto(customerRepository.save(customerMapper.customerDtoToCustomer(newCustomer)));
     }
 
@@ -69,6 +70,8 @@ public class CustomerServiceJpaImpl implements CustomerService {
         @CacheEvict(cacheNames = "customerListCache")
     })
     public Optional<CustomerDTO> editCustomer(UUID customerId, CustomerDTO customerToEdit) {
+        clearCache(customerId);
+        
         customerRepository.findById(customerId).ifPresent(foundCustomer -> {
             if (StringUtils.hasText(customerToEdit.getCustomerName())) {
                 foundCustomer.setCustomerName(customerToEdit.getCustomerName());
@@ -85,6 +88,8 @@ public class CustomerServiceJpaImpl implements CustomerService {
         @CacheEvict(cacheNames = "customerListCache")
     })
     public Optional<CustomerDTO> patchCustomer(UUID customerId, CustomerDTO customerToPatch) {
+        clearCache(customerId);
+        
         customerRepository.findById(customerId).ifPresent(foundCustomer -> {
             if (StringUtils.hasText(customerToPatch.getCustomerName())) {
                 foundCustomer.setCustomerName(customerToPatch.getCustomerName());
@@ -103,11 +108,17 @@ public class CustomerServiceJpaImpl implements CustomerService {
     })
     public Boolean deleteCustomer(UUID customerId) {
         if (customerRepository.existsById(customerId)) {
-            cacheManager.getCache("customerCache").evict(customerId);
-            cacheManager.getCache("customerListCache").clear();
+            
+            this.clearCache(customerId);
+            
             customerRepository.deleteById(customerId);
             return true;
         }
         return false;
+    }
+
+    private void clearCache(UUID customerId) {
+        cacheManager.getCache("customerCache").evict(customerId);
+        cacheManager.getCache("customerListCache").clear();
     }
 }
