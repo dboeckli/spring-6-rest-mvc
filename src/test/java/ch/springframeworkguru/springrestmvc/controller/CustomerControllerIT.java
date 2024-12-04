@@ -7,11 +7,13 @@ import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +32,9 @@ class CustomerControllerIT {
     @Autowired
     CustomerMapper customerMapper;
     
+    @Autowired
+    private CacheManager cacheManager;
+
     @Test
     @Transactional
     @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
@@ -138,6 +143,11 @@ class CustomerControllerIT {
     @Rollback(true) // we roll back the deletion to assure that the other tests are not failing
     void testEmptyListCustomer() {
         customerRepository.deleteAll();
+        
+        // we need to clear the cache, because the deleteAll does not evict the cache
+        Collection<String> cacheNames = cacheManager.getCacheNames();
+        cacheNames.forEach(cacheName -> cacheManager.getCache(cacheName).clear());
+            
         ResponseEntity<List<CustomerDTO>> customersDtoResponseEntity = customerController.listCustomer();
         List<CustomerDTO> customerDtos = customersDtoResponseEntity.getBody();
 

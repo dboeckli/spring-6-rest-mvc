@@ -15,13 +15,11 @@ spring:
     
 appconfig:
   cache:
-    enabled: false    
+    enabled: true    
       
 logging:
   level:
-    org:
-      springframework:
-        security: INFO    
+    org.springframework.security: INFO    
 
 controllers:
   customer-controller:

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
@@ -21,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.UUID;
 
 import static ch.springframeworkguru.springrestmvc.service.BeerServiceJpaImpl.MAX_PAGE_SIZE;
@@ -45,6 +47,9 @@ class BeerControllerIT {
 
     @Autowired
     BeerMapper beerMapper;
+
+    @Autowired
+    private CacheManager cacheManager;
 
     @Value("${spring.security.user.name}")
     private String username;
@@ -303,6 +308,11 @@ class BeerControllerIT {
     @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testEmptyListBeer() {
         beerRepository.deleteAll();
+
+        // we need to clear the cache, because the deleteAll does not evict the cache
+        Collection<String> cacheNames = cacheManager.getCacheNames();
+        cacheNames.forEach(cacheName -> cacheManager.getCache(cacheName).clear());
+        
         ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, null);
         Page<BeerDTO> beerDtos = beersDtoResponseEntity.getBody();
 

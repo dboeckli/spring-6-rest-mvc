@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableCaching
 @Slf4j
-public class CacheConfig {
+public class CacheConfiguration {
 
     @Bean
     public CacheManager cacheManager(@Value("${appconfig.cache.enabled}") boolean cacheEnabled) {

@@ -4,6 +4,7 @@ import ch.springframeworkguru.springrestmvc.mapper.CustomerMapper;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -25,10 +26,13 @@ public class CustomerServiceJpaImpl implements CustomerService {
     CustomerRepository customerRepository;
 
     CustomerMapper customerMapper;
+    
+    CacheManager cacheManager;
 
-    public CustomerServiceJpaImpl(CustomerRepository customerRepository, CustomerMapper customerMapper) {
+    public CustomerServiceJpaImpl(CustomerRepository customerRepository, CustomerMapper customerMapper, CacheManager cacheManager) {
         this.customerRepository = customerRepository;
         this.customerMapper = customerMapper;
+        this.cacheManager = cacheManager;
     }
 
     @Override
@@ -92,12 +96,15 @@ public class CustomerServiceJpaImpl implements CustomerService {
     }
 
     @Override
+    // Eviction does not work. We are using explicitly the cachemanager
     @Caching(evict = {
         @CacheEvict(cacheNames = "customerCache"),
         @CacheEvict(cacheNames = "customerListCache")
     })
     public Boolean deleteCustomer(UUID customerId) {
         if (customerRepository.existsById(customerId)) {
+            cacheManager.getCache("customerCache").evict(customerId);
+            cacheManager.getCache("customerListCache").clear();
             customerRepository.deleteById(customerId);
             return true;
         }
