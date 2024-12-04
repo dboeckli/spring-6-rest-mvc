@@ -309,7 +309,7 @@ class BeerControllerIT {
     void testEmptyListBeer() {
         beerRepository.deleteAll();
 
-        // we need to clear the cache, because the deleteAll does not evict the cache
+        // we need to clear the cache, because the deleteAll (in the repository class) does not evict the cache
         Collection<String> cacheNames = cacheManager.getCacheNames();
         cacheNames.forEach(cacheName -> cacheManager.getCache(cacheName).clear());
         
