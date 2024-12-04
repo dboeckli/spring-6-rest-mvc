@@ -6,6 +6,10 @@ import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,22 +28,28 @@ public class BeerServiceJpaImpl implements BeerService {
     BeerRepository beerRepository;
 
     BeerMapper beerMapper;
+
+    CacheManager cacheManager;
     
     public static final int DEFAULT_PAGE_SIZE = 25;
     public static final int MAX_PAGE_SIZE = 1000;
     public static final int DEFAULT_PAGE_NUMBER = 0;
 
-    public BeerServiceJpaImpl(BeerRepository beerRepository, BeerMapper beerMapper) {
+    public BeerServiceJpaImpl(BeerRepository beerRepository, BeerMapper beerMapper ,CacheManager cacheManager) {
         this.beerRepository = beerRepository;
         this.beerMapper = beerMapper;
+        this.cacheManager = cacheManager;
     }
 
     @Override
+    @Cacheable(cacheNames = "beerListCache")
     public Page<BeerDTO> listBeers(String beerName,
                                    BeerStyle beerStyle,
                                    Boolean showInventory,
                                    Integer pageNumber,
                                    Integer pageSize) {
+        
+        log.info("Service: listBeers");
         
         PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
         
@@ -98,7 +108,9 @@ public class BeerServiceJpaImpl implements BeerService {
     }
 
     @Override
+    @Cacheable(cacheNames = "beerCache")
     public Optional<BeerDTO> getBeerById(UUID id) {
+        log.info("Service getBeerById");
         return Optional.ofNullable(beerMapper
                 .beerToBeerDto(beerRepository
                         .findById(id)
@@ -106,12 +118,26 @@ public class BeerServiceJpaImpl implements BeerService {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "beerCache"),
+        @CacheEvict(cacheNames = "beerListCache")
+    })
     public BeerDTO saveNewBeer(BeerDTO newBeer) {
+        if (cacheManager.getCache("beerListCache") != null) {
+            cacheManager.getCache("beerListCache").clear();
+        }
+        
         return beerMapper.beerToBeerDto(beerRepository.save(beerMapper.beerDtoToBeer(newBeer)));
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "beerCache"),
+        @CacheEvict(cacheNames = "beerListCache")
+    })
     public Optional<BeerDTO> editBeer(UUID beerId, BeerDTO beer) {
+        clearCache(beerId);
+        
         beerRepository.findById(beerId).ifPresent(foundBeer -> {
             if (StringUtils.hasText(beer.getBeerName())) {
                 foundBeer.setBeerName(beer.getBeerName());
@@ -132,7 +158,13 @@ public class BeerServiceJpaImpl implements BeerService {
 
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "beerCache"),
+        @CacheEvict(cacheNames = "beerListCache")
+    })
     public Optional<BeerDTO> patchBeer(UUID beerId, BeerDTO beer) {
+        clearCache(beerId);
+        
         beerRepository.findById(beerId).ifPresent(foundBeer -> {
             if (StringUtils.hasText(beer.getBeerName())) {
                 foundBeer.setBeerName(beer.getBeerName());
@@ -152,12 +184,26 @@ public class BeerServiceJpaImpl implements BeerService {
     }
 
     @Override
+    @Caching(evict = {
+        @CacheEvict(cacheNames = "beerCache"),
+        @CacheEvict(cacheNames = "beerListCache")
+    })
     public Boolean deleteBeer(UUID beerId) {
         if (beerRepository.existsById(beerId)) {
+            clearCache(beerId);
             beerRepository.deleteById(beerId);
             return true;
         }
         return false;
+    }
+
+    private void clearCache(UUID beerId) {
+        if (cacheManager.getCache("beerCache") != null) {
+            cacheManager.getCache("beerCache").evict(beerId);
+        }
+        if (cacheManager.getCache("beerListCache") != null) {
+            cacheManager.getCache("beerListCache").clear();
+        }
     }
 
 }

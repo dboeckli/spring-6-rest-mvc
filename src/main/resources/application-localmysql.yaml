@@ -58,7 +58,14 @@ spring:
   security:
     user:
       name: master
-      password: password        
+      password: password    
+      
+  cache:
+    cache-names: "beerCache,beerListCache,customerCache,customerListCache"    
+    
+appconfig:
+  cache:
+    enabled: true    
 
 # Show bind values
 logging:

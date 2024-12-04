@@ -1,6 +1,7 @@
 package ch.springframeworkguru.springrestmvc.repository;
 
 import ch.springframeworkguru.springrestmvc.bootstrap.BootstrapData;
+import ch.springframeworkguru.springrestmvc.config.CacheConfiguration;
 import ch.springframeworkguru.springrestmvc.entity.Beer;
 import ch.springframeworkguru.springrestmvc.entity.Category;
 import ch.springframeworkguru.springrestmvc.service.BeerCsvServiceImpl;
@@ -16,7 +17,7 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-@Import({BootstrapData.class, BeerCsvServiceImpl.class})
+@Import({BootstrapData.class, BeerCsvServiceImpl.class, CacheConfiguration.class})
 class CategoryRepositoryTest {
     
     @Autowired

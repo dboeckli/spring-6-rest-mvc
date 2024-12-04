@@ -10,11 +10,16 @@ spring:
       name: master
       password: password  
       
+  cache:
+    cache-names: "beerCache,beerListCache,customerCache,customerListCache"    
+    
+appconfig:
+  cache:
+    enabled: true    
+      
 logging:
   level:
-    org:
-      springframework:
-        security: INFO    
+    org.springframework.security: INFO    
 
 controllers:
   customer-controller:
