@@ -22,8 +22,8 @@ echo 'Will change the version in pom.xml files...'
 BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD) || error_exit "Failed to get the current branch name."
 echo "### Branch is $BRANCH_NAME"
 
-# Replace '/' with '_'
-branch=${BRANCH_NAME//\//_}
+# Replace `/` and `-` with `_` and remove any other unwanted characters
+branch=$(echo "$BRANCH_NAME" | sed 's/[^a-zA-Z0-9]/_/g')
 echo "### Processed branch is $branch"
 echo "BRANCH_NAME=$branch" >>"$GITHUB_OUTPUT"
 
