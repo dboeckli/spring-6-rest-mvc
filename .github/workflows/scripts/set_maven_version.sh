@@ -24,7 +24,7 @@ echo "### Branch is $BRANCH_NAME"
 
 # Replace `/` and `-` with `_` and remove any other unwanted characters
 branch=$(echo "$BRANCH_NAME" | sed 's/[^a-zA-Z0-9]/_/g')
-echo "### Processed branch is $branch"
+echo "### Cleaned branch is  $branch"
 echo "BRANCH_NAME=$branch" >>"$GITHUB_OUTPUT"
 
 # Get current Maven project version
