@@ -1,6 +1,7 @@
 package ch.springframeworkguru.springrestmvc.service;
 
 import ch.springframeworkguru.springrestmvc.entity.Beer;
+import ch.springframeworkguru.springrestmvc.event.events.BeerCreatedEvent;
 import ch.springframeworkguru.springrestmvc.mapper.BeerMapper;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
@@ -10,10 +11,13 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -25,20 +29,23 @@ import java.util.UUID;
 @Slf4j
 public class BeerServiceJpaImpl implements BeerService {
 
-    BeerRepository beerRepository;
+    private final BeerRepository beerRepository;
 
-    BeerMapper beerMapper;
+    private final BeerMapper beerMapper;
 
-    CacheManager cacheManager;
+    private final CacheManager cacheManager;
+    
+    private final ApplicationEventPublisher eventPublisher;
     
     public static final int DEFAULT_PAGE_SIZE = 25;
     public static final int MAX_PAGE_SIZE = 1000;
     public static final int DEFAULT_PAGE_NUMBER = 0;
 
-    public BeerServiceJpaImpl(BeerRepository beerRepository, BeerMapper beerMapper ,CacheManager cacheManager) {
+    public BeerServiceJpaImpl(BeerRepository beerRepository, BeerMapper beerMapper , CacheManager cacheManager, ApplicationEventPublisher eventPublisher) {
         this.beerRepository = beerRepository;
         this.beerMapper = beerMapper;
         this.cacheManager = cacheManager;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -126,8 +133,16 @@ public class BeerServiceJpaImpl implements BeerService {
         if (cacheManager.getCache("beerListCache") != null) {
             cacheManager.getCache("beerListCache").clear();
         }
+
+        Beer savedBeer = beerRepository.save(beerMapper.beerDtoToBeer(newBeer));
         
-        return beerMapper.beerToBeerDto(beerRepository.save(beerMapper.beerDtoToBeer(newBeer)));
+        // publish a event
+        log.info("Current Thread name: " + Thread.currentThread().getName());
+        log.info("Current Thread ID: " + Thread.currentThread().threadId());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        eventPublisher.publishEvent(new BeerCreatedEvent(savedBeer, authentication));
+        
+        return beerMapper.beerToBeerDto(savedBeer);
     }
 
     @Override
