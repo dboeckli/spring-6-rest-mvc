@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 @AllArgsConstructor
 @Getter
 @Setter
-public class BeerCreatedEvent implements BeerEvent {
+public class BeerPatchEvent implements BeerEvent {
     
     private Beer beer;
     

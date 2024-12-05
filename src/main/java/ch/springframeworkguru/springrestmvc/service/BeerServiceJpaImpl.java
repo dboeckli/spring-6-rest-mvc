@@ -2,6 +2,8 @@ package ch.springframeworkguru.springrestmvc.service;
 
 import ch.springframeworkguru.springrestmvc.entity.Beer;
 import ch.springframeworkguru.springrestmvc.event.events.BeerCreatedEvent;
+import ch.springframeworkguru.springrestmvc.event.events.BeerDeleteEvent;
+import ch.springframeworkguru.springrestmvc.event.events.BeerPatchEvent;
 import ch.springframeworkguru.springrestmvc.mapper.BeerMapper;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
@@ -136,7 +138,7 @@ public class BeerServiceJpaImpl implements BeerService {
 
         Beer savedBeer = beerRepository.save(beerMapper.beerDtoToBeer(newBeer));
         
-        // publish a event
+        // publish an event
         log.info("Current Thread name: " + Thread.currentThread().getName());
         log.info("Current Thread ID: " + Thread.currentThread().threadId());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -166,7 +168,13 @@ public class BeerServiceJpaImpl implements BeerService {
             if (beer.getPrice() != null) {
                 foundBeer.setPrice(beer.getPrice());
             }
-            beerMapper.beerToBeerDto(beerRepository.save(foundBeer));
+            Beer updatedBeer = beerRepository.save(foundBeer);
+            
+            // publish an event
+            log.info("Current Thread name: " + Thread.currentThread().getName());
+            log.info("Current Thread ID: " + Thread.currentThread().threadId());
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            eventPublisher.publishEvent(new BeerCreatedEvent(updatedBeer, authentication));
         });
         return Optional.ofNullable(beerMapper.beerToBeerDto(beerRepository.findById(beerId).orElse(null)));
     }
@@ -193,7 +201,12 @@ public class BeerServiceJpaImpl implements BeerService {
             if (beer.getPrice() != null) {
                 foundBeer.setPrice(beer.getPrice());
             }
-            beerMapper.beerToBeerDto(beerRepository.save(foundBeer));
+            Beer patchedBeer = beerRepository.save(foundBeer);
+            // publish an event
+            log.info("Current Thread name: " + Thread.currentThread().getName());
+            log.info("Current Thread ID: " + Thread.currentThread().threadId());
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            eventPublisher.publishEvent(new BeerPatchEvent(patchedBeer, authentication));
         });
         return Optional.ofNullable(beerMapper.beerToBeerDto(beerRepository.findById(beerId).orElse(null)));
     }
@@ -207,6 +220,13 @@ public class BeerServiceJpaImpl implements BeerService {
         if (beerRepository.existsById(beerId)) {
             clearCache(beerId);
             beerRepository.deleteById(beerId);
+
+            // publish an event
+            log.info("Current Thread name: " + Thread.currentThread().getName());
+            log.info("Current Thread ID: " + Thread.currentThread().threadId());
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            eventPublisher.publishEvent(new BeerDeleteEvent(Beer.builder().id(beerId).build(), authentication));
+            
             return true;
         }
         return false;
