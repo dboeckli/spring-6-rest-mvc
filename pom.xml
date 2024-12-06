@@ -92,12 +92,14 @@
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
 
+        <!-- TODO: currently disabled: does not work yet
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-docker-compose</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+        -->
         
         <dependency>
             <groupId>org.zalando</groupId>
