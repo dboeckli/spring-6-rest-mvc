@@ -1,0 +1,80 @@
+server:
+  port: 8081
+
+management:
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+
+spring:
+  application:
+    name: spring-6-rest-mvc
+  
+  flyway:
+    enabled: true
+  
+  datasource:
+    username: restadmin
+    password: password
+    url: jdbc:mysql://localhost:3306/restdb?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      pool-name: RestDB-Pool
+      maximum-pool-size: 5
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+        useLocalSessionState: true
+        rewriteBatchedStatements: true
+        cacheResultSetMetadata: true
+        cacheServerConfiguration: true
+        elideSetAutoCommits: true
+        maintainTimeStats: false
+  
+  jpa:
+    database: mysql
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        ddl-auto: validate
+        # Show SQL  
+        show_sql: false
+        # Format SQL
+        format_sql: true
+  
+  security:
+    user:
+      name: master
+      password: password
+  
+  cache:
+    cache-names: "beerCache,beerListCache,customerCache,customerListCache"
+
+appconfig:
+  cache:
+    enabled: true
+
+# Show bind values
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: INFO
+    org.zalando.logbook: TRACE
+
+controllers:
+  customer-controller:
+    request-path: "/api/v1/customer"
+  beer-controller:
+    request-path: "/api/v1/beer"    
