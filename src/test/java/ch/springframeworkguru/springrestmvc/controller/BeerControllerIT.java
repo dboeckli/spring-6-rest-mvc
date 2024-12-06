@@ -1,21 +1,30 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
 import ch.springframeworkguru.springrestmvc.entity.Beer;
+import ch.springframeworkguru.springrestmvc.event.events.BeerCreatedEvent;
+import ch.springframeworkguru.springrestmvc.event.events.BeerDeleteEvent;
+import ch.springframeworkguru.springrestmvc.event.events.BeerPatchEvent;
 import ch.springframeworkguru.springrestmvc.mapper.BeerMapper;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -31,13 +40,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@RecordApplicationEvents
 class BeerControllerIT {
+
+    @Autowired
+    ApplicationEvents applicationEvents;
 
     @Autowired
     BeerController beerController;
@@ -50,6 +63,9 @@ class BeerControllerIT {
 
     @Autowired
     private CacheManager cacheManager;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Value("${spring.security.user.name}")
     private String username;
@@ -111,6 +127,38 @@ class BeerControllerIT {
     }
 
     @Test
+    void testSaveBeerWithMockMVC() throws Exception {
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
+        
+        BeerDTO newBeerDTO = BeerDTO.builder()
+            .beerName("verynewBeer")
+            .beerStyle(BeerStyle.GOSE)
+            .upc("upc")
+            .price(BigDecimal.valueOf(55))
+            .quantityOnHand(2)
+            .build();
+
+        MvcResult result = mockMvc.perform(post(requestPath + "/createBeer")
+                .with(jwtRequestPostProcessor)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(newBeerDTO)))
+            .andExpect(status().isCreated())
+            .andReturn();
+
+        String jsonResponse = result.getResponse().getContentAsString();
+        BeerDTO beerDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
+
+        assertAll(() -> {
+            assertNotNull(beerDTO);
+            assertEquals("verynewBeer", beerDTO.getBeerName());
+            assertEquals(1, applicationEvents.stream(BeerCreatedEvent.class).count());
+            assertEquals("verynewBeer", applicationEvents.stream(BeerCreatedEvent.class).findFirst().get().getBeer().getBeerName());
+            assertEquals("messaging-client", applicationEvents.stream(BeerCreatedEvent.class).findFirst().get().getAuthentication().getName());
+        });
+    }
+
+    @Test
     @Transactional
     @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testUpdateExistingBeer() {
@@ -126,8 +174,34 @@ class BeerControllerIT {
             assert editedBeer != null;
             assertEquals("UPDATED BEER", editedBeer.getBeerName());
         });
-        
+    }
 
+    @Test
+    void testUpdateBeerWithMockMVC() throws Exception {
+        Beer beerToUpdate = beerRepository.findAll().getFirst();
+        BeerDTO beerToUpdateDTO = beerMapper.beerToBeerDto(beerToUpdate);
+        beerToUpdateDTO.setBeerName("UPDATED BEER");
+        
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
+
+        MvcResult result = mockMvc.perform(put(requestPath + "/editBeer/{beerId}", beerToUpdate.getId())
+                .with(jwtRequestPostProcessor)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(beerToUpdateDTO)))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        String jsonResponse = result.getResponse().getContentAsString();
+        BeerDTO beerDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
+
+        assertAll(() -> {
+            assertNotNull(beerDTO);
+            assertEquals("UPDATED BEER", beerDTO.getBeerName());
+            assertEquals(1, applicationEvents.stream(BeerCreatedEvent.class).count());
+            assertEquals("UPDATED BEER", applicationEvents.stream(BeerCreatedEvent.class).findFirst().get().getBeer().getBeerName());
+            assertEquals("messaging-client", applicationEvents.stream(BeerCreatedEvent.class).findFirst().get().getAuthentication().getName());
+        });
     }
 
     @Test
@@ -161,6 +235,34 @@ class BeerControllerIT {
         BeerDTO beerDTO = BeerDTO.builder().build();
 
         assertThrows(NotfoundException.class, () -> beerController.patchBeer(beerDTO, UUID.randomUUID()));
+    }
+
+    @Test
+    void testPatchBeerWithMockMVC() throws Exception {
+        Beer beerToUpdate = beerRepository.findAll().getFirst();
+        BeerDTO beerToUpdateDTO = beerMapper.beerToBeerDto(beerToUpdate);
+        beerToUpdateDTO.setBeerName("PATCHED BEER");
+
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
+
+        MvcResult result = mockMvc.perform(patch(requestPath + "/patchBeer/{beerId}", beerToUpdate.getId())
+                .with(jwtRequestPostProcessor)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(beerToUpdateDTO)))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        String jsonResponse = result.getResponse().getContentAsString();
+        BeerDTO beerDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
+
+        assertAll(() -> {
+            assertNotNull(beerDTO);
+            assertEquals("PATCHED BEER", beerDTO.getBeerName());
+            assertEquals(1, applicationEvents.stream(BeerPatchEvent.class).count());
+            assertEquals("PATCHED BEER", applicationEvents.stream(BeerPatchEvent.class).findFirst().get().getBeer().getBeerName());
+            assertEquals("messaging-client", applicationEvents.stream(BeerPatchEvent.class).findFirst().get().getAuthentication().getName());
+        });
     }
 
     @Test
@@ -203,7 +305,6 @@ class BeerControllerIT {
     }
 
     @Test
-    // TODO: add tests for the others
     void testListBeersByName() throws Exception {
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
         
@@ -217,7 +318,6 @@ class BeerControllerIT {
     }
 
     @Test
-    // TODO: add tests for the others
     void testListBeersByNameWithWrongCredentials() throws Exception {
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
 
@@ -322,6 +422,27 @@ class BeerControllerIT {
                     assertEquals(0, beerDtos.getTotalElements());
                 }
         );
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
+    void testDeleteBeerWithMockMVC() throws Exception {
+        Beer beerToDelete = beerRepository.findAll().getFirst();
+
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
+
+        mockMvc.perform(delete(requestPath + "/deleteBeer/{beerId}", beerToDelete.getId())
+                .with(jwtRequestPostProcessor)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        assertAll(() -> {
+            assertEquals(1, applicationEvents.stream(BeerDeleteEvent.class).count());
+            assertNull(applicationEvents.stream(BeerDeleteEvent.class).findFirst().get().getBeer().getBeerName());
+            assertEquals("messaging-client", applicationEvents.stream(BeerDeleteEvent.class).findFirst().get().getAuthentication().getName());
+        });
     }
 
     @Test

@@ -40,7 +40,6 @@ jobs:
         id: set_version
         run: |
           "${GITHUB_WORKSPACE}/.github/workflows/scripts/set_maven_version.sh"
-
       - name: show variables
         id: show_variables
         shell: bash
@@ -52,6 +51,11 @@ jobs:
           echo "### ALLMYSECRETS: $ALLMYSECRETS"
           echo "### ALLMYVARS: $ALLMYVARS"
           echo "### ALLMYOUTPUT: $ALLMYOUTPUT"
+          echo ":sunflower: Cleaned Branch Name: ${{ steps.set_version.outputs.BRANCH_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo ":maple_leaf: GROUP ID: ${{ steps.set_version.outputs.GROUP_ID }}" >> $GITHUB_STEP_SUMMARY
+          echo ":maple_leaf: Artifact ID: ${{ steps.set_version.outputs.ARTIFACT_ID }}" >> $GITHUB_STEP_SUMMARY
+          echo ":maple_leaf: Original Maven version: ${{ steps.set_version.outputs.MVN_VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo ":cactus: Calculated Maven Version: ${{ steps.set_version.outputs.BRANCH_MVN_VERSION }}" >> $GITHUB_STEP_SUMMARY
 
   build:
     runs-on: ubuntu-latest

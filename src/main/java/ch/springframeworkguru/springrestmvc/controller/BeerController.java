@@ -34,7 +34,7 @@ public class BeerController {
         if (!beerService.deleteBeer(beerId)) {
             throw new NotfoundException();
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK); 
     }
 
     @GetMapping(value="/listBeers")
