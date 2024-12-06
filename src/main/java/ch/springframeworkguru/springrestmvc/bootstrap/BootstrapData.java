@@ -1,13 +1,17 @@
 package ch.springframeworkguru.springrestmvc.bootstrap;
 
 import ch.springframeworkguru.springrestmvc.entity.Beer;
+import ch.springframeworkguru.springrestmvc.entity.BeerOrder;
+import ch.springframeworkguru.springrestmvc.entity.BeerOrderLine;
 import ch.springframeworkguru.springrestmvc.entity.Customer;
+import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
 import ch.springframeworkguru.springrestmvc.service.BeerCsvService;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerCSVRecord;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.cache.CacheManager;
@@ -21,16 +25,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class BootstrapData implements CommandLineRunner {
     private final BeerRepository beerRepository;
     private final CustomerRepository customerRepository;
     private final BeerCsvService beerCsvService;
+    private final BeerOrderRepository beerOrderRepository;
     
     private final CacheManager cacheManager;
 
@@ -48,6 +52,7 @@ public class BootstrapData implements CommandLineRunner {
         loadBeerData();
         loadBeerCsvData();
         loadCustomerData();
+        loadOrderData();
     }
     
     private void clearCache() {
@@ -85,6 +90,8 @@ public class BootstrapData implements CommandLineRunner {
                 beerRepository.save(beer);
             }
         }
+        List<Beer> beers = beerRepository.findAll();
+        log.info("Created via csv list {} Beers: {}", beers.size(), beers);
     }
 
     private void loadBeerData() {
@@ -120,6 +127,9 @@ public class BootstrapData implements CommandLineRunner {
                     .build();
 
             beerRepository.saveAll(Arrays.asList(beer1, beer2, beer3));
+
+            List<Beer> beers = beerRepository.findAll();
+            log.info("Created {} Beers: {}", beers.size(), beers);
         }
 
     }
@@ -146,6 +156,50 @@ public class BootstrapData implements CommandLineRunner {
                     .build();
 
             customerRepository.saveAll(Arrays.asList(customer1, customer2, customer3));
+
+            List<Customer> customers = customerRepository.findAll();
+            log.info("Created {} Customers: {}", customers.size(), customers);
+        }
+    }
+
+    private void loadOrderData() {
+        if (beerOrderRepository.count() == 0) {
+            List<Customer> customers = customerRepository.findAll();
+            List<Beer> beers = beerRepository.findAll();
+
+            Iterator<Beer> beerIterator = beers.iterator();
+
+            customers.forEach(customer -> {
+
+                beerOrderRepository.save(BeerOrder.builder()
+                    .customer(customer)
+                    .beerOrderLines(Set.of(
+                        BeerOrderLine.builder()
+                            .beer(beerIterator.next())
+                            .orderQuantity(1)
+                            .build(),
+                        BeerOrderLine.builder()
+                            .beer(beerIterator.next())
+                            .orderQuantity(2)
+                            .build()
+                    )).build());
+
+                beerOrderRepository.save(BeerOrder.builder()
+                    .customer(customer)
+                    .beerOrderLines(Set.of(
+                        BeerOrderLine.builder()
+                            .beer(beerIterator.next())
+                            .orderQuantity(1)
+                            .build(),
+                        BeerOrderLine.builder()
+                            .beer(beerIterator.next())
+                            .orderQuantity(2)
+                            .build()
+                    )).build());
+            });
+
+            List<BeerOrder> orders = beerOrderRepository.findAll();
+            log.info("Created {} BeerOrders: {}", orders.size(), orders);
         }
     }
 }

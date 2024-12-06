@@ -18,6 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Builder
+@ToString
 public class BeerOrderShipment {
 
     @Id

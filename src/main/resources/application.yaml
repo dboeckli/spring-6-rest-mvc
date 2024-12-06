@@ -22,6 +22,18 @@ spring:
   application:
     name: spring-6-rest-mvc
     
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true  
+    
+  datasource: 
+    url: "jdbc:h2:mem:testdb"
+    driverClassName: "org.h2.Driver"
+    username: sa
+    password: password
+    
   flyway:
     enabled: false
   

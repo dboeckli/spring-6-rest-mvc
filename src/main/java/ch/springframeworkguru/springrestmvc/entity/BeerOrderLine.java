@@ -17,6 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class BeerOrderLine {
     @Id
     @GeneratedValue(generator = "UUID")

@@ -19,6 +19,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Customer {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -45,5 +46,6 @@ public class Customer {
     
     @Builder.Default
     @OneToMany(mappedBy = "customer")
+    @ToString.Exclude
     private Set<BeerOrder> beerOrders = new HashSet<>();
 }

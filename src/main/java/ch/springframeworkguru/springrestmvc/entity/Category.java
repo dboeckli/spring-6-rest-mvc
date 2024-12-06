@@ -19,6 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ToString
 public class Category {
 
     @Id
@@ -45,6 +46,7 @@ public class Category {
     @JoinTable(name = "beer_category",
         joinColumns = @JoinColumn(name = "category_id"),
         inverseJoinColumns = @JoinColumn(name = "beer_id"))
+    @ToString.Exclude
     private Set<Beer> beers = new HashSet<>();
 
     @Override
