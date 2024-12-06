@@ -1,5 +1,6 @@
 package ch.springframeworkguru.springrestmvc.service.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ public class BeerOrderShipmentDTO {
     private UUID id;
     private Long version;
 
+    @NotBlank
     private String trackingNumber;
 
     private Timestamp createdDate;

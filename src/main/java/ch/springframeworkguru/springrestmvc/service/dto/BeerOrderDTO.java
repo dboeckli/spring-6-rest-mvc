@@ -13,9 +13,6 @@ public class BeerOrderDTO {
     private UUID id;
     private Long version;
 
-    private Timestamp createdDate;
-    private Timestamp updateDate;
-
     private String customerRef;
 
     private CustomerDTO customer;
@@ -23,4 +20,7 @@ public class BeerOrderDTO {
     private Set<BeerOrderLineDTO> beerOrderLines;
 
     private BeerOrderShipmentDTO beerOrderShipment;
+
+    private Timestamp createdDate;
+    private Timestamp updateDate;
 }

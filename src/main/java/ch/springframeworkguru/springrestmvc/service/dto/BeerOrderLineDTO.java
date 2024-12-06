@@ -1,5 +1,6 @@
 package ch.springframeworkguru.springrestmvc.service.dto;
 
+import jakarta.validation.constraints.Min;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ public class BeerOrderLineDTO {
     private UUID id;
     private Long version;
 
+    @Min(value = 1, message = "Quantity On Hand must be greater than 0")
     private Integer orderQuantity;
 
     private Integer quantityAllocated;

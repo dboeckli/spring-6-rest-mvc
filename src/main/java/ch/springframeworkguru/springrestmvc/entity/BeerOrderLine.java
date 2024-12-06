@@ -39,7 +39,7 @@ public class BeerOrderLine {
         return this.id == null;
     }
 
-    private Integer orderQuantity = 0;
+    private Integer orderQuantity = 1;
     
     private Integer quantityAllocated = 0;
 
