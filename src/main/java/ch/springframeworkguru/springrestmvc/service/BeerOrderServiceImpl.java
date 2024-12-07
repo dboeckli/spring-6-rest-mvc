@@ -20,7 +20,7 @@ public class BeerOrderServiceImpl implements BeerOrderService {
         // TODO: Implement
         return Optional.of(BeerOrderDTO
             .builder()
-                .id(UUID.randomUUID())
+                .id(beerOrderId)
                 .customerRef("todo")
             .build());
     }

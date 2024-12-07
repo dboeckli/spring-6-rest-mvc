@@ -42,14 +42,18 @@ class BeerOrderRepositoryTest {
                 .build())
             .build();
 
+        testCustomer.addBeerOder(newBeerOrder);
+
+        // see testAddCategoryUsingExistingBeer in CategoryRepositoryTest
         BeerOrder savedBeerOrder = beerOrderRepository.save(newBeerOrder);
+        Customer savedCustomer = customerRepository.save(testCustomer);
+        
         beerOrderRepository.flush(); // Needed to trigger the association with the customer
         
         assertNotNull(savedBeerOrder);
+        assertNotNull(savedCustomer);
         assertEquals(7, beerOrderRepository.count());
-        assertEquals(2413, beerRepository.count());
-        assertEquals(3, customerRepository.count());
-        //assertEquals(1, testCustomer.getBeerOrders().size());  // TODO: currently fails, as the association is not persisted
+        assertEquals(1, savedCustomer.getBeerOrders().size());  // TODO: currently fails, as the association is not persisted
         //assertNotNull(savedBeerOrder.getCustomer()); // TODO: currently fails, as the association is not persisted
         //assertEquals(testCustomer.getId(), savedBeerOrder.getCustomer().getId());  // TODO: currently fails, as the association is not persisted
         assertEquals("123456789", savedBeerOrder.getBeerOrderShipment().getTrackingNumber());

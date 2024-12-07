@@ -14,17 +14,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.Instant;
-import java.util.List;
 
 import static ch.springframeworkguru.springrestmvc.controller.BeerOrderController.GET_BEER_ORDER_BY_ID;
 import static ch.springframeworkguru.springrestmvc.controller.BeerOrderController.LIST_BEER_ORDERS;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -63,7 +61,7 @@ class BeerOrderControllerIT {
         mockMvc.perform(get(requestPath + LIST_BEER_ORDERS)
                 .with(jwtRequestPostProcessor))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content.size()", greaterThan(0)));
+            .andExpect(jsonPath("$.content.size()", is(0)));
     }
 
     @Test

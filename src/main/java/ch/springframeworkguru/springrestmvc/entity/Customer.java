@@ -48,4 +48,14 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     @ToString.Exclude
     private Set<BeerOrder> beerOrders = new HashSet<>();
+
+    public void addBeerOder(BeerOrder beerOrder) {
+        beerOrders.add(beerOrder);
+        beerOrder.setCustomer(this);
+    }
+
+    public void removeBeerOder(BeerOrder beerOrder) {
+        beerOrders.remove(beerOrder);
+        beerOrder.getCustomer().removeBeerOder(beerOrder);
+    }
 }
