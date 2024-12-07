@@ -2,6 +2,9 @@ package ch.springframeworkguru.springrestmvc.controller;
 
 import ch.springframeworkguru.springrestmvc.entity.BeerOrder;
 import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
+import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderDTO;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -17,7 +21,9 @@ import java.time.Instant;
 
 import static ch.springframeworkguru.springrestmvc.controller.BeerOrderController.GET_BEER_ORDER_BY_ID;
 import static ch.springframeworkguru.springrestmvc.controller.BeerOrderController.LIST_BEER_ORDERS;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -33,6 +39,9 @@ class BeerOrderControllerIT {
 
     @Autowired
     WebApplicationContext wac;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Autowired
     BeerOrderRepository beerOrderRepository;
@@ -58,19 +67,29 @@ class BeerOrderControllerIT {
 
     @Test
     void testListBeerOrders() throws Exception {
-        mockMvc.perform(get(requestPath + LIST_BEER_ORDERS)
+        MvcResult result = mockMvc.perform(get(requestPath + LIST_BEER_ORDERS)
                 .with(jwtRequestPostProcessor))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content.size()", is(0)));
+            .andExpect(jsonPath("$.content.size()", greaterThan(0)))
+            .andReturn();
+
+        String jsonResponse = result.getResponse().getContentAsString();
+        //PageImpl<List<BeerOrderDTO>> beerOrderDTOSs = objectMapper.readValue(jsonResponse, new TypeReference<>() {}); // TODO. DOES NOT WORK. PageImpl is not Serializable
     }
 
     @Test
     void testGetBeerOrderById() throws Exception {
         BeerOrder beerOrder = beerOrderRepository.findAll().get(0);
 
-        mockMvc.perform(get(requestPath + GET_BEER_ORDER_BY_ID, beerOrder.getId())
+        MvcResult result = mockMvc.perform(get(requestPath + GET_BEER_ORDER_BY_ID, beerOrder.getId())
                 .with(jwtRequestPostProcessor))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id", is(beerOrder.getId().toString())));
+            .andExpect(jsonPath("$.id", is(beerOrder.getId().toString())))
+            .andReturn();
+
+        String jsonResponse = result.getResponse().getContentAsString();
+        BeerOrderDTO beerOrderDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
+        
+        assertEquals(beerOrder.getId(), beerOrderDTO.getId());
     }
 }

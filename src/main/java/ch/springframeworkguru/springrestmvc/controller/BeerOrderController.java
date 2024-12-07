@@ -27,7 +27,7 @@ public class BeerOrderController {
     private final BeerOrderService beerOrderService;
 
     @GetMapping(value=LIST_BEER_ORDERS)
-    public ResponseEntity<Page<BeerOrderDTO>> listBeerOrdery(@RequestParam(required = false) Integer pageNumber,
+    public ResponseEntity<Page<BeerOrderDTO>> listBeerOrder(@RequestParam(required = false) Integer pageNumber,
                                                              @RequestParam(required = false) Integer pageSize) {
         return new ResponseEntity<>(beerOrderService.listBeerOrders(pageNumber, pageSize), HttpStatus.OK);
     }
