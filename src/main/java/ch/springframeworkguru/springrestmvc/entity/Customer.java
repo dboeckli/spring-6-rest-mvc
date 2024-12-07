@@ -45,7 +45,7 @@ public class Customer {
     private LocalDateTime lastModifiedDate;
     
     @Builder.Default
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     @ToString.Exclude
     private Set<BeerOrder> beerOrders = new HashSet<>();
 }
