@@ -72,6 +72,8 @@ controllers:
     request-path: "/api/v1/customer"
   beer-controller:
     request-path: "/api/v1/beer"  
+  beer-order-controller:
+    request-path: "/api/v1/beerOrder"  
     
 springdoc:
   api-docs:
