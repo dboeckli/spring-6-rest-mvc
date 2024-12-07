@@ -60,6 +60,7 @@ public class BeerOrder {
     private String customerRef;
 
     @ManyToOne
+    @ToString.Exclude
     private Customer customer;
 
     @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL)
@@ -67,6 +68,7 @@ public class BeerOrder {
     private Set<BeerOrderLine> beerOrderLines;
 
     @OneToOne(cascade = CascadeType.PERSIST)
+    @ToString.Exclude
     private BeerOrderShipment beerOrderShipment;
 
     public void setCustomer(Customer customer) {
