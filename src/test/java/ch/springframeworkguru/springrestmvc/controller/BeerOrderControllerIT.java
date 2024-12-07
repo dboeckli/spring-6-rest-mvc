@@ -74,7 +74,9 @@ class BeerOrderControllerIT {
             .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        //PageImpl<List<BeerOrderDTO>> beerOrderDTOSs = objectMapper.readValue(jsonResponse, new TypeReference<>() {}); // TODO. DOES NOT WORK. PageImpl is not Serializable
+        // TODO. DOES NOT WORK. PageImpl is not Serializable
+        // TODO: SEE https://stackoverflow.com/questions/52490399/spring-boot-page-deserialization-pageimpl-no-constructor
+        //PageImpl<List<BeerOrderDTO>> beerOrderDTOSs = objectMapper.readValue(jsonResponse, new TypeReference<>() {}); 
     }
 
     @Test
