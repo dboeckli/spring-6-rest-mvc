@@ -32,7 +32,7 @@ public class BeerController {
     @DeleteMapping(value="/deleteBeer/{beerId}")
     public ResponseEntity<BeerDTO> deleteBeer(@PathVariable("beerId") UUID beerId) {
         if (!beerService.deleteBeer(beerId)) {
-            throw new NotfoundException();
+            throw new NotFoundException();
         }
         return new ResponseEntity<>(HttpStatus.OK); 
     }
@@ -48,7 +48,7 @@ public class BeerController {
 
     @GetMapping(value = "/getBeerById/{beerId}")
     public ResponseEntity<BeerDTO> getBeerById(@PathVariable("beerId") UUID beerId){
-        return new ResponseEntity<>(beerService.getBeerById(beerId).orElseThrow(NotfoundException::new), HttpStatus.OK);
+        return new ResponseEntity<>(beerService.getBeerById(beerId).orElseThrow(NotFoundException::new), HttpStatus.OK);
     }
 
     @PostMapping(value = "/createBeer")
@@ -65,7 +65,7 @@ public class BeerController {
     public ResponseEntity<BeerDTO> editBeer(@Validated @RequestBody BeerDTO beer, @PathVariable("beerId") UUID beerId) {
         Optional<BeerDTO> updatedBeer = beerService.editBeer(beerId, beer);
         if (updatedBeer.isEmpty()) {
-            throw new NotfoundException();
+            throw new NotFoundException();
         } else {
             return new ResponseEntity<>(updatedBeer.get(), HttpStatus.OK);
         }
@@ -75,7 +75,7 @@ public class BeerController {
     public ResponseEntity<BeerDTO> patchBeer(@RequestBody BeerDTO beer, @PathVariable("beerId") UUID beerId) {
         Optional<BeerDTO> patchedBeer = beerService.patchBeer(beerId, beer);
         if (patchedBeer.isEmpty()) {
-            throw new NotfoundException();
+            throw new NotFoundException();
         } else {
             return new ResponseEntity<>(patchedBeer.get(), HttpStatus.OK);
         }

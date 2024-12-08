@@ -50,7 +50,7 @@ class CustomerControllerIT {
     @Transactional
     @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
     void testDeleteCustomerDoesNotExist() {
-        assertThrows(NotfoundException.class, () -> {
+        assertThrows(NotFoundException.class, () -> {
             customerController.deleteCustomer(UUID.randomUUID());
         });
     }
@@ -77,7 +77,7 @@ class CustomerControllerIT {
     void testUpdateCustomerDoesNotExist() {
         CustomerDTO customerDTO = CustomerDTO.builder().build();
 
-        assertThrows(NotfoundException.class, () -> {
+        assertThrows(NotFoundException.class, () -> {
             customerController.editCustomer(customerDTO, UUID.randomUUID());
         });
     }
@@ -104,7 +104,7 @@ class CustomerControllerIT {
     void testPatchCustomerDoesNotExist() {
         CustomerDTO customerDTO = CustomerDTO.builder().build();
 
-        assertThrows(NotfoundException.class, () -> {
+        assertThrows(NotFoundException.class, () -> {
             customerController.patchCustomer(customerDTO, UUID.randomUUID());
         });
     }
@@ -176,6 +176,6 @@ class CustomerControllerIT {
 
     @Test
     void testGetCustomerByIdNotFound() {
-        assertThrows(NotfoundException.class, () -> customerController.getCustomerById(UUID.randomUUID()));
+        assertThrows(NotFoundException.class, () -> customerController.getCustomerById(UUID.randomUUID()));
     }
 }

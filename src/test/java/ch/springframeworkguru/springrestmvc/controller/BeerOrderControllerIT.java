@@ -1,8 +1,14 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
+import ch.springframeworkguru.springrestmvc.entity.Beer;
 import ch.springframeworkguru.springrestmvc.entity.BeerOrder;
+import ch.springframeworkguru.springrestmvc.entity.Customer;
 import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
+import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
+import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
+import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderCreateDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderLineCreateDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,17 +25,19 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.Instant;
+import java.util.Set;
 
-import static ch.springframeworkguru.springrestmvc.controller.BeerOrderController.GET_BEER_ORDER_BY_ID;
-import static ch.springframeworkguru.springrestmvc.controller.BeerOrderController.LIST_BEER_ORDERS;
+import static ch.springframeworkguru.springrestmvc.controller.BeerOrderController.*;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -45,6 +54,12 @@ class BeerOrderControllerIT {
 
     @Autowired
     BeerOrderRepository beerOrderRepository;
+
+    @Autowired
+    CustomerRepository customerRepository;
+
+    @Autowired
+    BeerRepository beerRepository;
 
     MockMvc mockMvc;
 
@@ -93,5 +108,36 @@ class BeerOrderControllerIT {
         BeerOrderDTO beerOrderDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
         
         assertEquals(beerOrder.getId(), beerOrderDTO.getId());
+    }
+
+    @Test
+    void testCreateBeerOrder() throws Exception {
+        Customer customer = customerRepository.findAll().get(0);
+        Beer beer = beerRepository.findAll().get(0);
+        
+        BeerOrderCreateDTO newBeerOrderDTO = BeerOrderCreateDTO.builder()
+            .customerId(customer.getId())
+            .customerRef("ABC123")
+            .beerOrderLines(Set.of(BeerOrderLineCreateDTO.builder()
+                .beerId(beer.getId())
+                .orderQuantity(1)
+                .build()))
+            .build();
+
+        MvcResult result = mockMvc.perform(post(requestPath + CREATE_BEER_ORDER)
+                .with(jwtRequestPostProcessor)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(newBeerOrderDTO)))
+            .andExpect(status().isCreated())
+            .andExpect(header().exists("Location"))
+            .andExpect(header().string("Location", matchesPattern(requestPath + GET_BEER_ORDER + "/[0-9a-fA-F-]{36}")))
+            .andReturn();
+
+        String jsonResponse = result.getResponse().getContentAsString();
+        BeerOrderDTO beerOrderDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
+
+        // TODO: beerOrderlines and Customer are not persisted or wired into BeerOrder
+        assertNotNull(beerOrderDTO.getId());
     }
 }

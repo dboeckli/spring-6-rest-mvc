@@ -1,5 +1,6 @@
 package ch.springframeworkguru.springrestmvc.service;
 
+import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderCreateDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderDTO;
 import org.springframework.data.domain.Page;
 
@@ -12,7 +13,7 @@ public interface BeerOrderService {
 
     Optional<BeerOrderDTO> getBeerOrderById(UUID beerOrderId);
 
-    BeerOrderDTO saveNewBeerOrder(BeerOrderDTO newBeerOrder);
+    BeerOrderDTO saveNewBeerOrder(BeerOrderCreateDTO newBeerOrder);
 
     Optional<BeerOrderDTO> editBeerOrder(UUID beerOrderId, BeerOrderDTO beerOrder);
 

@@ -47,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @RecordApplicationEvents
+// TODO: PLACE CONTROLLER TESTS AND MOCKMVC TESTS IN SEPARATED CLASSES
 class BeerControllerIT {
 
     @Autowired
@@ -103,7 +104,7 @@ class BeerControllerIT {
     @Transactional
     @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testDeleteBeerByIdNotFound() {
-        assertThrows(NotfoundException.class, () -> beerController.deleteBeer(UUID.randomUUID()));
+        assertThrows(NotFoundException.class, () -> beerController.deleteBeer(UUID.randomUUID()));
     }
 
     @Test
@@ -208,7 +209,7 @@ class BeerControllerIT {
     @Transactional
     @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testUpdateExistingBeerButNotFound() {
-        assertThrows(NotfoundException.class, () -> 
+        assertThrows(NotFoundException.class, () -> 
             beerController.editBeer(BeerDTO.builder().build(), UUID.randomUUID()));
     }
 
@@ -234,7 +235,7 @@ class BeerControllerIT {
     void testPatchBeerDoesNotExist() {
         BeerDTO beerDTO = BeerDTO.builder().build();
 
-        assertThrows(NotfoundException.class, () -> beerController.patchBeer(beerDTO, UUID.randomUUID()));
+        assertThrows(NotFoundException.class, () -> beerController.patchBeer(beerDTO, UUID.randomUUID()));
     }
 
     @Test
@@ -462,6 +463,6 @@ class BeerControllerIT {
 
     @Test
     void testGetBeerByIdNotFound() {
-        assertThrows(NotfoundException.class, () -> beerController.getBeerById(UUID.randomUUID()));
+        assertThrows(NotFoundException.class, () -> beerController.getBeerById(UUID.randomUUID()));
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 public class ExceptionHandlerController {
 
     //@ExceptionHandler(NotfoundException.class)
-    public ResponseEntity<NotfoundException> handleNotFoundException() {
+    public ResponseEntity<NotFoundException> handleNotFoundException() {
         return ResponseEntity
                 .notFound()
                 .build();

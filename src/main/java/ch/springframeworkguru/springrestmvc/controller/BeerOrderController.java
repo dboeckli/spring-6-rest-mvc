@@ -1,13 +1,16 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
 import ch.springframeworkguru.springrestmvc.service.BeerOrderService;
+import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderCreateDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -22,7 +25,10 @@ public class BeerOrderController {
     private String requestPath;
     
     public static final String LIST_BEER_ORDERS = "/listBeerOrders";
-    public static final String GET_BEER_ORDER_BY_ID = "/getBeerOrderyById/{beerOrderId}";
+    public static final String GET_BEER_ORDER = "/getBeerOrderyById";
+    public static final String BEER_ORDER_ID_PATH_VARIABLE = "beerOrderId";
+    public static final String GET_BEER_ORDER_BY_ID = GET_BEER_ORDER + "/" + "{" + BEER_ORDER_ID_PATH_VARIABLE + "}";
+    public static final String CREATE_BEER_ORDER = "/createBeerOrder";
 
     private final BeerOrderService beerOrderService;
 
@@ -34,6 +40,16 @@ public class BeerOrderController {
 
     @GetMapping(value = GET_BEER_ORDER_BY_ID)
     public ResponseEntity<BeerOrderDTO> getBeerById(@PathVariable("beerOrderId") UUID beerOrderId){
-        return new ResponseEntity<>(beerOrderService.getBeerOrderById(beerOrderId).orElseThrow(NotfoundException::new), HttpStatus.OK);
+        return new ResponseEntity<>(beerOrderService.getBeerOrderById(beerOrderId).orElseThrow(NotFoundException::new), HttpStatus.OK);
+    }
+
+    @PostMapping(value = CREATE_BEER_ORDER)
+    public ResponseEntity<BeerOrderDTO> createBeerOrder(@Validated @RequestBody BeerOrderCreateDTO newBeerOrder) {
+        BeerOrderDTO savedBeerOrder = beerOrderService.saveNewBeerOrder(newBeerOrder);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", requestPath + GET_BEER_ORDER +"/" + savedBeerOrder.getId().toString());
+
+        return new ResponseEntity<>(savedBeerOrder, headers, HttpStatus.CREATED);
     }
 }
