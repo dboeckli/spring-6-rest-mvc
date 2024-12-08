@@ -1,5 +1,6 @@
 package ch.springframeworkguru.springrestmvc.service.dto;
 
+import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderShipmentDTO;
 import lombok.Builder;
 import lombok.Data;
 

@@ -8,7 +8,7 @@ import ch.springframeworkguru.springrestmvc.mapper.BeerOrderMapper;
 import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderCreateDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderCreateDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

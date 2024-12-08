@@ -1,4 +1,4 @@
-package ch.springframeworkguru.springrestmvc.service.dto;
+package ch.springframeworkguru.springrestmvc.service.dto.update;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -9,13 +9,15 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class BeerOrderCreateDTO {
+public class BeerOrderUpdateDTO {
 
     private String customerRef;
 
     @NotNull
     private UUID customerId;
 
-    private Set<BeerOrderLineCreateDTO> beerOrderLines;
+    private Set<BeerOrderLineUpdateDTO> beerOrderLines;
+
+    private BeerOrderShipmentUpdateDTO beerOrderShipment;
     
 }

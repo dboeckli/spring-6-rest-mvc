@@ -1,7 +1,7 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
 import ch.springframeworkguru.springrestmvc.service.BeerOrderService;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderCreateDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderCreateDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +29,10 @@ public class BeerOrderController {
     public static final String BEER_ORDER_ID_PATH_VARIABLE = "beerOrderId";
     public static final String GET_BEER_ORDER_BY_ID = GET_BEER_ORDER + "/" + "{" + BEER_ORDER_ID_PATH_VARIABLE + "}";
     public static final String CREATE_BEER_ORDER = "/createBeerOrder";
+    public static final String UPDATE_BEER_ORDER = "/updateBeerOrder";
+    public static final String UPDATE_BEER_ORDER_BY_ID = UPDATE_BEER_ORDER + "/" + "{" + BEER_ORDER_ID_PATH_VARIABLE + "}";;
+    
+    
 
     private final BeerOrderService beerOrderService;
 

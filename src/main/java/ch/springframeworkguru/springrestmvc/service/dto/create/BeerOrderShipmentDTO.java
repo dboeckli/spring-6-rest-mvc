@@ -1,4 +1,4 @@
-package ch.springframeworkguru.springrestmvc.service.dto;
+package ch.springframeworkguru.springrestmvc.service.dto.create;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;

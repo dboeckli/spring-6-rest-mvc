@@ -6,9 +6,12 @@ import ch.springframeworkguru.springrestmvc.entity.Customer;
 import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderCreateDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderCreateDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderDTO;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderLineCreateDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderLineCreateDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderLineUpdateDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderShipmentUpdateDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderUpdateDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +28,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 
 import static ch.springframeworkguru.springrestmvc.controller.BeerOrderController.*;
@@ -35,8 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -105,8 +108,9 @@ class BeerOrderControllerIT {
             .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        BeerOrderDTO beerOrderDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
-        
+        BeerOrderDTO beerOrderDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {
+        });
+
         assertEquals(beerOrder.getId(), beerOrderDTO.getId());
     }
 
@@ -114,7 +118,7 @@ class BeerOrderControllerIT {
     void testCreateBeerOrder() throws Exception {
         Customer customer = customerRepository.findAll().get(0);
         Beer beer = beerRepository.findAll().get(0);
-        
+
         BeerOrderCreateDTO newBeerOrderDTO = BeerOrderCreateDTO.builder()
             .customerId(customer.getId())
             .customerRef("ABC123")
@@ -135,9 +139,50 @@ class BeerOrderControllerIT {
             .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        BeerOrderDTO beerOrderDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
+        BeerOrderDTO beerOrderDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {
+        });
 
         // TODO: beerOrderlines and Customer are not persisted or wired into BeerOrder
+        assertNotNull(beerOrderDTO.getId());
+    }
+
+    @Test
+    // TODO: TEST IS CURRENTLY FAILING. Controller and Service not yet implemented
+    void testUpdateBeerOrder() throws Exception {
+        BeerOrder beerOrderToUpdate = beerOrderRepository.findAll().get(0);
+
+        Set<BeerOrderLineUpdateDTO> lines = new HashSet<>();
+        beerOrderToUpdate.getBeerOrderLines().forEach(beerOrderLine -> {
+            lines.add(BeerOrderLineUpdateDTO.builder()
+                .id(beerOrderLine.getId())
+                .beerId(beerOrderLine.getBeer().getId())
+                .orderQuantity(beerOrderLine.getOrderQuantity())
+                .quantityAllocated(beerOrderLine.getQuantityAllocated())
+                .build());
+        });
+
+        BeerOrderUpdateDTO beerOrderUpdateDTO = BeerOrderUpdateDTO.builder()
+            .customerId(beerOrderToUpdate.getCustomer().getId())
+            .customerRef("UpdatedTestRef")
+            .beerOrderLines(lines)
+            .beerOrderShipment(BeerOrderShipmentUpdateDTO.builder()
+                .trackingNumber("123456")
+                .build())
+            .build();
+
+        MvcResult result = mockMvc.perform(put(requestPath + UPDATE_BEER_ORDER_BY_ID, beerOrderToUpdate.getId())
+                .with(jwtRequestPostProcessor)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(beerOrderToUpdate)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.customerRef", is("UpdatedTestRef")))
+            .andReturn();
+
+        String jsonResponse = result.getResponse().getContentAsString();
+        BeerOrderDTO beerOrderDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {
+        });
+
         assertNotNull(beerOrderDTO.getId());
     }
 }
