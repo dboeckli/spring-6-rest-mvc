@@ -32,12 +32,24 @@ public class SpringSecurityConfigRest {
         http
             .authorizeHttpRequests(authorizeRequests -> {
                 authorizeRequests
-                    .requestMatchers("/v3/api-docs**", "/v3/api-docs/**", "/swagger-ui/**",  "/swagger-ui.html").permitAll() // permit all swagger/openapi endpoints
+                    .requestMatchers(
+                        "/v3/api-docs**", 
+                        "/v3/api-docs/**", 
+                        "/swagger-ui/**",  
+                        "/swagger-ui.html", 
+                        "/h2-console/**")
+                    .permitAll() // permit all swagger/openapi endpoints
                     //.requestMatchers("/actuator/**").permitAll()
                     .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()  // permit all actuator endpoints
                     .anyRequest().authenticated();
             })
-            .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()));
+            .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**") // CSRF-Schutz für H2-Console deaktivieren
+            )
+            .headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions.disable()) // Neue Syntax für Frame-Optionen
+            );
         return http.build();
     }
 }

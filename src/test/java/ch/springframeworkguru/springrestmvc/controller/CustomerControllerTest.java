@@ -85,7 +85,7 @@ class CustomerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(givenCustomer.getId().toString())))
-                .andExpect(jsonPath("$.customerName", is(givenCustomer.getCustomerName())))
+                .andExpect(jsonPath("$.name", is(givenCustomer.getName())))
                 .andExpect(content().json(objectMapper.writeValueAsString(givenCustomer)));  // oder das ganze Object
     }
 
@@ -115,7 +115,7 @@ class CustomerControllerTest {
     @Test
     void testCreateCustomer() throws Exception {
         CustomerDTO givenCustomer = customerServiceImpl.listCustomers().getFirst();
-        givenCustomer.setCustomerName("pumukel");
+        givenCustomer.setName("pumukel");
         givenCustomer.setId(null);
 
         given(customerService.saveNewCustomer(any(CustomerDTO.class))).willReturn(givenCustomer);
@@ -134,7 +134,7 @@ class CustomerControllerTest {
     @Test
     void testEditCustomer() throws Exception {
         CustomerDTO givenCustomerToEdit = customerServiceImpl.listCustomers().getFirst();
-        givenCustomerToEdit.setCustomerName("veryveryNew Customer");
+        givenCustomerToEdit.setName("veryveryNew Customer");
 
         given(customerService.editCustomer(givenCustomerToEdit.getId(), givenCustomerToEdit)).willReturn(Optional.of(givenCustomerToEdit));
 
@@ -187,7 +187,7 @@ class CustomerControllerTest {
     @Test
     void testPatchCustomer() throws Exception {
         CustomerDTO givenCustomerToPatch = customerServiceImpl.listCustomers().getFirst();
-        givenCustomerToPatch.setCustomerName("patchedCustomerName");
+        givenCustomerToPatch.setName("patchedCustomerName");
 
         given(customerService.patchCustomer(givenCustomerToPatch.getId(), givenCustomerToPatch)).willReturn(Optional.of(givenCustomerToPatch));
 

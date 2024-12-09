@@ -2,6 +2,7 @@ package ch.springframeworkguru.springrestmvc.controller;
 
 import ch.springframeworkguru.springrestmvc.entity.Customer;
 import ch.springframeworkguru.springrestmvc.mapper.CustomerMapper;
+import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,8 @@ class CustomerControllerIT {
     
     @Autowired
     private CacheManager cacheManager;
+    @Autowired
+    private BeerOrderRepository beerOrderRepository;
 
     @Test
     @Transactional
@@ -50,7 +53,7 @@ class CustomerControllerIT {
     @Transactional
     @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
     void testDeleteCustomerDoesNotExist() {
-        assertThrows(NotfoundException.class, () -> {
+        assertThrows(NotFoundException.class, () -> {
             customerController.deleteCustomer(UUID.randomUUID());
         });
     }
@@ -61,13 +64,13 @@ class CustomerControllerIT {
     void testUpdateCustomer() {
         Customer givenCustomer = customerRepository.findAll().getFirst();
         CustomerDTO customerDTO = customerMapper.customerToCustomerDto(givenCustomer);
-        customerDTO.setCustomerName("Hans");
+        customerDTO.setName("Hans");
 
         CustomerDTO editedCustomerDTO = customerController.editCustomer(customerDTO, customerDTO.getId()).getBody();
 
         assertAll(() -> {
             assertNotNull(editedCustomerDTO);
-            assertEquals("Hans", editedCustomerDTO.getCustomerName());
+            assertEquals("Hans", editedCustomerDTO.getName());
         });
     }
 
@@ -77,7 +80,7 @@ class CustomerControllerIT {
     void testUpdateCustomerDoesNotExist() {
         CustomerDTO customerDTO = CustomerDTO.builder().build();
 
-        assertThrows(NotfoundException.class, () -> {
+        assertThrows(NotFoundException.class, () -> {
             customerController.editCustomer(customerDTO, UUID.randomUUID());
         });
     }
@@ -87,14 +90,14 @@ class CustomerControllerIT {
     @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testPatchCustomer() {
         Customer givenCustomer = customerRepository.findAll().getFirst();
+        
         CustomerDTO customerDTO = customerMapper.customerToCustomerDto(givenCustomer);
-        customerDTO.setCustomerName("Hans");
+        customerDTO.setName("Hans");
 
         CustomerDTO editedCustomerDTO = customerController.patchCustomer(customerDTO, customerDTO.getId()).getBody();
-
         assertAll(() -> {
             assertNotNull(editedCustomerDTO);
-            assertEquals("Hans", editedCustomerDTO.getCustomerName());
+            assertEquals("Hans", editedCustomerDTO.getName());
         });
     }
 
@@ -104,7 +107,7 @@ class CustomerControllerIT {
     void testPatchCustomerDoesNotExist() {
         CustomerDTO customerDTO = CustomerDTO.builder().build();
 
-        assertThrows(NotfoundException.class, () -> {
+        assertThrows(NotFoundException.class, () -> {
             customerController.patchCustomer(customerDTO, UUID.randomUUID());
         });
     }
@@ -114,14 +117,14 @@ class CustomerControllerIT {
     @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testCreateCustomer() {
         CustomerDTO customerDTO = CustomerDTO.builder()
-            .customerName("Fridolin")
+            .name("Fridolin")
             .build();
 
         CustomerDTO createdCustomer = customerController.createCustomer(customerDTO).getBody();
 
         assertAll(() -> {
             assertNotNull(createdCustomer);
-            assertEquals("Fridolin", createdCustomer.getCustomerName());
+            assertEquals("Fridolin", createdCustomer.getName());
         });
     }
 
@@ -142,6 +145,7 @@ class CustomerControllerIT {
     @Transactional
     @Rollback(true) // we roll back the deletion to assure that the other tests are not failing
     void testEmptyListCustomer() {
+        beerOrderRepository.deleteAll();
         customerRepository.deleteAll();
         
         // we need to clear the cache, because the deleteAll (in the repository class) does not evict the cache
@@ -176,6 +180,6 @@ class CustomerControllerIT {
 
     @Test
     void testGetCustomerByIdNotFound() {
-        assertThrows(NotfoundException.class, () -> customerController.getCustomerById(UUID.randomUUID()));
+        assertThrows(NotFoundException.class, () -> customerController.getCustomerById(UUID.randomUUID()));
     }
 }

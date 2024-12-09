@@ -12,7 +12,7 @@ spring:
       
   cache:
     cache-names: "beerCache,beerListCache,customerCache,customerListCache"    
-    
+
 appconfig:
   cache:
     enabled: true    

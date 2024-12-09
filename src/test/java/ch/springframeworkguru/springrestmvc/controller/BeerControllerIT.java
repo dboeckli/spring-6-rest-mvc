@@ -5,6 +5,7 @@ import ch.springframeworkguru.springrestmvc.event.events.BeerCreatedEvent;
 import ch.springframeworkguru.springrestmvc.event.events.BeerDeleteEvent;
 import ch.springframeworkguru.springrestmvc.event.events.BeerPatchEvent;
 import ch.springframeworkguru.springrestmvc.mapper.BeerMapper;
+import ch.springframeworkguru.springrestmvc.repository.BeerOrderLinesRepository;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
@@ -47,6 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @RecordApplicationEvents
+// TODO: PLACE CONTROLLER TESTS AND MOCKMVC TESTS IN SEPARATED CLASSES
 class BeerControllerIT {
 
     @Autowired
@@ -57,6 +59,9 @@ class BeerControllerIT {
 
     @Autowired
     BeerRepository beerRepository;
+
+    @Autowired
+    BeerOrderLinesRepository beerOrderLinesRepository;
 
     @Autowired
     BeerMapper beerMapper;
@@ -103,7 +108,7 @@ class BeerControllerIT {
     @Transactional
     @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testDeleteBeerByIdNotFound() {
-        assertThrows(NotfoundException.class, () -> beerController.deleteBeer(UUID.randomUUID()));
+        assertThrows(NotFoundException.class, () -> beerController.deleteBeer(UUID.randomUUID()));
     }
 
     @Test
@@ -208,7 +213,7 @@ class BeerControllerIT {
     @Transactional
     @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testUpdateExistingBeerButNotFound() {
-        assertThrows(NotfoundException.class, () -> 
+        assertThrows(NotFoundException.class, () -> 
             beerController.editBeer(BeerDTO.builder().build(), UUID.randomUUID()));
     }
 
@@ -234,7 +239,7 @@ class BeerControllerIT {
     void testPatchBeerDoesNotExist() {
         BeerDTO beerDTO = BeerDTO.builder().build();
 
-        assertThrows(NotfoundException.class, () -> beerController.patchBeer(beerDTO, UUID.randomUUID()));
+        assertThrows(NotFoundException.class, () -> beerController.patchBeer(beerDTO, UUID.randomUUID()));
     }
 
     @Test
@@ -407,6 +412,7 @@ class BeerControllerIT {
     @Transactional
     @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testEmptyListBeer() {
+        beerOrderLinesRepository.deleteAll();
         beerRepository.deleteAll();
 
         // we need to clear the cache, because the deleteAll (in the repository class) does not evict the cache
@@ -462,6 +468,6 @@ class BeerControllerIT {
 
     @Test
     void testGetBeerByIdNotFound() {
-        assertThrows(NotfoundException.class, () -> beerController.getBeerById(UUID.randomUUID()));
+        assertThrows(NotFoundException.class, () -> beerController.getBeerById(UUID.randomUUID()));
     }
 }

@@ -1,0 +1,60 @@
+### this retrieves the bearer token. use the token in the request below
+POST http://localhost:9000/oauth2/token
+Authorization: Basic messaging-client secret
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&client_id=user&client_secret=password&scope=message.read message.write
+
+###
+GET http://localhost:8081/api/v1/beer/listBeerOrders
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJraWQiOiI2Nzk4YjZhZS1kM2NlLTRhYjEtOWQxYi1hNTY3OGE1Y2M2MGIiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJtZXNzYWdpbmctY2xpZW50IiwiYXVkIjoibWVzc2FnaW5nLWNsaWVudCIsIm5iZiI6MTczMzI0MDA1Miwic2NvcGUiOlsibWVzc2FnZS5yZWFkIiwibWVzc2FnZS53cml0ZSJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjkwMDAiLCJleHAiOjE3MzMyNDAzNTIsImlhdCI6MTczMzI0MDA1MiwianRpIjoiZDQyNWMxNDItY2M3Mi00MzA0LTlhOWEtOTE0NDkwMGY3YzdlIn0.ccjHR0BYiCA8BPF2eqpkVHZ3HTe0ZoEGJk9np2qFzXV7CVG6y9pFiAmMHxG3DFs8LR1hrzcH26Vu30lWxJhI04N9wj0KpST7TPBgs4hi5wZCGscHjIw2mHn71UyN0XctXcqlo1hIQ8ASZjlEeyx0tNCXSK-F--7tX--AhGUfGupjjmLfFNwli4dcvy9exK3Prj3f-sVQ39YSnMAmsOAH5KRAkaWqw0yKiPtHtvKXw3V3LJ3Zoni3sAOhNRwXY605pM2dEU_0YTgdS6B72XPCXP9mmFIxyC-qCYwzVHRLMd2Q3cKKv0c98I0MHp3502cM9hTcGmTjrHR6DY86e85egA
+
+###
+GET http://localhost:8081/api/v1/beer/getBeerOrderyById/0cb49969-8f19-4fe7-90bb-c2a1b9456bb3
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer eyJraWQiOiI2Nzk4YjZhZS1kM2NlLTRhYjEtOWQxYi1hNTY3OGE1Y2M2MGIiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJtZXNzYWdpbmctY2xpZW50IiwiYXVkIjoibWVzc2FnaW5nLWNsaWVudCIsIm5iZiI6MTczMzI0MDA1Miwic2NvcGUiOlsibWVzc2FnZS5yZWFkIiwibWVzc2FnZS53cml0ZSJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjkwMDAiLCJleHAiOjE3MzMyNDAzNTIsImlhdCI6MTczMzI0MDA1MiwianRpIjoiZDQyNWMxNDItY2M3Mi00MzA0LTlhOWEtOTE0NDkwMGY3YzdlIn0.ccjHR0BYiCA8BPF2eqpkVHZ3HTe0ZoEGJk9np2qFzXV7CVG6y9pFiAmMHxG3DFs8LR1hrzcH26Vu30lWxJhI04N9wj0KpST7TPBgs4hi5wZCGscHjIw2mHn71UyN0XctXcqlo1hIQ8ASZjlEeyx0tNCXSK-F--7tX--AhGUfGupjjmLfFNwli4dcvy9exK3Prj3f-sVQ39YSnMAmsOAH5KRAkaWqw0yKiPtHtvKXw3V3LJ3Zoni3sAOhNRwXY605pM2dEU_0YTgdS6B72XPCXP9mmFIxyC-qCYwzVHRLMd2Q3cKKv0c98I0MHp3502cM9hTcGmTjrHR6DY86e85egA
+
+###
+POST http://localhost:8081/api/v1/beer/createBeerOrder
+Accept: application/json
+Content-Type: application/json
+Authorization: Basic master password
+
+{
+  "customerId": 0,
+  "customerRef": "abc"
+}
+
+### TODO: CHANGE TO ORDER
+PUT http://localhost:8081/api/v1/beer/editBeer/4908886e-8df4-4df1-bdb0-6ac0bae289af
+Accept: application/json
+Content-Type: application/json
+Authorization: Basic master password
+
+{
+  "version": 0,
+  "beerName": "altered Beername",
+  "beerStyle": "LAGER",
+  "upc": "",
+  "quantityOnHand": 0,
+  "price": 27.16
+}
+
+### TODO: CHANGE TO ORDER
+PATCH http://localhost:8081/api/v1/beer/patchBeer/9d07c34b-36fb-4108-b9ca-0de3393ea2ab
+Accept: application/json
+Content-Type: application/json
+Authorization: Basic master password
+
+{
+  "beerName": "patched Beername"
+}
+
+### TODO: CHANGE TO ORDER
+DELETE http://localhost:8081/api/v1/beer/deleteBeer/6ab05faf-743d-443b-8ad6-5e8ae531d12d
+Accept: application/json
+Content-Type: application/json
+Authorization: Basic master password

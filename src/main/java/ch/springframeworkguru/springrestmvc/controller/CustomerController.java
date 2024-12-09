@@ -25,7 +25,7 @@ public class CustomerController {
     @DeleteMapping(value = "/deleteCustomer/{customerId}")
     public ResponseEntity<CustomerDTO> deleteCustomer(@PathVariable("customerId") UUID customerId) {
         if (!customerService.deleteCustomer(customerId)) {
-            throw new NotfoundException();
+            throw new NotFoundException();
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -37,7 +37,7 @@ public class CustomerController {
 
     @GetMapping(value = "/getCustomerById/{customerId}")
     public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable("customerId") UUID customerId) {
-        return new ResponseEntity<>(customerService.getCustomerById(customerId).orElseThrow(NotfoundException::new), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.getCustomerById(customerId).orElseThrow(NotFoundException::new), HttpStatus.OK);
     }
 
     @PostMapping(value = "/createCustomer")
@@ -50,7 +50,7 @@ public class CustomerController {
     public ResponseEntity<CustomerDTO> editCustomer(@RequestBody CustomerDTO customerToEdit, @PathVariable("customerId") UUID customerId) {
         Optional<CustomerDTO> updatedCustomer = customerService.editCustomer(customerId, customerToEdit);
         if (updatedCustomer.isEmpty()) {
-            throw new NotfoundException();
+            throw new NotFoundException();
         } else {
             return new ResponseEntity<>(updatedCustomer.get(), HttpStatus.OK);
         }
@@ -60,7 +60,7 @@ public class CustomerController {
     public ResponseEntity<CustomerDTO> patchCustomer(@RequestBody CustomerDTO customer, @PathVariable("customerId") UUID customerId) {
         Optional<CustomerDTO> patchedCustomer = customerService.patchCustomer(customerId, customer);
         if (patchedCustomer.isEmpty()) {
-            throw new NotfoundException();
+            throw new NotFoundException();
         } else {
             return new ResponseEntity<>(patchedCustomer.get(), HttpStatus.OK);
         }

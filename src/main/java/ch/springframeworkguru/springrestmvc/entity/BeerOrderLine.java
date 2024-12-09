@@ -1,6 +1,7 @@
 package ch.springframeworkguru.springrestmvc.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class BeerOrderLine {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -39,8 +41,11 @@ public class BeerOrderLine {
         return this.id == null;
     }
 
-    private Integer orderQuantity = 0;
-    
+    @Builder.Default
+    @Min(value = 1, message = "Quantity On Hand must be greater than 0")
+    private Integer orderQuantity = 1;
+
+    @Builder.Default
     private Integer quantityAllocated = 0;
 
     @ManyToOne

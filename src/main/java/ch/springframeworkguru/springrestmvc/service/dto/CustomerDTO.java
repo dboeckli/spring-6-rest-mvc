@@ -16,10 +16,12 @@ public class CustomerDTO {
 
     private String version;
 
-    private String customerName;
+    private String name;
+
+    private String email;
 
     private LocalDateTime createdDate;
 
-    private LocalDateTime lastModifiedDate;
+    private LocalDateTime updateDate;
 
 }

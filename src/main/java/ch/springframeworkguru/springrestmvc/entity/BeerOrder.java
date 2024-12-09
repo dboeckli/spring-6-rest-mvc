@@ -1,9 +1,11 @@
 package ch.springframeworkguru.springrestmvc.entity;
 
 import jakarta.persistence.*;
-import jakarta.persistence.CascadeType;
 import lombok.*;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
 import java.sql.Timestamp;
@@ -15,6 +17,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Builder
+@ToString
 public class BeerOrder {
 
     public BeerOrder(UUID id, 
@@ -31,7 +34,7 @@ public class BeerOrder {
         this.lastModifiedDate = lastModifiedDate;
         this.customerRef = customerRef;
         this.setCustomer(customer);
-        this.beerOrderLines = beerOrderLines;
+        this.setBeerOrderLines(beerOrderLines);
         this.setBeerOrderShipment(beerOrderShipment);
     }
 
@@ -58,22 +61,41 @@ public class BeerOrder {
 
     private String customerRef;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ToString.Exclude
     private Customer customer;
 
-    @OneToMany(mappedBy = "beerOrder")
-    private Set<BeerOrderLine> beerOrderLines;
-
     public void setCustomer(Customer customer) {
-        this.customer = customer;
-        customer.getBeerOrders().add(this);
+        if (customer != null) {
+            this.customer = customer;
+            customer.getBeerOrders().add(this);
+        }
     }
 
     public void setBeerOrderShipment(BeerOrderShipment beerOrderShipment) {
-        this.beerOrderShipment = beerOrderShipment;
-        beerOrderShipment.setBeerOrder(BeerOrder.this);
+        if(beerOrderShipment != null) {
+            this.beerOrderShipment = beerOrderShipment;
+            beerOrderShipment.setBeerOrder(this);
+        }
+    }
+
+    @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private Set<BeerOrderLine> beerOrderLines;
+
+    public void setBeerOrderLines(Set<BeerOrderLine> beerOrderLines) {
+        if (beerOrderLines != null) {
+            this.beerOrderLines = beerOrderLines;
+            beerOrderLines.forEach(beerOrderLine -> beerOrderLine.setBeerOrder(this));
+        }
     }
 
     @OneToOne(cascade = CascadeType.PERSIST)
+    @ToString.Exclude
     private BeerOrderShipment beerOrderShipment;
+
+    
+    
+    
+
 }

@@ -2,7 +2,7 @@
 ## Spring 6 Rest MVC API
 
 This is the Backend Part. Application is listening on port 8081
-* default profile: runs with a in memory h2 database
+* default profile: runs with a in memory h2 database: 
 * localmysql: requires a local mysql installation
 
 When Testing this module requires that the authentication server is up and running at localhost on port 9000. 
@@ -10,6 +10,7 @@ When Testing this module requires that the authentication server is up and runni
 openapi api-docs: http://localhost:8081/v3/api-docs
 openapi gui: http://localhost:8081/swagger-ui/index.html
 openapi-yaml: http://localhost:8081/v3/api-docs.yaml
+h2-console: http://localhost:8081/h2-console (check application.yaml for connection parameters)
 
 Chapter 1-17
 
