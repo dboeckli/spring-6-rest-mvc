@@ -11,7 +11,11 @@ spring:
       password: password  
       
   cache:
-    cache-names: "beerCache,beerListCache,customerCache,customerListCache"    
+    cache-names: "beerCache,beerListCache,customerCache,customerListCache"  
+    
+  docker:
+    compose:
+      enabled: false  
 
 appconfig:
   cache:

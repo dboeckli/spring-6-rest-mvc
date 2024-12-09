@@ -1,11 +1,10 @@
 services:
-  mongodb:
-    image: 'mysql:8.0.33'
+  mysql:
+    image: 'mysql:latest'
     environment:
-      - 'MYSQL_DATABASE=restdb'
-      - 'MYSQL_USER=restadmin'
-      - 'MYSQL_PASSWORD=password'
-      - 'MYSQL_ROOT_PASSWORD=password'
+      - 'MYSQL_DATABASE=mydatabase'
+      - 'MYSQL_PASSWORD=secret'
+      - 'MYSQL_ROOT_PASSWORD=verysecret'
+      - 'MYSQL_USER=myuser'
     ports:
-      # this expose the port 3306 externally
-      - '3306:3306'
+      - '3306'

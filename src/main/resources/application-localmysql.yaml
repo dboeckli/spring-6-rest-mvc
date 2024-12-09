@@ -63,6 +63,10 @@ spring:
   cache:
     cache-names: "beerCache,beerListCache,customerCache,customerListCache"    
     
+  docker:
+    compose:
+      enabled: true  
+    
 appconfig:
   cache:
     enabled: true    
