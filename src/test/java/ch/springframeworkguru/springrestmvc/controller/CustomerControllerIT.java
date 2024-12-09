@@ -2,6 +2,7 @@ package ch.springframeworkguru.springrestmvc.controller;
 
 import ch.springframeworkguru.springrestmvc.entity.Customer;
 import ch.springframeworkguru.springrestmvc.mapper.CustomerMapper;
+import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,8 @@ class CustomerControllerIT {
     
     @Autowired
     private CacheManager cacheManager;
+    @Autowired
+    private BeerOrderRepository beerOrderRepository;
 
     @Test
     @Transactional
@@ -142,6 +145,7 @@ class CustomerControllerIT {
     @Transactional
     @Rollback(true) // we roll back the deletion to assure that the other tests are not failing
     void testEmptyListCustomer() {
+        beerOrderRepository.deleteAll();
         customerRepository.deleteAll();
         
         // we need to clear the cache, because the deleteAll (in the repository class) does not evict the cache

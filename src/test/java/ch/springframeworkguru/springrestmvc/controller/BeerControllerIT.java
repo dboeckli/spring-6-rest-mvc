@@ -5,6 +5,7 @@ import ch.springframeworkguru.springrestmvc.event.events.BeerCreatedEvent;
 import ch.springframeworkguru.springrestmvc.event.events.BeerDeleteEvent;
 import ch.springframeworkguru.springrestmvc.event.events.BeerPatchEvent;
 import ch.springframeworkguru.springrestmvc.mapper.BeerMapper;
+import ch.springframeworkguru.springrestmvc.repository.BeerOrderLinesRepository;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
@@ -58,6 +59,9 @@ class BeerControllerIT {
 
     @Autowired
     BeerRepository beerRepository;
+
+    @Autowired
+    BeerOrderLinesRepository beerOrderLinesRepository;
 
     @Autowired
     BeerMapper beerMapper;
@@ -408,6 +412,7 @@ class BeerControllerIT {
     @Transactional
     @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testEmptyListBeer() {
+        beerOrderLinesRepository.deleteAll();
         beerRepository.deleteAll();
 
         // we need to clear the cache, because the deleteAll (in the repository class) does not evict the cache
