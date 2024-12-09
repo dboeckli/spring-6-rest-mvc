@@ -17,8 +17,8 @@ create table customer
 (
     version            integer,
     created_date       timestamp(6),
-    last_modified_date timestamp(6),
+    update_date        timestamp(6),
     id                 varchar(36) not null,
-    customer_name      varchar(255),
+    name               varchar(255),
     primary key (id)
 );

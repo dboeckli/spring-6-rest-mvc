@@ -76,10 +76,10 @@ public class CustomerServiceJpaImpl implements CustomerService {
         clearCache(customerId);
         
         customerRepository.findById(customerId).ifPresent(foundCustomer -> {
-            if (StringUtils.hasText(customerToEdit.getCustomerName())) {
-                foundCustomer.setCustomerName(customerToEdit.getCustomerName());
+            if (StringUtils.hasText(customerToEdit.getName())) {
+                foundCustomer.setName(customerToEdit.getName());
             }
-            foundCustomer.setLastModifiedDate(LocalDateTime.now());
+            foundCustomer.setUpdateDate(LocalDateTime.now());
             customerMapper.customerToCustomerDto(customerRepository.save(foundCustomer));
         });
         return Optional.ofNullable(customerMapper.customerToCustomerDto(customerRepository.findById(customerId).orElse(null)));
@@ -94,10 +94,10 @@ public class CustomerServiceJpaImpl implements CustomerService {
         clearCache(customerId);
         
         customerRepository.findById(customerId).ifPresent(foundCustomer -> {
-            if (StringUtils.hasText(customerToPatch.getCustomerName())) {
-                foundCustomer.setCustomerName(customerToPatch.getCustomerName());
+            if (StringUtils.hasText(customerToPatch.getName())) {
+                foundCustomer.setName(customerToPatch.getName());
             }
-            foundCustomer.setLastModifiedDate(LocalDateTime.now());
+            foundCustomer.setUpdateDate(LocalDateTime.now());
             customerMapper.customerToCustomerDto(customerRepository.save(foundCustomer));
         });
         return Optional.ofNullable(customerMapper.customerToCustomerDto(customerRepository.findById(customerId).orElse(null)));

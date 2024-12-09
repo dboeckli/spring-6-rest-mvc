@@ -58,8 +58,6 @@ public class BeerServiceJpaImpl implements BeerService {
                                    Integer pageNumber,
                                    Integer pageSize) {
         
-        log.info("Service: listBeers");
-        
         PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
         
         Page<Beer> beerPages;
@@ -119,7 +117,6 @@ public class BeerServiceJpaImpl implements BeerService {
     @Override
     @Cacheable(cacheNames = "beerCache")
     public Optional<BeerDTO> getBeerById(UUID id) {
-        log.info("Service getBeerById");
         return Optional.ofNullable(beerMapper
                 .beerToBeerDto(beerRepository
                         .findById(id)

@@ -16,14 +16,14 @@ class CustomerRepositoryTest {
     @Test
     void testSave() {
         Customer savedCustomer = customer.save(Customer.builder()
-                .customerName("hallo")
+                .name("hallo")
                 .build());
 
         assertAll(
                 () -> assertNotNull(savedCustomer),
                 () -> assertNotNull(savedCustomer.getId()),
-                () -> assertNotNull(savedCustomer.getCustomerName()),
-                () -> assertEquals("hallo", savedCustomer.getCustomerName())
+                () -> assertNotNull(savedCustomer.getName()),
+                () -> assertEquals("hallo", savedCustomer.getName())
         );
     }
 

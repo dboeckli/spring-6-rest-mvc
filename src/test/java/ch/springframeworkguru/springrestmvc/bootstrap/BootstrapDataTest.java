@@ -1,6 +1,7 @@
 package ch.springframeworkguru.springrestmvc.bootstrap;
 
 import ch.springframeworkguru.springrestmvc.config.CacheConfiguration;
+import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
 import ch.springframeworkguru.springrestmvc.service.BeerCsvService;
@@ -29,22 +30,26 @@ class BootstrapDataTest {
     CustomerRepository customerRepository;
 
     @Autowired
+    BeerOrderRepository beerOrderRepository;
+
+    @Autowired
     CacheManager cacheManager;
 
     BootstrapData bootstrapData;
 
     @BeforeEach
     void setUp() {
-        bootstrapData = new BootstrapData(beerRepository, customerRepository, beerCsvService, cacheManager);
+        bootstrapData = new BootstrapData(beerRepository, customerRepository, beerCsvService, beerOrderRepository, cacheManager);
     }
 
     @Test
     void testSetBootstrapData() throws Exception {
         bootstrapData.run((String) null);
-
         assertAll(
                 () -> assertEquals(2413, beerRepository.count()),
-                () -> assertEquals(3, customerRepository.count())
+                () -> assertEquals(3, customerRepository.count()),
+                () -> assertEquals(6, beerOrderRepository.count()),
+                () -> assertEquals(0, cacheManager.getCacheNames().size())
         );
     }
 
