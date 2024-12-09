@@ -6,15 +6,14 @@ import ch.springframeworkguru.springrestmvc.entity.Customer;
 import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
-import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderCreateDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderCreateDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderLineCreateDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderLineUpdateDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderShipmentUpdateDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderUpdateDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +30,13 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static ch.springframeworkguru.springrestmvc.controller.BeerOrderController.*;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -154,9 +151,6 @@ class BeerOrderControllerIT {
     @Test
     @Transactional
     void testUpdateBeerOrder() throws Exception {
-
-        List<BeerOrder> beerOrderList = beerOrderRepository.findAll();
-        
         BeerOrder beerOrderToUpdate = beerOrderRepository.findAll().get(0);
 
         Set<BeerOrderLineUpdateDTO> lines = new HashSet<>();
@@ -192,5 +186,22 @@ class BeerOrderControllerIT {
         });
 
         assertNotNull(beerOrderDTO.getId());
+    }
+
+    @Test
+    @Transactional
+    void testDeleteBeerOrder() throws Exception {
+        BeerOrder beerOrderToDelete = beerOrderRepository.findAll().get(0);
+
+        mockMvc.perform(delete(requestPath + DELETE_BEER_ORDER_BY_ID, beerOrderToDelete.getId())
+                .with(jwtRequestPostProcessor))
+            .andExpect(status().isNoContent());
+        
+        assertTrue(beerOrderRepository.findById(beerOrderToDelete.getId()).isEmpty());
+        assertFalse(beerOrderRepository.existsById(beerOrderToDelete.getId()));
+
+        mockMvc.perform(delete(requestPath + DELETE_BEER_ORDER_BY_ID, beerOrderToDelete.getId())
+                .with(jwtRequestPostProcessor))
+            .andExpect(status().isNotFound());
     }
 }

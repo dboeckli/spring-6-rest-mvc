@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -27,12 +26,19 @@ public class BeerOrderController {
     private String requestPath;
     
     public static final String LIST_BEER_ORDERS = "/listBeerOrders";
+    
     public static final String GET_BEER_ORDER = "/getBeerOrderyById";
     public static final String BEER_ORDER_ID_PATH_VARIABLE = "beerOrderId";
+    
     public static final String GET_BEER_ORDER_BY_ID = GET_BEER_ORDER + "/" + "{" + BEER_ORDER_ID_PATH_VARIABLE + "}";
+    
     public static final String CREATE_BEER_ORDER = "/createBeerOrder";
+    
     public static final String UPDATE_BEER_ORDER = "/updateBeerOrder";
-    public static final String UPDATE_BEER_ORDER_BY_ID = UPDATE_BEER_ORDER + "/" + "{" + BEER_ORDER_ID_PATH_VARIABLE + "}";;
+    public static final String UPDATE_BEER_ORDER_BY_ID = UPDATE_BEER_ORDER + "/" + "{" + BEER_ORDER_ID_PATH_VARIABLE + "}";
+    
+    public static final String DELETE_BEER_ORDER = "/deleteBeerOrder";
+    public static final String DELETE_BEER_ORDER_BY_ID = DELETE_BEER_ORDER + "/" + "{" + BEER_ORDER_ID_PATH_VARIABLE + "}";;
     
     
 
@@ -60,8 +66,17 @@ public class BeerOrderController {
     }
 
     @PutMapping(value = UPDATE_BEER_ORDER_BY_ID)
-    public ResponseEntity<BeerOrderDTO> updateBeerOrder(@RequestBody BeerOrderUpdateDTO updateBeerOrderDTO, @PathVariable("beerOrderId") UUID beerOrderId) { //BeerOrderUpdateDTO
+    public ResponseEntity<BeerOrderDTO> updateBeerOrder(@RequestBody BeerOrderUpdateDTO updateBeerOrderDTO, @PathVariable("beerOrderId") UUID beerOrderId) { 
         BeerOrderDTO updatedBeerOrder = beerOrderService.editBeerOrder(beerOrderId, updateBeerOrderDTO);
         return new ResponseEntity<>(updatedBeerOrder, HttpStatus.OK);
     }
+
+    @DeleteMapping(value = DELETE_BEER_ORDER_BY_ID)
+    public ResponseEntity<Void> deleteBeerOrder(@PathVariable("beerOrderId") UUID beerOrderId) { 
+        if (!beerOrderService.deleteBeerOrder(beerOrderId)) {
+            throw new NotFoundException();
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

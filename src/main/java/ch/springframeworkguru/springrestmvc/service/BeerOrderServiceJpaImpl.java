@@ -18,7 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -116,17 +115,19 @@ public class BeerOrderServiceJpaImpl implements BeerOrderService {
     }
 
     @Override
-    public Boolean deleteBeerOrderDTO(UUID beerOrderId) {
-        // TODO: Implement
-        log.error("Delete not Yet Implemented");
-        return null;
-    }
-
-    @Override
     public Optional<BeerOrderDTO> patchBeerOrder(UUID beerOrderId, BeerOrderDTO beerOrder) {
         // TODO: Implement
         log.error("Patch not Yet Implemented");
         return Optional.empty();
+    }
+
+    @Override
+    public Boolean deleteBeerOrder(UUID beerOrderId) {
+        if (beerOrderRepository.existsById(beerOrderId)) {
+            beerOrderRepository.deleteById(beerOrderId);
+            return true;
+        }
+        return false;
     }
 
     private PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
