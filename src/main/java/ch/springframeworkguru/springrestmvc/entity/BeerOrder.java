@@ -1,9 +1,11 @@
 package ch.springframeworkguru.springrestmvc.entity;
 
 import jakarta.persistence.*;
-import jakarta.persistence.CascadeType;
 import lombok.*;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
 import java.sql.Timestamp;
@@ -64,7 +66,7 @@ public class BeerOrder {
     private Customer customer;
 
     public void setCustomer(Customer customer) {
-        if (this.customer != null) {
+        if (customer != null) {
             this.customer = customer;
             customer.getBeerOrders().add(this);
         }
@@ -82,7 +84,7 @@ public class BeerOrder {
     private Set<BeerOrderLine> beerOrderLines;
 
     public void setBeerOrderLines(Set<BeerOrderLine> beerOrderLines) {
-        if (this.beerOrderLines != null) {
+        if (beerOrderLines != null) {
             this.beerOrderLines = beerOrderLines;
             beerOrderLines.forEach(beerOrderLine -> beerOrderLine.setBeerOrder(this));
         }

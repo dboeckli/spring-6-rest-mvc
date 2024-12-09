@@ -146,14 +146,13 @@ class BeerOrderControllerIT {
         BeerOrderDTO beerOrderDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {
         });
 
-        // TODO: beerOrderlines and Customer are not persisted or wired into BeerOrder
         assertNotNull(beerOrderDTO.getId());
-        //assertNotNull(beerOrderDTO.getCustomer());
+        assertNotNull(beerOrderDTO.getCustomer());
+        assertEquals(1, beerOrderDTO.getBeerOrderLines().size());
     }
 
     @Test
     @Transactional
-    // TODO: beerOrderlines and Customer are not persisted or wired into BeerOrder
     void testUpdateBeerOrder() throws Exception {
 
         List<BeerOrder> beerOrderList = beerOrderRepository.findAll();

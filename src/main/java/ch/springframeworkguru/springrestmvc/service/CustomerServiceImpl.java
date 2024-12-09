@@ -17,25 +17,25 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerDTO customer1 = CustomerDTO.builder()
                 .id(UUID.randomUUID())
-                .customerName("Pumukel")
+                .name("Pumukel")
                 .createdDate(LocalDateTime.now())
-                .lastModifiedDate(LocalDateTime.now())
+                .updateDate(LocalDateTime.now())
                 .version("1.0")
                 .build();
 
         CustomerDTO customer2 = CustomerDTO.builder()
                 .id(UUID.randomUUID())
-                .customerName("Pumukel")
+                .name("Pumukel")
                 .createdDate(LocalDateTime.now())
-                .lastModifiedDate(LocalDateTime.now())
+                .updateDate(LocalDateTime.now())
                 .version("1.0")
                 .build();
 
         CustomerDTO customer3 = CustomerDTO.builder()
                 .id(UUID.randomUUID())
-                .customerName("Pumukel")
+                .name("Pumukel")
                 .createdDate(LocalDateTime.now())
-                .lastModifiedDate(LocalDateTime.now())
+                .updateDate(LocalDateTime.now())
                 .version("1.0")
                 .build();
 
@@ -58,9 +58,9 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDTO saveNewCustomer(CustomerDTO newCustomer) {
         CustomerDTO customer = CustomerDTO.builder()
                 .id(UUID.randomUUID())
-                .customerName(newCustomer.getCustomerName())
+                .name(newCustomer.getName())
                 .createdDate(LocalDateTime.now())
-                .lastModifiedDate(LocalDateTime.now())
+                .updateDate(LocalDateTime.now())
                 .version(newCustomer.getVersion())
                 .build();
         customerMap.put(customer.getId(), customer);
@@ -70,7 +70,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Optional<CustomerDTO> editCustomer(UUID customerId, CustomerDTO customerToEdit) {
         CustomerDTO editedCustomer = customerMap.get(customerId);
-        editedCustomer.setCustomerName(customerToEdit.getCustomerName());
+        editedCustomer.setName(customerToEdit.getName());
         editedCustomer.setVersion(customerToEdit.getVersion());
         customerMap.replace(customerId, editedCustomer);
         return Optional.of(editedCustomer);
@@ -79,14 +79,14 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Optional<CustomerDTO> patchCustomer(UUID customerId, CustomerDTO customer) {
         CustomerDTO customerToChange = customerMap.get(customerId);
-        if (StringUtils.isNotEmpty(customer.getCustomerName())) {
-            customerToChange.setCustomerName(customer.getCustomerName());
+        if (StringUtils.isNotEmpty(customer.getName())) {
+            customerToChange.setName(customer.getName());
         }
         if (StringUtils.isNotEmpty(customer.getVersion())) {
             customerToChange.setVersion(customer.getVersion());
         }
         if (!customer.equals(customerToChange)) {
-            customerToChange.setLastModifiedDate(LocalDateTime.now());
+            customerToChange.setUpdateDate(LocalDateTime.now());
             customerMap.replace(customerId, customerToChange);
         }
         return Optional.of(customerToChange);

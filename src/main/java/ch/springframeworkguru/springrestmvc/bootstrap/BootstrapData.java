@@ -137,21 +137,21 @@ public class BootstrapData implements CommandLineRunner {
 
         if (customerRepository.count() == 0) {
             Customer customer1 = Customer.builder()
-                .customerName("Customer 1")
+                .name("Customer 1")
                 .createdDate(LocalDateTime.now())
-                .lastModifiedDate(LocalDateTime.now())
+                .updateDate(LocalDateTime.now())
                 .build();
 
             Customer customer2 = Customer.builder()
-                .customerName("Customer 2")
+                .name("Customer 2")
                 .createdDate(LocalDateTime.now())
-                .lastModifiedDate(LocalDateTime.now())
+                .updateDate(LocalDateTime.now())
                 .build();
 
             Customer customer3 = Customer.builder()
-                .customerName("Customer 3")
+                .name("Customer 3")
                 .createdDate(LocalDateTime.now())
-                .lastModifiedDate(LocalDateTime.now())
+                .updateDate(LocalDateTime.now())
                 .build();
 
             customerRepository.saveAll(Arrays.asList(customer1, customer2, customer3));
@@ -170,23 +170,6 @@ public class BootstrapData implements CommandLineRunner {
 
             customers.forEach(customer -> {
 
-                BeerOrder beerOderTest = BeerOrder.builder()
-                    .customer(customer)
-                    .customerRef("bootstrap1")
-                    .beerOrderLines(Set.of(
-                        BeerOrderLine.builder()
-                            .beer(beerIterator.next())
-                            .orderQuantity(1)
-                            .build(),
-                        BeerOrderLine.builder()
-                            .beer(beerIterator.next())
-                            .orderQuantity(2)
-                            .build()
-                    )).build();
-                beerOderTest.setCustomer(customer);
-                beerOrderRepository.save(beerOderTest);
-
-                /*
                 beerOrderRepository.save(BeerOrder.builder()
                     .customer(customer)
                     .customerRef("bootstrap1")
@@ -199,7 +182,7 @@ public class BootstrapData implements CommandLineRunner {
                             .beer(beerIterator.next())
                             .orderQuantity(2)
                             .build()
-                    )).build());*/
+                    )).build());
 
                 beerOrderRepository.save(BeerOrder.builder()
                     .customer(customer)

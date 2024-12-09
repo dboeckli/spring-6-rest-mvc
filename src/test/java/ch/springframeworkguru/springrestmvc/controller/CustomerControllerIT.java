@@ -61,13 +61,13 @@ class CustomerControllerIT {
     void testUpdateCustomer() {
         Customer givenCustomer = customerRepository.findAll().getFirst();
         CustomerDTO customerDTO = customerMapper.customerToCustomerDto(givenCustomer);
-        customerDTO.setCustomerName("Hans");
+        customerDTO.setName("Hans");
 
         CustomerDTO editedCustomerDTO = customerController.editCustomer(customerDTO, customerDTO.getId()).getBody();
 
         assertAll(() -> {
             assertNotNull(editedCustomerDTO);
-            assertEquals("Hans", editedCustomerDTO.getCustomerName());
+            assertEquals("Hans", editedCustomerDTO.getName());
         });
     }
 
@@ -87,14 +87,14 @@ class CustomerControllerIT {
     @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testPatchCustomer() {
         Customer givenCustomer = customerRepository.findAll().getFirst();
+        
         CustomerDTO customerDTO = customerMapper.customerToCustomerDto(givenCustomer);
-        customerDTO.setCustomerName("Hans");
+        customerDTO.setName("Hans");
 
         CustomerDTO editedCustomerDTO = customerController.patchCustomer(customerDTO, customerDTO.getId()).getBody();
-
         assertAll(() -> {
             assertNotNull(editedCustomerDTO);
-            assertEquals("Hans", editedCustomerDTO.getCustomerName());
+            assertEquals("Hans", editedCustomerDTO.getName());
         });
     }
 
@@ -114,14 +114,14 @@ class CustomerControllerIT {
     @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
     void testCreateCustomer() {
         CustomerDTO customerDTO = CustomerDTO.builder()
-            .customerName("Fridolin")
+            .name("Fridolin")
             .build();
 
         CustomerDTO createdCustomer = customerController.createCustomer(customerDTO).getBody();
 
         assertAll(() -> {
             assertNotNull(createdCustomer);
-            assertEquals("Fridolin", createdCustomer.getCustomerName());
+            assertEquals("Fridolin", createdCustomer.getName());
         });
     }
 

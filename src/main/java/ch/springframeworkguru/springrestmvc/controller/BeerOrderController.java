@@ -59,7 +59,7 @@ public class BeerOrderController {
         return new ResponseEntity<>(savedBeerOrder, headers, HttpStatus.CREATED);
     }
 
-    @PostMapping(value = UPDATE_BEER_ORDER_BY_ID)
+    @PutMapping(value = UPDATE_BEER_ORDER_BY_ID)
     public ResponseEntity<BeerOrderDTO> updateBeerOrder(@RequestBody BeerOrderUpdateDTO updateBeerOrderDTO, @PathVariable("beerOrderId") UUID beerOrderId) { //BeerOrderUpdateDTO
         BeerOrderDTO updatedBeerOrder = beerOrderService.editBeerOrder(beerOrderId, updateBeerOrderDTO);
         return new ResponseEntity<>(updatedBeerOrder, HttpStatus.OK);
