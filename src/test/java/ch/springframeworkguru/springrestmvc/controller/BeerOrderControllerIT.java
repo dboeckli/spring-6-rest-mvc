@@ -14,6 +14,7 @@ import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderShipment
 import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderUpdateDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static ch.springframeworkguru.springrestmvc.controller.BeerOrderController.*;
@@ -115,6 +118,7 @@ class BeerOrderControllerIT {
     }
 
     @Test
+    @Transactional
     void testCreateBeerOrder() throws Exception {
         Customer customer = customerRepository.findAll().get(0);
         Beer beer = beerRepository.findAll().get(0);
@@ -144,11 +148,16 @@ class BeerOrderControllerIT {
 
         // TODO: beerOrderlines and Customer are not persisted or wired into BeerOrder
         assertNotNull(beerOrderDTO.getId());
+        //assertNotNull(beerOrderDTO.getCustomer());
     }
 
     @Test
-    // TODO: TEST IS CURRENTLY FAILING. Controller and Service not yet implemented
+    @Transactional
+    // TODO: beerOrderlines and Customer are not persisted or wired into BeerOrder
     void testUpdateBeerOrder() throws Exception {
+
+        List<BeerOrder> beerOrderList = beerOrderRepository.findAll();
+        
         BeerOrder beerOrderToUpdate = beerOrderRepository.findAll().get(0);
 
         Set<BeerOrderLineUpdateDTO> lines = new HashSet<>();
@@ -174,7 +183,7 @@ class BeerOrderControllerIT {
                 .with(jwtRequestPostProcessor)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(beerOrderToUpdate)))
+                .content(objectMapper.writeValueAsString(beerOrderUpdateDTO)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.customerRef", is("UpdatedTestRef")))
             .andReturn();

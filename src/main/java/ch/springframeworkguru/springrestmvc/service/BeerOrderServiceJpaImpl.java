@@ -3,18 +3,22 @@ package ch.springframeworkguru.springrestmvc.service;
 import ch.springframeworkguru.springrestmvc.controller.NotFoundException;
 import ch.springframeworkguru.springrestmvc.entity.BeerOrder;
 import ch.springframeworkguru.springrestmvc.entity.BeerOrderLine;
+import ch.springframeworkguru.springrestmvc.entity.BeerOrderShipment;
 import ch.springframeworkguru.springrestmvc.entity.Customer;
 import ch.springframeworkguru.springrestmvc.mapper.BeerOrderMapper;
 import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
-import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderCreateDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderCreateDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderUpdateDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -23,6 +27,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BeerOrderServiceJpaImpl implements BeerOrderService {
 
     public static final int DEFAULT_PAGE_SIZE = 25;
@@ -34,9 +39,9 @@ public class BeerOrderServiceJpaImpl implements BeerOrderService {
     private final BeerRepository beerRepository;
 
     private final CustomerRepository customerRepository;
-    
+
     private final BeerOrderMapper beerOrderMapper;
-    
+
     @Override
     public Page<BeerOrderDTO> listBeerOrders(Integer pageNumber, Integer pageSize) {
         PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
@@ -72,25 +77,55 @@ public class BeerOrderServiceJpaImpl implements BeerOrderService {
             .beerOrderLines(beerOrderLines)
             .customerRef(beerOrderCreateDTO.getCustomerRef())
             .build());
-        
+
         return beerOrderMapper.beerOrderToBeerOrderDto(savedBeerOrder);
     }
 
     @Override
-    public Optional<BeerOrderDTO> editBeerOrder(UUID beerOrderId, BeerOrderDTO beerOrder) {
-        // TODO: Implement
-        return Optional.empty();
+    public BeerOrderDTO editBeerOrder(UUID beerOrderId, BeerOrderUpdateDTO beerOrderUpdateDTO) {
+        BeerOrder beerOrder = beerOrderRepository.findById(beerOrderId).orElseThrow(NotFoundException::new);
+
+        beerOrder.setCustomer(customerRepository.findById(beerOrderUpdateDTO.getCustomerId()).orElseThrow(NotFoundException::new));
+        beerOrder.setCustomerRef(beerOrderUpdateDTO.getCustomerRef());
+
+        beerOrderUpdateDTO.getBeerOrderLines().forEach(beerOrderLine -> {
+            if (beerOrderLine.getBeerId() != null) {
+                BeerOrderLine foundLine = beerOrder.getBeerOrderLines().stream()
+                    .filter(beerOrderLine1 -> beerOrderLine1.getId().equals(beerOrderLine.getId()))
+                    .findFirst().orElseThrow(NotFoundException::new);
+                foundLine.setBeer(beerRepository.findById(beerOrderLine.getBeerId()).orElseThrow(NotFoundException::new));
+                foundLine.setOrderQuantity(beerOrderLine.getOrderQuantity());
+                foundLine.setQuantityAllocated(beerOrderLine.getQuantityAllocated());
+            } else {
+                beerOrder.getBeerOrderLines().add(BeerOrderLine.builder()
+                    .beer(beerRepository.findById(beerOrderLine.getBeerId()).orElseThrow(NotFoundException::new))
+                    .orderQuantity(beerOrderLine.getOrderQuantity())
+                    .quantityAllocated(beerOrderLine.getQuantityAllocated())
+                    .build());
+            }
+        });
+
+        if (beerOrderUpdateDTO.getBeerOrderShipment() != null && beerOrderUpdateDTO.getBeerOrderShipment().getTrackingNumber() != null) {
+            if (beerOrder.getBeerOrderShipment() == null) {
+                beerOrder.setBeerOrderShipment(BeerOrderShipment.builder().trackingNumber(beerOrderUpdateDTO.getBeerOrderShipment().getTrackingNumber()).build());
+            } else {
+                beerOrder.getBeerOrderShipment().setTrackingNumber(beerOrderUpdateDTO.getBeerOrderShipment().getTrackingNumber());
+            }
+        }
+        return beerOrderMapper.beerOrderToBeerOrderDto(beerOrderRepository.save(beerOrder));
     }
 
     @Override
     public Boolean deleteBeerOrderDTO(UUID beerOrderId) {
         // TODO: Implement
+        log.error("Delete not Yet Implemented");
         return null;
     }
 
     @Override
     public Optional<BeerOrderDTO> patchBeerOrder(UUID beerOrderId, BeerOrderDTO beerOrder) {
         // TODO: Implement
+        log.error("Patch not Yet Implemented");
         return Optional.empty();
     }
 

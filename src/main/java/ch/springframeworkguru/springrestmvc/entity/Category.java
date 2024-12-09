@@ -42,18 +42,18 @@ public class Category {
     private String description;
 
     @Builder.Default
-    @ManyToMany()
+    @ToString.Exclude
+    @ManyToMany
     @JoinTable(name = "beer_category",
         joinColumns = @JoinColumn(name = "category_id"),
         inverseJoinColumns = @JoinColumn(name = "beer_id"))
-    @ToString.Exclude
     private Set<Beer> beers = new HashSet<>();
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Category category)) return false;
-        if (!super.equals(o)) return false;
+    public boolean equals(Object categoryObject) {
+        if (this == categoryObject) return true;
+        if (!(categoryObject instanceof Category category)) return false;
+        if (!super.equals(categoryObject)) return false;
 
         return getDescription() != null ? getDescription().equals(category.getDescription()) : category.getDescription() == null;
     }

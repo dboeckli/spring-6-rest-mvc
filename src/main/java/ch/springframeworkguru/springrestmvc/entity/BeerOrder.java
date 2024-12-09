@@ -59,17 +59,9 @@ public class BeerOrder {
 
     private String customerRef;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @ToString.Exclude
     private Customer customer;
-
-    @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL)
-    @ToString.Exclude
-    private Set<BeerOrderLine> beerOrderLines;
-
-    @OneToOne(cascade = CascadeType.PERSIST)
-    @ToString.Exclude
-    private BeerOrderShipment beerOrderShipment;
 
     public void setCustomer(Customer customer) {
         if (this.customer != null) {
@@ -81,15 +73,27 @@ public class BeerOrder {
     public void setBeerOrderShipment(BeerOrderShipment beerOrderShipment) {
         if(beerOrderShipment != null) {
             this.beerOrderShipment = beerOrderShipment;
-            beerOrderShipment.setBeerOrder(BeerOrder.this);
+            beerOrderShipment.setBeerOrder(this);
         }
     }
-    
+
+    @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private Set<BeerOrderLine> beerOrderLines;
+
     public void setBeerOrderLines(Set<BeerOrderLine> beerOrderLines) {
         if (this.beerOrderLines != null) {
             this.beerOrderLines = beerOrderLines;
             beerOrderLines.forEach(beerOrderLine -> beerOrderLine.setBeerOrder(this));
         }
     }
+
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @ToString.Exclude
+    private BeerOrderShipment beerOrderShipment;
+
+    
+    
+    
 
 }

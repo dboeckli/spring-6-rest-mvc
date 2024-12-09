@@ -29,7 +29,6 @@ public class Beer {
     @Id
     @GeneratedValue(generator = "UUID")
     @UuidGenerator
-    //@GenericGenerator(name = "UUID", type = UuidGenerator.class) // Deprecated, has been replaced with above
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
@@ -44,10 +43,12 @@ public class Beer {
     private String beerName;
 
     @NotNull
+    @JdbcTypeCode(value = SqlTypes.SMALLINT)
     private BeerStyle beerStyle;
 
     @NotNull
     @NotBlank
+    @Size(max = 255)
     private String upc;
     
     private Integer quantityOnHand;
@@ -55,20 +56,13 @@ public class Beer {
     @NotNull
     private BigDecimal price;
     
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime createdDate;
-    
-    @UpdateTimestamp
-    private LocalDateTime updateDate;
-
     @OneToMany(mappedBy = "beer")
     @ToString.Exclude
     private Set<BeerOrderLine> beerOrderLines;
 
     @Builder.Default
-    @ManyToMany(mappedBy = "beers")
     @ToString.Exclude
+    @ManyToMany(mappedBy = "beers")
     private Set<Category> categories = new HashSet<>();
     
     public void addCategory(Category category) {
@@ -80,4 +74,11 @@ public class Beer {
         categories.remove(category);
         category.getBeers().remove(this);
     }
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdDate;
+
+    @UpdateTimestamp
+    private LocalDateTime updateDate;
 }

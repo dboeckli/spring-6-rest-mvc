@@ -24,7 +24,6 @@ public class Customer {
     @Id
     @GeneratedValue(generator = "UUID")
     @UuidGenerator
-    //@GenericGenerator(name = "UUID", type = UuidGenerator.class) // Deprecated, has been replaced with above
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
@@ -45,10 +44,12 @@ public class Customer {
     private LocalDateTime lastModifiedDate;
     
     @Builder.Default
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    //@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer") // TODO: CHECK
     @ToString.Exclude
     private Set<BeerOrder> beerOrders = new HashSet<>();
 
+    /*
     public void addBeerOder(BeerOrder beerOrder) {
         beerOrders.add(beerOrder);
         beerOrder.setCustomer(this);
@@ -57,5 +58,5 @@ public class Customer {
     public void removeBeerOder(BeerOrder beerOrder) {
         beerOrders.remove(beerOrder);
         beerOrder.getCustomer().removeBeerOder(beerOrder);
-    }
+    }*/
 }

@@ -1,8 +1,9 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
 import ch.springframeworkguru.springrestmvc.service.BeerOrderService;
-import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderCreateDTO;
 import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderCreateDTO;
+import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -55,5 +57,11 @@ public class BeerOrderController {
         headers.add("Location", requestPath + GET_BEER_ORDER +"/" + savedBeerOrder.getId().toString());
 
         return new ResponseEntity<>(savedBeerOrder, headers, HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = UPDATE_BEER_ORDER_BY_ID)
+    public ResponseEntity<BeerOrderDTO> updateBeerOrder(@RequestBody BeerOrderUpdateDTO updateBeerOrderDTO, @PathVariable("beerOrderId") UUID beerOrderId) { //BeerOrderUpdateDTO
+        BeerOrderDTO updatedBeerOrder = beerOrderService.editBeerOrder(beerOrderId, updateBeerOrderDTO);
+        return new ResponseEntity<>(updatedBeerOrder, HttpStatus.OK);
     }
 }

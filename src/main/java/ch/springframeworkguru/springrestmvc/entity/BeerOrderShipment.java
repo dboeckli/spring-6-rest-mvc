@@ -48,5 +48,5 @@ public class BeerOrderShipment {
 
     @UpdateTimestamp
     private Timestamp lastModifiedDate;
-    
+   
 }
