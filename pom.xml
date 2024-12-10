@@ -328,6 +328,11 @@
                             </arguments>
                         </configuration>
                     </execution>
+                    <execution>
+                        <goals>
+                            <goal>build-image-no-fork</goal>
+                        </goals>
+                    </execution>
                 </executions>    
             </plugin>
 

@@ -12,6 +12,12 @@ openapi gui: http://localhost:8081/swagger-ui/index.html
 openapi-yaml: http://localhost:8081/v3/api-docs.yaml
 h2-console: http://localhost:8081/h2-console (check application.yaml for connection parameters)
 
+## docker:
+### create image
+.\mvnw clean package spring-boot:build-image
+### run image 
+docker run -p 8081:8081 docker.io/library/spring-6-rest-mvc:0.0.1-SNAPSHOT
+
 Chapter 1-17
 
 This repository is for an example application built in my [Spring Framework 6 - Beginner to Guru](https://www.udemy.com/course/spring-framework-6-beginner-to-guru/?referralCode=2BD0B7B7B6B511D699A9) online course
