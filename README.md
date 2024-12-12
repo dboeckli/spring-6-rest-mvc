@@ -12,6 +12,34 @@ openapi gui: http://localhost:8081/swagger-ui/index.html
 openapi-yaml: http://localhost:8081/v3/api-docs.yaml
 h2-console: http://localhost:8081/h2-console (check application.yaml for connection parameters)
 
+## Docker 
+
+### create image
+```shell
+.\mvnw clean package spring-boot:build-image
+```
+or just run 
+```shell
+.\mvnw clean install
+```
+
+### run image
+
+Hint: remove the daemon flag -d to see what is happening, else it run in background
+
+```shell
+docker run --name mysql -d -e MYSQL_USER=restadmin -e MYSQL_PASSWORD=password -e MYSQL_DATABASE=restdb -e MYSQL_ROOT_PASSWORD=password mysql:9
+docker stop mysql
+docker rm mysql
+docker start mysql
+
+docker run --name rest-mvc -d -p 8081:8080 -e SPRING_PROFILES_ACTIVE=localmysql -e SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://auth-server:9000 -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/restdb -e SERVER_PORT=8080 --link auth-server:auth-server --link mysql:mysql spring-6-rest-mvc:0.0.1-SNAPSHOT
+ 
+docker stop rest-mvc
+docker rm rest-mvc
+docker start rest-mvc
+```
+
 Chapter 1-17
 
 This repository is for an example application built in my [Spring Framework 6 - Beginner to Guru](https://www.udemy.com/course/spring-framework-6-beginner-to-guru/?referralCode=2BD0B7B7B6B511D699A9) online course

@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="docker.io/library/spring-6-rest-mvc:0.0.1-SNAPSHOT" type="docker-deploy" factoryName="docker-image" server-name="Docker">
+    <deployment type="docker-image">
+      <settings>
+        <option name="imageTag" value="spring-6-rest-mvc:0.0.1-SNAPSHOT" />
+        <option name="containerName" value="spring-6-rest-mvc" />
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+</component>
