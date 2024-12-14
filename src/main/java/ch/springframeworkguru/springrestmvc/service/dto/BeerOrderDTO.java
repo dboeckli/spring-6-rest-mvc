@@ -4,6 +4,7 @@ import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderShipment
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Set;
 import java.util.UUID;
@@ -13,6 +14,8 @@ import java.util.UUID;
 public class BeerOrderDTO {
     private UUID id;
     private Long version;
+
+    private BigDecimal paymentAmount;
 
     private String customerRef;
 
