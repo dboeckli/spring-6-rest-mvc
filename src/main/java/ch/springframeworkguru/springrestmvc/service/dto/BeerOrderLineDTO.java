@@ -18,6 +18,8 @@ public class BeerOrderLineDTO {
 
     private Integer quantityAllocated;
 
+    private BeerOrderLineStatus orderLineStatus;
+
     private BeerDTO beer;
 
     private Timestamp createdDate;

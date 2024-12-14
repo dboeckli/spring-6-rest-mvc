@@ -1,5 +1,6 @@
 package ch.springframeworkguru.springrestmvc.entity;
 
+import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderLineStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -47,6 +48,10 @@ public class BeerOrderLine {
 
     @Builder.Default
     private Integer quantityAllocated = 0;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private BeerOrderLineStatus orderLineStatus = BeerOrderLineStatus.NEW;
 
     @ManyToOne
     private BeerOrder beerOrder;
