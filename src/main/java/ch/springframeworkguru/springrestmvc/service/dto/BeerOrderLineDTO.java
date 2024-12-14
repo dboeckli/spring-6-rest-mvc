@@ -21,5 +21,5 @@ public class BeerOrderLineDTO {
     private BeerDTO beer;
 
     private Timestamp createdDate;
-    private Timestamp lastModifiedDate;
+    private Timestamp updateDate;
 }

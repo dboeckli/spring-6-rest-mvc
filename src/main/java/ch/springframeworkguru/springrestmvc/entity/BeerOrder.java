@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Set;
 import java.util.UUID;
@@ -21,18 +22,21 @@ import java.util.UUID;
 public class BeerOrder {
 
     public BeerOrder(UUID id, 
-                     Long version, 
+                     Long version,
+                     BigDecimal paymentAmount,
                      Timestamp createdDate, 
-                     Timestamp lastModifiedDate, 
+                     Timestamp updateDate, 
                      String customerRef, 
-                     Customer customer, 
+                     Customer customer,
                      Set<BeerOrderLine> beerOrderLines,
                      BeerOrderShipment beerOrderShipment) {
+        
         this.id = id;
         this.version = version;
         this.createdDate = createdDate;
-        this.lastModifiedDate = lastModifiedDate;
+        this.updateDate = updateDate;
         this.customerRef = customerRef;
+        this.paymentAmount = paymentAmount;
         this.setCustomer(customer);
         this.setBeerOrderLines(beerOrderLines);
         this.setBeerOrderShipment(beerOrderShipment);
@@ -48,12 +52,14 @@ public class BeerOrder {
     @Version
     private Long version;
 
+    private BigDecimal paymentAmount;
+
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdDate;
 
     @UpdateTimestamp
-    private Timestamp lastModifiedDate;
+    private Timestamp updateDate;
 
     public boolean isNew() {
         return this.id == null;
@@ -93,9 +99,4 @@ public class BeerOrder {
     @OneToOne(cascade = CascadeType.PERSIST)
     @ToString.Exclude
     private BeerOrderShipment beerOrderShipment;
-
-    
-    
-    
-
 }

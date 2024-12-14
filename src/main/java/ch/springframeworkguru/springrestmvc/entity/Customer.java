@@ -2,7 +2,9 @@ package ch.springframeworkguru.springrestmvc.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
@@ -25,6 +27,7 @@ public class Customer {
     @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
     @JdbcTypeCode(SqlTypes.CHAR)
     private UUID id;
+    
     private String name;
 
     @Column(length = 255)
@@ -32,7 +35,12 @@ public class Customer {
 
     @Version
     private Integer version;
+
+    @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdDate;
+
+    @UpdateTimestamp
     private LocalDateTime updateDate;
 
     @Builder.Default

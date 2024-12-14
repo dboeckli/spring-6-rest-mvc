@@ -1,9 +1,7 @@
 package ch.springframeworkguru.springrestmvc.bootstrap;
 
 import ch.springframeworkguru.springrestmvc.config.CacheConfiguration;
-import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
-import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
-import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
+import ch.springframeworkguru.springrestmvc.repository.*;
 import ch.springframeworkguru.springrestmvc.service.BeerCsvService;
 import ch.springframeworkguru.springrestmvc.service.BeerCsvServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +31,15 @@ class BootstrapDataTest {
     BeerOrderRepository beerOrderRepository;
 
     @Autowired
+    BeerOrderLinesRepository beerOrderLinesRepository;
+
+    @Autowired
+    BeerAuditRepository beerAuditRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
+
+    @Autowired
     CacheManager cacheManager;
 
     BootstrapData bootstrapData;
@@ -46,10 +53,13 @@ class BootstrapDataTest {
     void testSetBootstrapData() throws Exception {
         bootstrapData.run((String) null);
         assertAll(
-                () -> assertEquals(2413, beerRepository.count()),
-                () -> assertEquals(3, customerRepository.count()),
-                () -> assertEquals(6, beerOrderRepository.count()),
-                () -> assertEquals(0, cacheManager.getCacheNames().size())
+            () -> assertEquals(2413, beerRepository.count()),
+            () -> assertEquals(3, customerRepository.count()),
+            () -> assertEquals(6, beerOrderRepository.count()),
+            () -> assertEquals(12, beerOrderLinesRepository.count()),
+            () -> assertEquals(0, beerAuditRepository.count()),
+            () -> assertEquals(0, categoryRepository.count()),
+            () -> assertEquals(0, cacheManager.getCacheNames().size())
         );
     }
 

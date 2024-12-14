@@ -35,7 +35,7 @@ public class BeerOrderLine {
     private Timestamp createdDate;
 
     @UpdateTimestamp
-    private Timestamp lastModifiedDate;
+    private Timestamp updateDate;
 
     public boolean isNew() {
         return this.id == null;
