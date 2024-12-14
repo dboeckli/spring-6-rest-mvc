@@ -24,7 +24,6 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Component
@@ -90,7 +89,7 @@ public class BootstrapData implements CommandLineRunner {
             }
         }
         List<Beer> beers = beerRepository.findAll();
-        log.info("Created via csv list {} Beers: {}", beers.size(), beers);
+        log.info("Created via csv list {} beers", beers.size());
     }
 
     private void loadBeerData() {
@@ -101,8 +100,6 @@ public class BootstrapData implements CommandLineRunner {
                 .upc("12356")
                 .price(new BigDecimal("12.99"))
                 .quantityOnHand(122)
-                .createdDate(LocalDateTime.now())
-                .updateDate(LocalDateTime.now())
                 .build();
 
             Beer beer2 = Beer.builder()
@@ -111,8 +108,6 @@ public class BootstrapData implements CommandLineRunner {
                 .upc("12356222")
                 .price(new BigDecimal("11.99"))
                 .quantityOnHand(392)
-                .createdDate(LocalDateTime.now())
-                .updateDate(LocalDateTime.now())
                 .build();
 
             Beer beer3 = Beer.builder()
@@ -121,8 +116,6 @@ public class BootstrapData implements CommandLineRunner {
                 .upc("12356")
                 .price(new BigDecimal("13.99"))
                 .quantityOnHand(144)
-                .createdDate(LocalDateTime.now())
-                .updateDate(LocalDateTime.now())
                 .build();
 
             beerRepository.saveAll(Arrays.asList(beer1, beer2, beer3));
@@ -138,20 +131,14 @@ public class BootstrapData implements CommandLineRunner {
         if (customerRepository.count() == 0) {
             Customer customer1 = Customer.builder()
                 .name("Customer 1")
-                .createdDate(LocalDateTime.now())
-                .updateDate(LocalDateTime.now())
                 .build();
 
             Customer customer2 = Customer.builder()
                 .name("Customer 2")
-                .createdDate(LocalDateTime.now())
-                .updateDate(LocalDateTime.now())
                 .build();
 
             Customer customer3 = Customer.builder()
                 .name("Customer 3")
-                .createdDate(LocalDateTime.now())
-                .updateDate(LocalDateTime.now())
                 .build();
 
             customerRepository.saveAll(Arrays.asList(customer1, customer2, customer3));
