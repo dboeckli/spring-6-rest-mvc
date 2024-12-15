@@ -1,6 +1,6 @@
 package ch.springframeworkguru.springrestmvc.service;
 
-import ch.springframeworkguru.springrestmvc.service.dto.BeerCSVRecord;
+import ch.springframeworkguru.springrestmvc.bootstrap.BeerCSVRecord;
 
 import java.io.File;
 import java.util.List;

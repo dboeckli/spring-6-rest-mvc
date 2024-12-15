@@ -1,4 +1,4 @@
-package ch.springframeworkguru.springrestmvc.service.dto;
+package ch.springframeworkguru.springrestmvc.bootstrap;
 
 import com.opencsv.bean.CsvBindByName;
 import lombok.AllArgsConstructor;

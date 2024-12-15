@@ -1,10 +1,10 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
+import ch.guru.springframework.spring6restmvcapi.dto.CustomerDTO;
 import ch.springframeworkguru.springrestmvc.entity.Customer;
 import ch.springframeworkguru.springrestmvc.mapper.CustomerMapper;
 import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
-import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

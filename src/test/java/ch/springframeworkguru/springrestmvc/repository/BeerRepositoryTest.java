@@ -1,7 +1,7 @@
 package ch.springframeworkguru.springrestmvc.repository;
 
+import ch.guru.springframework.spring6restmvcapi.dto.BeerStyle;
 import ch.springframeworkguru.springrestmvc.entity.Beer;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

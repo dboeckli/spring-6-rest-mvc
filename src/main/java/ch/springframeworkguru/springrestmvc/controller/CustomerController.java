@@ -1,7 +1,7 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
+import ch.guru.springframework.spring6restmvcapi.dto.CustomerDTO;
 import ch.springframeworkguru.springrestmvc.service.CustomerService;
-import ch.springframeworkguru.springrestmvc.service.dto.CustomerDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -58,24 +58,27 @@
         <!--suppress UnresolvedMavenProperty -->
         <buildNumber>${git.commit.id.abbrev}</buildNumber>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+            <!-- 
+            you need a personal access token for the dboeckli organization: generate access token on github: https://github.com/settings/apps 
+            add gitHub server configuration to settings.xml file with username and password (add token there)
+            Configure maven settings of IntelliJ to use your personal settings.xml 
+            -->
+            <id>github</id>
+            <url>https://maven.pkg.github.com/${organization.name}/${project.artifactId}</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
     
     <profiles>
-        <profile>
-            <id>github</id>
-            <repositories>
-                <repository>
-                    <id>central</id>
-                    <url>https://repo1.maven.org/maven2</url>
-                </repository>
-                <repository>
-                    <id>github</id>
-                    <url>https://maven.pkg.github.com/${organization.name}/${project.artifactId}</url>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </repository>
-            </repositories>
-        </profile>
         <!-- CI/CD profile for GitHub Actions -->
         <profile>
             <id>ci-cd</id>
@@ -99,7 +102,14 @@
             <url>https://maven.pkg.github.com/${organization.name}/${project.artifactId}</url>
         </repository>
     </distributionManagement>
+    
     <dependencies>
+        <dependency>
+            <groupId>ch.dboeckli.guru.springframework</groupId>
+            <artifactId>spring-6-rest-mvc-api </artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>

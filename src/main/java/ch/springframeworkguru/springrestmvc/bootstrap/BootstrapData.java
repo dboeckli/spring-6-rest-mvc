@@ -1,5 +1,6 @@
 package ch.springframeworkguru.springrestmvc.bootstrap;
 
+import ch.guru.springframework.spring6restmvcapi.dto.BeerStyle;
 import ch.springframeworkguru.springrestmvc.entity.Beer;
 import ch.springframeworkguru.springrestmvc.entity.BeerOrder;
 import ch.springframeworkguru.springrestmvc.entity.BeerOrderLine;
@@ -8,8 +9,6 @@ import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
 import ch.springframeworkguru.springrestmvc.service.BeerCsvService;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerCSVRecord;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

@@ -1,10 +1,10 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
+import ch.guru.springframework.spring6restmvcapi.dto.BeerDTO;
+import ch.guru.springframework.spring6restmvcapi.dto.BeerStyle;
 import ch.springframeworkguru.springrestmvc.config.SpringSecurityConfigRest;
 import ch.springframeworkguru.springrestmvc.service.BeerService;
 import ch.springframeworkguru.springrestmvc.service.BeerServiceImpl;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +69,7 @@ class BeerControllerTest {
                     claims.put("scope", "message.write");
                 })
                 .subject("messaging-client")
-                .notBefore(Instant.now().minusSeconds(5l));
+                .notBefore(Instant.now().minusSeconds(5L));
         });
 
     @BeforeEach

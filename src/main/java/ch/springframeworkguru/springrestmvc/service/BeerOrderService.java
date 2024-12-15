@@ -1,8 +1,8 @@
 package ch.springframeworkguru.springrestmvc.service;
 
-import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderDTO;
-import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderCreateDTO;
-import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderUpdateDTO;
+import ch.guru.springframework.spring6restmvcapi.dto.BeerOrderDTO;
+import ch.guru.springframework.spring6restmvcapi.dto.create.BeerOrderCreateDTO;
+import ch.guru.springframework.spring6restmvcapi.dto.update.BeerOrderUpdateDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.Optional;
