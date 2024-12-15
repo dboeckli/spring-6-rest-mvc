@@ -1,7 +1,7 @@
 package ch.springframeworkguru.springrestmvc.service;
 
-import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
+import ch.guru.springframework.spring6restmvcapi.dto.BeerDTO;
+import ch.guru.springframework.spring6restmvcapi.dto.BeerStyle;
 import org.springframework.data.domain.Page;
 
 import java.util.Optional;

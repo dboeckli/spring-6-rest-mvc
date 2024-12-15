@@ -1,11 +1,11 @@
 package ch.springframeworkguru.springrestmvc.repository;
 
+import ch.guru.springframework.spring6restmvcapi.dto.BeerStyle;
 import ch.springframeworkguru.springrestmvc.bootstrap.BootstrapData;
 import ch.springframeworkguru.springrestmvc.config.CacheConfiguration;
 import ch.springframeworkguru.springrestmvc.entity.Beer;
 import ch.springframeworkguru.springrestmvc.entity.Category;
 import ch.springframeworkguru.springrestmvc.service.BeerCsvServiceImpl;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

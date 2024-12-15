@@ -1,8 +1,8 @@
 package ch.springframeworkguru.springrestmvc.mapper;
 
+import ch.guru.springframework.spring6restmvcapi.dto.BeerDTO;
 import ch.springframeworkguru.springrestmvc.entity.Beer;
 import ch.springframeworkguru.springrestmvc.entity.BeerAudit;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

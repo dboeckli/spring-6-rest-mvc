@@ -1,5 +1,7 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
+import ch.guru.springframework.spring6restmvcapi.dto.BeerDTO;
+import ch.guru.springframework.spring6restmvcapi.dto.BeerStyle;
 import ch.springframeworkguru.springrestmvc.entity.Beer;
 import ch.springframeworkguru.springrestmvc.event.events.BeerCreatedEvent;
 import ch.springframeworkguru.springrestmvc.event.events.BeerDeleteEvent;
@@ -7,8 +9,6 @@ import ch.springframeworkguru.springrestmvc.event.events.BeerPatchEvent;
 import ch.springframeworkguru.springrestmvc.mapper.BeerMapper;
 import ch.springframeworkguru.springrestmvc.repository.BeerOrderLinesRepository;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

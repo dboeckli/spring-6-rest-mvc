@@ -1,6 +1,6 @@
 package ch.springframeworkguru.springrestmvc.entity;
 
-import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderLineStatus;
+import ch.guru.springframework.spring6restmvcapi.dto.BeerOrderLineStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;

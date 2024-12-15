@@ -1,9 +1,9 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
+import ch.guru.springframework.spring6restmvcapi.dto.BeerOrderDTO;
+import ch.guru.springframework.spring6restmvcapi.dto.create.BeerOrderCreateDTO;
+import ch.guru.springframework.spring6restmvcapi.dto.update.BeerOrderUpdateDTO;
 import ch.springframeworkguru.springrestmvc.service.BeerOrderService;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderDTO;
-import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderCreateDTO;
-import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +38,7 @@ public class BeerOrderController {
     public static final String UPDATE_BEER_ORDER_BY_ID = UPDATE_BEER_ORDER + "/" + "{" + BEER_ORDER_ID_PATH_VARIABLE + "}";
     
     public static final String DELETE_BEER_ORDER = "/deleteBeerOrder";
-    public static final String DELETE_BEER_ORDER_BY_ID = DELETE_BEER_ORDER + "/" + "{" + BEER_ORDER_ID_PATH_VARIABLE + "}";;
+    public static final String DELETE_BEER_ORDER_BY_ID = DELETE_BEER_ORDER + "/" + "{" + BEER_ORDER_ID_PATH_VARIABLE + "}";
     
     
 
@@ -46,7 +46,7 @@ public class BeerOrderController {
 
     @GetMapping(value=LIST_BEER_ORDERS)
     public ResponseEntity<Page<BeerOrderDTO>> listBeerOrder(@RequestParam(required = false) Integer pageNumber,
-                                                             @RequestParam(required = false) Integer pageSize) {
+                                                            @RequestParam(required = false) Integer pageSize) {
         return new ResponseEntity<>(beerOrderService.listBeerOrders(pageNumber, pageSize), HttpStatus.OK);
     }
 
