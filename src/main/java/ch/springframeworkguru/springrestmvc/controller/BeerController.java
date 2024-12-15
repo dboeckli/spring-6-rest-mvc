@@ -1,8 +1,8 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
+import ch.guru.springframework.spring6restmvcapi.dto.BeerDTO;
+import ch.guru.springframework.spring6restmvcapi.dto.BeerStyle;
 import ch.springframeworkguru.springrestmvc.service.BeerService;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerDTO;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;

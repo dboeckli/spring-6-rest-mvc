@@ -1,17 +1,17 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
+import ch.guru.springframework.spring6restmvcapi.dto.BeerOrderDTO;
+import ch.guru.springframework.spring6restmvcapi.dto.create.BeerOrderCreateDTO;
+import ch.guru.springframework.spring6restmvcapi.dto.create.BeerOrderLineCreateDTO;
+import ch.guru.springframework.spring6restmvcapi.dto.update.BeerOrderLineUpdateDTO;
+import ch.guru.springframework.spring6restmvcapi.dto.update.BeerOrderShipmentUpdateDTO;
+import ch.guru.springframework.spring6restmvcapi.dto.update.BeerOrderUpdateDTO;
 import ch.springframeworkguru.springrestmvc.entity.Beer;
 import ch.springframeworkguru.springrestmvc.entity.BeerOrder;
 import ch.springframeworkguru.springrestmvc.entity.Customer;
 import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
-import ch.springframeworkguru.springrestmvc.service.dto.BeerOrderDTO;
-import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderCreateDTO;
-import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderLineCreateDTO;
-import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderLineUpdateDTO;
-import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderShipmentUpdateDTO;
-import ch.springframeworkguru.springrestmvc.service.dto.update.BeerOrderUpdateDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

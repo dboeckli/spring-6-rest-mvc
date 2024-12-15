@@ -1,7 +1,7 @@
 package ch.springframeworkguru.springrestmvc.mapper;
 
+import ch.guru.springframework.spring6restmvcapi.dto.create.BeerOrderShipmentDTO;
 import ch.springframeworkguru.springrestmvc.entity.BeerOrderShipment;
-import ch.springframeworkguru.springrestmvc.service.dto.create.BeerOrderShipmentDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

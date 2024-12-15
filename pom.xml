@@ -68,6 +68,7 @@
             <!-- 
             you need a personal access token for the dboeckli organization: generate access token on github: https://github.com/settings/apps 
             add gitHub server configuration to settings.xml file with username and password (add token there)
+            Configure maven settings of IntelliJ to use your personal settings.xml 
             -->
             <id>github</id>
             <url>https://maven.pkg.github.com/${organization.name}/${project.artifactId}</url>
