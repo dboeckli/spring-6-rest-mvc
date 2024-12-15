@@ -58,24 +58,26 @@
         <!--suppress UnresolvedMavenProperty -->
         <buildNumber>${git.commit.id.abbrev}</buildNumber>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+            <!-- 
+            you need a personal access token for the dboeckli organization: generate access token on github: https://github.com/settings/apps 
+            add gitHub server configuration to settings.xml file with username and password (add token there)
+            -->
+            <id>github</id>
+            <url>https://maven.pkg.github.com/${organization.name}/${project.artifactId}</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
     
     <profiles>
-        <profile>
-            <id>github</id>
-            <repositories>
-                <repository>
-                    <id>central</id>
-                    <url>https://repo1.maven.org/maven2</url>
-                </repository>
-                <repository>
-                    <id>github</id>
-                    <url>https://maven.pkg.github.com/${organization.name}/${project.artifactId}</url>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </repository>
-            </repositories>
-        </profile>
         <!-- CI/CD profile for GitHub Actions -->
         <profile>
             <id>ci-cd</id>
