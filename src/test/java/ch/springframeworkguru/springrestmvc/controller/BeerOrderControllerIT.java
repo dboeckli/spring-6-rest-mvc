@@ -99,7 +99,7 @@ class BeerOrderControllerIT {
 
     @Test
     void testGetBeerOrderById() throws Exception {
-        BeerOrder beerOrder = beerOrderRepository.findAll().get(0);
+        BeerOrder beerOrder = beerOrderRepository.findAll().getFirst();
 
         MvcResult result = mockMvc.perform(get(requestPath + GET_BEER_ORDER_BY_ID, beerOrder.getId())
                 .with(jwtRequestPostProcessor))
@@ -117,8 +117,8 @@ class BeerOrderControllerIT {
     @Test
     @Transactional
     void testCreateBeerOrder() throws Exception {
-        Customer customer = customerRepository.findAll().get(0);
-        Beer beer = beerRepository.findAll().get(0);
+        Customer customer = customerRepository.findAll().getFirst();
+        Beer beer = beerRepository.findAll().getFirst();
 
         BeerOrderCreateDTO newBeerOrderDTO = BeerOrderCreateDTO.builder()
             .customerId(customer.getId())
@@ -151,7 +151,7 @@ class BeerOrderControllerIT {
     @Test
     @Transactional
     void testUpdateBeerOrder() throws Exception {
-        BeerOrder beerOrderToUpdate = beerOrderRepository.findAll().get(0);
+        BeerOrder beerOrderToUpdate = beerOrderRepository.findAll().getFirst();
 
         Set<BeerOrderLineUpdateDTO> lines = new HashSet<>();
         beerOrderToUpdate.getBeerOrderLines().forEach(beerOrderLine -> {
@@ -191,7 +191,7 @@ class BeerOrderControllerIT {
     @Test
     @Transactional
     void testDeleteBeerOrder() throws Exception {
-        BeerOrder beerOrderToDelete = beerOrderRepository.findAll().get(0);
+        BeerOrder beerOrderToDelete = beerOrderRepository.findAll().getFirst();
 
         mockMvc.perform(delete(requestPath + DELETE_BEER_ORDER_BY_ID, beerOrderToDelete.getId())
                 .with(jwtRequestPostProcessor))
