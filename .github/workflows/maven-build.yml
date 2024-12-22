@@ -67,6 +67,8 @@ jobs:
       packages: write
       id-token: write
       checks: write
+      pull-requests: write
+      actions: read
 
     steps:
       - uses: actions/checkout@v4
