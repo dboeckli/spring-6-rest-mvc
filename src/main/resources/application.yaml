@@ -17,8 +17,9 @@ management:
         enabled: true
       show-details: always
             
-
+  
 spring:
+  
   application:
     name: spring-6-rest-mvc
     
@@ -60,6 +61,18 @@ spring:
         jwt:
           issuer-uri: http://localhost:9000
           
+  kafka:
+    consumer:
+      group-id: sfg
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties: 
+        spring.json.trusted.packages: "*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  
   cache:
     cache-names: "beerCache,beerListCache,customerCache,customerListCache"
 

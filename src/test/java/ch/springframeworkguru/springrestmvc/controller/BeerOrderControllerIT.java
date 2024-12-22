@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.core.OAuth2TokenIntrospectionClaimNames;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -76,11 +77,11 @@ class BeerOrderControllerIT {
     public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
         jwt().jwt(jwt -> {
             jwt.claims(claims -> {
-                    claims.put("scope", "message.read");
-                    claims.put("scope", "message.write");
+                    claims.put(OAuth2TokenIntrospectionClaimNames.SCOPE, "message.read");
+                    claims.put(OAuth2TokenIntrospectionClaimNames.SCOPE, "message.write");
                 })
                 .subject("messaging-client")
-                .notBefore(Instant.now().minusSeconds(5l));
+                .notBefore(Instant.now().minusSeconds(5L));
         });
 
     @Test
