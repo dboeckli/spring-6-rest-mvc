@@ -375,6 +375,7 @@
                         <goals>
                             <goal>build-image-no-fork</goal>
                         </goals>
+                        <phase>install</phase>
                         <configuration>
                             <image>
                                 <name>local/${project.artifactId}:latest</name>
