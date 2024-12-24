@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.0</version>
+        <version>3.4.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     
@@ -319,19 +319,10 @@
                     </execution>
                 </executions>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <jvmArguments>-Dspring.application.admin.enabled=true</jvmArguments>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
                 <executions>
                     <execution>
                         <id>add-build-infos</id>
@@ -348,9 +339,9 @@
                             </additionalProperties>
                         </configuration>
                     </execution>
-                    
+
                     <execution>
-                        <id>start-springboot-app-for-springdoc</id>
+                        <id>start-springboot-app</id>
                         <goals>
                             <goal>start</goal>
                             <goal>stop</goal>
@@ -366,11 +357,22 @@
                             </arguments>
                         </configuration>
                     </execution>
-                    
+
                     <execution>
+                        <id>build-docker-image</id>
                         <goals>
                             <goal>build-image-no-fork</goal>
                         </goals>
+                        <phase>install</phase>
+                        <configuration>
+                            <image>
+                                <name>local/${project.artifactId}:latest</name>
+                                <tags>
+                                    local/${project.artifactId}:${project.version}
+                                </tags>
+                                <publish>false</publish>
+                            </image>
+                        </configuration>
                     </execution>
 
                     <execution>
@@ -382,20 +384,25 @@
                         <configuration>
                             <skip>${skip.docker.publish}</skip>
                             <image>
-                                <name>ghcr.io/${organization.name}/${project.artifactId}:${project.version}</name>
+                                <name>ghcr.io/${organization.name}/${project.artifactId}:latest</name>
+                                <tags>
+                                    ghcr.io/${organization.name}/${project.artifactId}:${project.version}
+                                </tags>
                                 <publish>true</publish>
                             </image>
                             <docker>
                                 <publishRegistry>
                                     <!-- GITHUB_ACTOR and GITHUB_TOKEN are set by gitHub Actions -->
+                                    <!--suppress UnresolvedMavenProperty -->
                                     <username>${env.GITHUB_ACTOR}</username>
+                                    <!--suppress UnresolvedMavenProperty -->
                                     <password>${env.GITHUB_TOKEN}</password>
                                     <url>https://ghcr.io</url><!-- gitHub packages -->
                                 </publishRegistry>
                             </docker>
                         </configuration>
                     </execution>
-                    
+
                     <execution>
                         <id>publish-docker-image-to-docker-hub</id>
                         <goals>
@@ -405,20 +412,41 @@
                         <configuration>
                             <skip>${skip.docker.publish}</skip>
                             <image>
-                                <name>${env.DOCKER_USER}/${project.artifactId}:${project.version}</name>
+                                <!--suppress UnresolvedMavenProperty -->
+                                <name>${env.DOCKER_USER}/${project.artifactId}:latest</name>
+                                <tags>
+                                    <!--suppress UnresolvedMavenProperty -->
+                                    ${env.DOCKER_USER}/${project.artifactId}:${project.version}
+                                </tags>
                                 <publish>true</publish>
                             </image>
                             <docker>
                                 <publishRegistry>
                                     <!-- DOCKER_USER and DOCKER_TOKEN are set by gitHub Actions -->
+                                    <!--suppress UnresolvedMavenProperty -->
                                     <username>${env.DOCKER_USER}</username>
+                                    <!--suppress UnresolvedMavenProperty -->
                                     <password>${env.DOCKER_TOKEN}</password>
                                     <url>https://index.docker.io/v1/</url>
                                 </publishRegistry>
                             </docker>
                         </configuration>
                     </execution>
-                </executions>    
+
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -468,19 +496,6 @@
                         <compilerArg>-Amapstruct.defaultComponentModel=spring</compilerArg>
                     </compilerArgs>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>
