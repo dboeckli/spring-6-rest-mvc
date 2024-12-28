@@ -85,10 +85,12 @@ appconfig:
 
 # Show bind values
 logging:
-  level: 
+  level:
     org.hibernate.orm.jdbc.bind: INFO
     org.zalando.logbook: TRACE
-    
+    # kafka is very verbose here
+    org.apache.kafka.clients.NetworkClient: ERROR
+
 logbook:
   filter:
     enabled: true
