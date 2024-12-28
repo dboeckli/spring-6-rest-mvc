@@ -35,7 +35,9 @@ appconfig:
       
 logging:
   level:
-    org.springframework.security: INFO    
+    org.springframework.security: INFO
+    # kafka is very verbose here
+    org.apache.kafka.clients.NetworkClient: ERROR
     
 logbook:
   filter:
