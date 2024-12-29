@@ -1,0 +1,27 @@
+name: Package Cleanup
+run-name: >
+  ${{ github.workflow }}: ${{ github.event_name }} for ${{ github.ref_name }} by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '5 1 * * *' # daily at 1:05
+      
+jobs:
+
+  setup:
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'com.springframework.guru.spring-6-rest-mvc'
+          package-type: 'maven'
+          min-versions-to-keep: 3
+          delete-only-untagged-versions: 'true'
+          ignore-versions: '^\\d+\\.\\d+\\.\\d+$'
