@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/delete-package-versions@v5
         with:
-          package-name: 'com.springframework.guru.spring-6-rest-mvc'
+          package-name: 'ch.dboeckli.springframeworkguru.spring-rest-mvc.spring-6-rest-mvc'
           package-type: 'maven'
           min-versions-to-keep: 3
           delete-only-untagged-versions: 'true'
