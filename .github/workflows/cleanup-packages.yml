@@ -9,7 +9,7 @@ on:
       
 jobs:
 
-  setup:
+  cleanup-maven-package:
 
     runs-on: ubuntu-latest
 
@@ -19,8 +19,19 @@ jobs:
 
     steps:
       - uses: actions/delete-package-versions@v5
+        id: delete-all-feature-and-pr-package
         with:
-          package-name: 'com.springframework.guru.spring-6-rest-mvc'
+          package-name: 'ch.dboeckli.springframeworkguru.spring-rest-mvc.spring-6-rest-mvc'
+          package-type: 'maven'
+          min-versions-to-keep: 1
+          delete-only-untagged-versions: 'true'
+          version-pattern: '.*(_feature_|_PR_feature_).*'
+      
+      
+      - uses: actions/delete-package-versions@v5
+        id: delete-all-packages
+        with:
+          package-name: 'ch.dboeckli.springframeworkguru.spring-rest-mvc.spring-6-rest-mvc'
           package-type: 'maven'
           min-versions-to-keep: 3
           delete-only-untagged-versions: 'true'
