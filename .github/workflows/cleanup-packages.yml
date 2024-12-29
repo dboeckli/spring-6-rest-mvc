@@ -9,7 +9,7 @@ on:
       
 jobs:
 
-  setup:
+  cleanup-maven-package:
 
     runs-on: ubuntu-latest
 
