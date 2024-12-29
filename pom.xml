@@ -107,7 +107,7 @@
         <dependency>
             <groupId>ch.dboeckli.guru.springframework</groupId>
             <artifactId>spring-6-rest-mvc-api </artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
         
         <dependency>
