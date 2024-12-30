@@ -77,8 +77,10 @@ spring:
     
   docker:
     compose:
-      enabled: true  
-    
+      enabled: true
+      stop:
+        command: down
+
 appconfig:
   cache:
     enabled: true    
