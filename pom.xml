@@ -452,17 +452,29 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-maven-plugin</artifactId>
                 <version>${springdoc-openapi-maven-plugin.version}</version>
-                <configuration>
-                    <apiDocsUrl>http://localhost:${tomcat.http.port}/v3/api-docs</apiDocsUrl>
-                    <outputFileName>openapi.json</outputFileName>
-                    <attachArtifact>true</attachArtifact>
-                </configuration>
+                
                 <executions>
                     <execution>
-                        <id>integration-test</id>
+                        <id>generate-open-api.json</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
+                        <configuration>
+                            <apiDocsUrl>http://localhost:${tomcat.http.port}/v3/api-docs</apiDocsUrl>
+                            <outputFileName>openapi.json</outputFileName>
+                            <attachArtifact>true</attachArtifact>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-open-api.yaml</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <apiDocsUrl>http://localhost:${tomcat.http.port}/v3/api-docs.yaml</apiDocsUrl>
+                            <outputFileName>openapi.yaml</outputFileName>
+                            <attachArtifact>true</attachArtifact>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
