@@ -2,6 +2,7 @@ package ch.springframeworkguru.springrestmvc.controller;
 
 import ch.guru.springframework.spring6restmvcapi.dto.CustomerDTO;
 import ch.springframeworkguru.springrestmvc.service.CustomerService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static ch.springframeworkguru.springrestmvc.config.SpringSecurityConfigRest.SECURITY_SCHEME_NAME;
+
 @RestController
 @RequestMapping("${controllers.customer-controller.request-path}")
 @Slf4j
+@SecurityRequirement(name = SECURITY_SCHEME_NAME)
 public class CustomerController {
 
     private final CustomerService customerService;
