@@ -3,6 +3,8 @@ package ch.springframeworkguru.springrestmvc.controller;
 import ch.guru.springframework.spring6restmvcapi.dto.BeerDTO;
 import ch.guru.springframework.spring6restmvcapi.dto.BeerStyle;
 import ch.springframeworkguru.springrestmvc.service.BeerService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -15,19 +17,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 import java.util.UUID;
 
+import static ch.springframeworkguru.springrestmvc.config.OpenApiConfiguration.SECURITY_SCHEME_NAME;
+
 @RestController
 @RequestMapping("${controllers.beer-controller.request-path}")
+@RequiredArgsConstructor
 @Slf4j
+@SecurityRequirement(name = SECURITY_SCHEME_NAME)
 public class BeerController {
 
     @Value("${controllers.beer-controller.request-path}")
     private String requestPath;
 
     private final BeerService beerService;
-
-    public BeerController(BeerService beerService) {
-        this.beerService = beerService;
-    }
 
     @DeleteMapping(value="/deleteBeer/{beerId}")
     public ResponseEntity<BeerDTO> deleteBeer(@PathVariable("beerId") UUID beerId) {
