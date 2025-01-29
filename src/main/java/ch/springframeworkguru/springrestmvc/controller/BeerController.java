@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 import java.util.UUID;
 
-import static ch.springframeworkguru.springrestmvc.config.SpringSecurityConfigRest.SECURITY_SCHEME_NAME;
+import static ch.springframeworkguru.springrestmvc.config.OpenApiConfiguration.SECURITY_SCHEME_NAME;
 
 @RestController
 @RequestMapping("${controllers.beer-controller.request-path}")
 @RequiredArgsConstructor
 @Slf4j
-
+@SecurityRequirement(name = SECURITY_SCHEME_NAME)
 public class BeerController {
 
     @Value("${controllers.beer-controller.request-path}")
@@ -32,7 +32,6 @@ public class BeerController {
     private final BeerService beerService;
 
     @DeleteMapping(value="/deleteBeer/{beerId}")
-    @SecurityRequirement(name = SECURITY_SCHEME_NAME)
     public ResponseEntity<BeerDTO> deleteBeer(@PathVariable("beerId") UUID beerId) {
         if (!beerService.deleteBeer(beerId)) {
             throw new NotFoundException();
@@ -41,7 +40,6 @@ public class BeerController {
     }
 
     @GetMapping(value="/listBeers")
-    @SecurityRequirement(name = SECURITY_SCHEME_NAME)
     public ResponseEntity<Page<BeerDTO>> listBeers(@RequestParam(required = false) String beerName,
                                                    @RequestParam(required = false) BeerStyle beerStyle,
                                                    @RequestParam(required = false) Boolean showInventory,
@@ -51,13 +49,11 @@ public class BeerController {
     }
 
     @GetMapping(value = "/getBeerById/{beerId}")
-    @SecurityRequirement(name = SECURITY_SCHEME_NAME)
     public ResponseEntity<BeerDTO> getBeerById(@PathVariable("beerId") UUID beerId){
         return new ResponseEntity<>(beerService.getBeerById(beerId).orElseThrow(NotFoundException::new), HttpStatus.OK);
     }
 
     @PostMapping(value = "/createBeer")
-    @SecurityRequirement(name = SECURITY_SCHEME_NAME)
     public ResponseEntity<BeerDTO> createBeer(@Validated @RequestBody BeerDTO newBeer) {
         BeerDTO savedBeer = beerService.saveNewBeer(newBeer);
 
@@ -68,7 +64,6 @@ public class BeerController {
     }
 
     @PutMapping(value = "/editBeer/{beerId}")
-    @SecurityRequirement(name = SECURITY_SCHEME_NAME)
     public ResponseEntity<BeerDTO> editBeer(@Validated @RequestBody BeerDTO beer, @PathVariable("beerId") UUID beerId) {
         Optional<BeerDTO> updatedBeer = beerService.editBeer(beerId, beer);
         if (updatedBeer.isEmpty()) {
@@ -79,7 +74,6 @@ public class BeerController {
     }
 
     @PatchMapping(value = "/patchBeer/{beerId}")
-    @SecurityRequirement(name = SECURITY_SCHEME_NAME)
     public ResponseEntity<BeerDTO> patchBeer(@RequestBody BeerDTO beer, @PathVariable("beerId") UUID beerId) {
         Optional<BeerDTO> patchedBeer = beerService.patchBeer(beerId, beer);
         if (patchedBeer.isEmpty()) {

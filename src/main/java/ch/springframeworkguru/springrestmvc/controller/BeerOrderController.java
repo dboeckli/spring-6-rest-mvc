@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-import static ch.springframeworkguru.springrestmvc.config.SpringSecurityConfigRest.SECURITY_SCHEME_NAME;
+import static ch.springframeworkguru.springrestmvc.config.OpenApiConfiguration.SECURITY_SCHEME_NAME;
 
 @RestController
 @RequestMapping("${controllers.beer-order-controller.request-path}")

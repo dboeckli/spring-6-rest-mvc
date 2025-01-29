@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static ch.springframeworkguru.springrestmvc.config.SpringSecurityConfigRest.SECURITY_SCHEME_NAME;
+import static ch.springframeworkguru.springrestmvc.config.OpenApiConfiguration.SECURITY_SCHEME_NAME;
 
 @RestController
 @RequestMapping("${controllers.customer-controller.request-path}")

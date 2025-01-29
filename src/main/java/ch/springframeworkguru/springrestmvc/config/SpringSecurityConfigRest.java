@@ -1,7 +1,6 @@
 package ch.springframeworkguru.springrestmvc.config;
 
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,21 +10,22 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import static ch.springframeworkguru.springrestmvc.config.SpringSecurityConfigRest.SECURITY_SCHEME_NAME;
+import java.util.List;
 
 @Configuration
 @Profile("!test-disabled-security")
-@SecurityScheme(
-    name = SECURITY_SCHEME_NAME,
-    type = SecuritySchemeType.HTTP,
-    bearerFormat = "JWT",
-    scheme = "bearer"
-)
 public class SpringSecurityConfigRest {
-    
-    public final static String SECURITY_SCHEME_NAME = "Bearer Authentication";
 
+    private static final List<String> ALLOWED_HEADERS = List.of("*");
+    private static final List<String> ALLOWED_METHODS = List.of("POST", "GET", "PUT", "OPTIONS", "DELETE", "PATCH");
+    
+    @Value("${security.cors.allowed-origins}")
+    private List<String> allowedOrigins;
+    
     /* http basic auth ./
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -41,14 +41,16 @@ public class SpringSecurityConfigRest {
 
     @Bean
     @Order(99)
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
         http
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                 .requestMatchers(
                     "/v3/api-docs**", 
                     "/v3/api-docs/**", 
                     "/swagger-ui/**",  
-                    "/swagger-ui.html", 
+                    "/swagger-ui.html",
+                    "/swagger-resources/**",
+                    "/webjars/**",
                     "/h2-console/**")
                 .permitAll() // permit all swagger/openapi endpoints
                 //.requestMatchers("/actuator/**").permitAll()
@@ -58,9 +60,26 @@ public class SpringSecurityConfigRest {
             .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/h2-console/**") // CSRF-Schutz für H2-Console deaktivieren
             )
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
             .headers(headers -> headers
                 .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable) // Neue Syntax für Frame-Optionen
             );
         return http.build();
     }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.setAllowedOrigins(allowedOrigins);
+        configuration.setAllowedMethods(ALLOWED_METHODS);
+        configuration.setAllowedHeaders(ALLOWED_HEADERS);
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
 }
