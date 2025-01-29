@@ -4,6 +4,7 @@ import ch.guru.springframework.spring6restmvcapi.dto.BeerOrderDTO;
 import ch.guru.springframework.spring6restmvcapi.dto.create.BeerOrderCreateDTO;
 import ch.guru.springframework.spring6restmvcapi.dto.update.BeerOrderUpdateDTO;
 import ch.springframeworkguru.springrestmvc.service.BeerOrderService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,10 +17,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+import static ch.springframeworkguru.springrestmvc.config.OpenApiConfiguration.SECURITY_SCHEME_NAME;
+
 @RestController
 @RequestMapping("${controllers.beer-order-controller.request-path}")
 @Slf4j
 @RequiredArgsConstructor
+@SecurityRequirement(name = SECURITY_SCHEME_NAME)
 public class BeerOrderController {
 
     @Value("${controllers.beer-order-controller.request-path}")
@@ -39,8 +43,6 @@ public class BeerOrderController {
     
     public static final String DELETE_BEER_ORDER = "/deleteBeerOrder";
     public static final String DELETE_BEER_ORDER_BY_ID = DELETE_BEER_ORDER + "/" + "{" + BEER_ORDER_ID_PATH_VARIABLE + "}";
-    
-    
 
     private final BeerOrderService beerOrderService;
 

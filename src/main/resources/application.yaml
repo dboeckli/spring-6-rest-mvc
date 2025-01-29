@@ -93,11 +93,16 @@ controllers:
     request-path: "/api/v1/beer"  
   beer-order-controller:
     request-path: "/api/v1/beerOrder"  
-    
+  
 springdoc:
+  show-oauth2-endpoints: true
   api-docs:
     enabled: true
-    path: "/v3/api-docs"
+  swagger-ui:
+    oauth:
+      # do that not on production!
+      client-id: messaging-client
+      client-secret: secret
 
 logging:
   level:
@@ -119,4 +124,12 @@ logbook:
       - password
   predicate:
     exclude:
-      - path: /actuator/health    
+      - path: /actuator/health 
+        
+security:
+  authorization-url: http://localhost:9000/oauth2/auth
+  token-url: http://localhost:9000/oauth2/token
+  refresh-url: http://localhost:9000/oauth2/refresh-token
+  cors:
+    # gateway project runs on port 8080
+    allowed-origins: http://localhost:8080,http://127.0.0.1:8080          
