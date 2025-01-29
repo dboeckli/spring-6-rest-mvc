@@ -8,6 +8,10 @@ import io.swagger.v3.oas.annotations.security.OAuthFlow;
 import io.swagger.v3.oas.annotations.security.OAuthFlows;
 import io.swagger.v3.oas.annotations.security.OAuthScope;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import lombok.RequiredArgsConstructor;
+import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springframework.boot.info.BuildProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static ch.springframeworkguru.springrestmvc.config.OpenApiConfiguration.SECURITY_SCHEME_NAME;
@@ -37,8 +41,20 @@ import static ch.springframeworkguru.springrestmvc.config.OpenApiConfiguration.S
     )
 )
 @Configuration
+@RequiredArgsConstructor
 public class OpenApiConfiguration {
 
+    private final BuildProperties buildProperties;
+
     public final static String SECURITY_SCHEME_NAME = "Bearer Authentication";
+
+    @Bean
+    public OpenApiCustomizer customerGlobalHeaderOpenApiCustomizer() {
+        return openApi -> {
+            io.swagger.v3.oas.models.info.Info info = openApi.getInfo();
+            info.setTitle(buildProperties.getName());
+            info.setVersion(buildProperties.getVersion());
+        };
+    }
 
 }
