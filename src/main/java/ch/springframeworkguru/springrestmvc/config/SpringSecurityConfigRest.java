@@ -1,7 +1,11 @@
 package ch.springframeworkguru.springrestmvc.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import jakarta.annotation.PostConstruct;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -10,6 +14,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -17,14 +22,20 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
+@RequiredArgsConstructor
+@Slf4j
 @Profile("!test-disabled-security")
 public class SpringSecurityConfigRest {
 
     private static final List<String> ALLOWED_HEADERS = List.of("*");
     private static final List<String> ALLOWED_METHODS = List.of("POST", "GET", "PUT", "OPTIONS", "DELETE", "PATCH");
-    
-    @Value("${security.cors.allowed-origins}")
-    private List<String> allowedOrigins;
+
+    private final AllowedOriginConfig allowedOriginConfig;
+
+    @PostConstruct
+    public void init() {
+        log.info("### Allowed origins: {}", allowedOriginConfig);
+    }
     
     /* http basic auth ./
     @Bean
@@ -71,7 +82,7 @@ public class SpringSecurityConfigRest {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(allowedOrigins);
+        configuration.setAllowedOrigins(allowedOriginConfig.getAllowedOrigins());
         configuration.setAllowedMethods(ALLOWED_METHODS);
         configuration.setAllowedHeaders(ALLOWED_HEADERS);
         configuration.setAllowCredentials(true);
@@ -80,6 +91,13 @@ public class SpringSecurityConfigRest {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Component
+    @ConfigurationProperties(prefix = "security.cors")
+    @Data
+    public static class AllowedOriginConfig {
+        private List<String> allowedOrigins;
     }
 
 }
