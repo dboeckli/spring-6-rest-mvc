@@ -20,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @Testcontainers
 @Slf4j
 @ActiveProfiles("localmysql")
-public class MySqlIT {
+class MySqlIT {
     @Container
-    static MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:9");
+    static MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.4.4");
 
     @Autowired
     BeerRepository beerRepository;
