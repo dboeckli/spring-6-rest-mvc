@@ -60,7 +60,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           # requires admin gitHub token which can do merge on master
-          token: ${{ secrets.RELEASE_TOKEN }} 
+          token: ${{ secrets.RELEASE_TOKEN }}
           fetch-depth: 0
 
       - name: Set up java 21
@@ -73,10 +73,10 @@ jobs:
           settings-path: ${{ github.workspace }} # location for the settings.xml file  
 
       - name: View settings.xml
-        run: | 
+        run: |
           echo "### show settings.xml ###"
           cat ./settings.xml
-      
+
       - name: Setup git user
         env:
           CI_USER_EMAIL: ${{ vars.CI_USER_EMAIL }}
@@ -98,7 +98,7 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
           # requires admin gitHub token which can do merge on master
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_USER: ${{ vars.DOCKER_USER }}
           DOCKER_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
         run: |
           # Check if required parameters are set
