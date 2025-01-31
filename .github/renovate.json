@@ -50,7 +50,6 @@
     "schedule": [
       "before 5am"
     ],
-    "onboarding": false,
     "platformAutomerge": false,
     "dependencyDashboard": true,
     "prHourlyLimit": 0,
