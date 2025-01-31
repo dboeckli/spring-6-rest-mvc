@@ -54,7 +54,7 @@
     "before 5am"
   ],
   "platformAutomerge": false,
-  "dependencyDashboard": true,
+  "dependencyDashboard": false,
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
   "baseBranches": [
@@ -62,6 +62,7 @@
   ],
   "branchPrefix": "feature/renovate-",
   "separateMinorPatch": true,
-  "separateMajorMinor": true
+  "separateMajorMinor": true,
+  "automerge": false,
+  "rebaseWhen": "conflicted"
 }
-
