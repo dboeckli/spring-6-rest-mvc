@@ -1,6 +1,6 @@
 services:
   mysql:
-    image: 'mysql:8.4.3'
+    image: 'mysql:8.4.4'
     environment:
       - 'MYSQL_DATABASE=mydatabase'
       - 'MYSQL_PASSWORD=secret'
@@ -10,7 +10,7 @@ services:
       - '3306'
   auth-server:
     container_name: auth-server
-    image: domboeckli/spring-6-auth-server:0.0.2-SNAPSHOT
+    image: domboeckli/spring-6-auth-server:0.0.3-SNAPSHOT
     ports:
       - "9000:9000"
     expose:
