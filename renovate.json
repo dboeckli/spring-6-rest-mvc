@@ -25,4 +25,6 @@
   "prConcurrentLimit": 0,
   "baseBranches": ["master"],
   "branchPrefix": "feature/renovate-"
+  "separateMinorPatch": true,
+  "separateMajorMinor": true
 }
