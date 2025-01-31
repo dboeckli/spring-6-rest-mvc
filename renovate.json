@@ -11,6 +11,7 @@
     "enabled": true
   },
   "packageRules": [
+    // Rule for domboeckli images
     {
       "matchDatasources": ["docker"],
       "matchPackagePatterns": ["^domboeckli/"],
@@ -21,6 +22,7 @@
       "requiredStatusChecks": null,
       "matchUpdateTypes": ["major", "minor", "patch", "pin"]
     },
+    // Rule for other Docker images (excluding domboeckli)
     {
       "matchDatasources": ["docker"],
       "excludePackagePatterns": ["^domboeckli/"],
@@ -28,6 +30,7 @@
       "automergeType": "pr",
       "requiredStatusChecks": null
     },
+    // Rule for Docker images with specific version patterns
     {
       "matchDatasources": ["docker"],
       "excludePackagePatterns": ["^domboeckli/"],
@@ -38,6 +41,10 @@
       "automergeType": "pr",
       "requiredStatusChecks": null
     },
+    /* 
+      Rule for Java Testcontainers
+      This rule handles all Testcontainers in Java code
+    */
     {
       "matchManagers": ["java"],
       "matchPackageNames": ["org.testcontainers:testcontainers"],
