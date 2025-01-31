@@ -321,6 +321,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <portNames>
+                                <portName>jmx.server.port</portName>
                                 <portName>tomcat.http.port</portName>
                             </portNames>
                         </configuration>
@@ -387,7 +388,6 @@
                                 <javaVersion>${java.version}</javaVersion>
                                 <javaVendor>${java.vendor}</javaVendor>
                                 <commit-id>${buildNumber}</commit-id>
-                                <!--<docker-repository>${docker.push.repository}/${docker.image.prefix}/${project.artifactId}</docker-repository>-->
                             </additionalProperties>
                         </configuration>
                     </execution>
@@ -408,6 +408,7 @@
                                 <argument>--server.port=${tomcat.http.port}</argument>
                                 <argument>--spring.cloud.kubernetes.enabled=false</argument>
                             </arguments>
+                            <jmxPort>${jmx.server.port}</jmxPort>
                         </configuration>
                     </execution>
 
