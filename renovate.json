@@ -7,6 +7,9 @@
   "docker-compose": {
     "enabled": true
   },
+  "java": {
+    "enabled": true
+  },
   "packageRules": [
     {
       "matchDatasources": ["docker"],
@@ -29,6 +32,20 @@
       "matchDatasources": ["docker"],
       "excludePackagePatterns": ["^domboeckli/"],
       "matchCurrentVersion": "/(^\\d+$|latest)/",
+      "rangeStrategy": "pin",
+      "pinDigests": false,
+      "automerge": false,
+      "automergeType": "pr",
+      "requiredStatusChecks": null
+    },
+    {
+      "matchManagers": ["java"],
+      "matchPackageNames": ["org.testcontainers:testcontainers"],
+      "matchStrings": [
+        "new (?<depName>\\w+)Container<>\\(\"(?<depName>.*?):(?<currentValue>[^\"]+)\"\\)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "docker",
       "rangeStrategy": "pin",
       "pinDigests": false,
       "automerge": false,
