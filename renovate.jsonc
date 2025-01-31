@@ -7,76 +7,105 @@
     // 5. Schedule updates to run before 5am daily.
     // 6. Separate minor and patch updates for better granularity in version control.
     // 7. Use feature branches for all Renovate updates.  
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
-  "enabledManagers": ["docker-compose"],
-  "docker-compose": {
-    "enabled": true
-  },
-  "java": {
-    "enabled": true
-  },
-  "packageRules": [
-    // Rule for domboeckli images
-    {
-      "matchDatasources": ["docker"],
-      "matchPackagePatterns": ["^domboeckli/"],
-      "versioning": "maven",
-      "ignoreUnstable": false,
-      "automerge": false,
-      "automergeType": "pr",
-      "requiredStatusChecks": null,
-      "matchUpdateTypes": ["major", "minor", "patch", "pin"]
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:base"
+    ],
+    "enabledManagers": [
+        "docker-compose"
+    ],
+    "docker-compose": {
+        "enabled": true
     },
-    // Rule for other Docker images (excluding domboeckli)
-    {
-      "matchDatasources": ["docker"],
-      "excludePackagePatterns": ["^domboeckli/"],
-      "automerge": false,
-      "automergeType": "pr",
-      "requiredStatusChecks": null
+    "java": {
+        "enabled": true
     },
-    // Rule for Docker images with specific version patterns
-    {
-      "matchDatasources": ["docker"],
-      "excludePackagePatterns": ["^domboeckli/"],
-      "matchCurrentVersion": "/(^\\d+$|latest)/",
-      "rangeStrategy": "pin",
-      "pinDigests": false,
-      "automerge": false,
-      "automergeType": "pr",
-      "requiredStatusChecks": null
-    },
-    /* 
-      Rule for Java Testcontainers
-      This rule handles all Testcontainers in Java code
-    */
-    {
-      "matchManagers": ["java"],
-      "matchPackageNames": ["org.testcontainers:testcontainers"],
-      "matchStrings": [
-        "new (?<depName>\\w+)Container<>\\(\"(?<depName>.*?):(?<currentValue>[^\"]+)\"\\)"
-      ],
-      "datasourceTemplate": "docker",
-      "versioningTemplate": "docker",
-      "rangeStrategy": "pin",
-      "pinDigests": false,
-      "automerge": false,
-      "automergeType": "pr",
-      "requiredStatusChecks": null
-    }
-  ],
-  "ignoreDeps": ["maven"],
-  "schedule": ["before 5am every day"],
-  "onboarding": false,
-  "platformAutomerge": false,
-  "dependencyDashboard": true,
-  "prHourlyLimit": 0,
-  "prConcurrentLimit": 0,
-  "baseBranches": ["master"],
-  "branchPrefix": "feature/renovate-",
-  "separateMinorPatch": true,
-  "separateMajorMinor": true
+    "packageRules": [
+        // Rule for domboeckli images
+        {
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchPackagePatterns": [
+                "^domboeckli/"
+            ],
+            "versioning": "maven",
+            "ignoreUnstable": false,
+            "automerge": false,
+            "automergeType": "pr",
+            "requiredStatusChecks": null,
+            "matchUpdateTypes": [
+                "major",
+                "minor",
+                "patch",
+                "pin"
+            ]
+        },
+        // Rule for other Docker images (excluding domboeckli)
+        {
+            "matchDatasources": [
+                "docker"
+            ],
+            "excludePackagePatterns": [
+                "^domboeckli/"
+            ],
+            "automerge": false,
+            "automergeType": "pr",
+            "requiredStatusChecks": null
+        },
+        // Rule for Docker images with specific version patterns
+        {
+            "matchDatasources": [
+                "docker"
+            ],
+            "excludePackagePatterns": [
+                "^domboeckli/"
+            ],
+            "matchCurrentVersion": "/(^\\d+$|latest)/",
+            "rangeStrategy": "pin",
+            "pinDigests": false,
+            "automerge": false,
+            "automergeType": "pr",
+            "requiredStatusChecks": null
+        },
+        /* 
+          Rule for Java Testcontainers
+          This rule handles all Testcontainers in Java code
+        */
+        {
+            "matchManagers": [
+                "java"
+            ],
+            "matchPackageNames": [
+                "org.testcontainers:testcontainers"
+            ],
+            "matchStrings": [
+                "new (?<depName>\\w+)Container<>\\(\"(?<depName>.*?):(?<currentValue>[^\"]+)\"\\)"
+            ],
+            "datasourceTemplate": "docker",
+            "versioningTemplate": "docker",
+            "rangeStrategy": "pin",
+            "pinDigests": false,
+            "automerge": false,
+            "automergeType": "pr",
+            "requiredStatusChecks": null
+        }
+    ],
+    "ignoreDeps": [
+        "maven"
+    ],
+    "schedule": [
+        "before 5am every day"
+    ],
+    "onboarding": false,
+    "platformAutomerge": false,
+    "dependencyDashboard": true,
+    "prHourlyLimit": 0,
+    "prConcurrentLimit": 0,
+    "baseBranches": [
+        "master"
+    ],
+    "branchPrefix": "feature/renovate-",
+    "separateMinorPatch": true,
+    "separateMajorMinor": true
 }
