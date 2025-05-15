@@ -107,7 +107,13 @@ logbook:
       - password
   predicate:
     exclude:
-      - path: /actuator/health    
+      # Exclude HTML-related calls and specific endpoints that Logbook doesn't handle correctly
+      - path: /actuator/health/**
+      - path: /h2-console/**  # Exclude H2 console
+      - path: /swagger-ui/**  # Exclude Swagger UI if used
+      - path: /v3/api-docs/** # Exclude OpenAPI docs if used
+      - path: /favicon.ico
+      # Add more exclusions as needed
   
 controllers:
   customer-controller:
@@ -128,9 +134,10 @@ springdoc:
       client-secret: secret
         
 security:
-  authorization-url: http://localhost:9000/oauth2/auth
-  token-url: http://localhost:9000/oauth2/token
-  refresh-url: http://localhost:9000/oauth2/refresh-token
+  auth-server-health-url: http://localhost:9000
+  authorization-url-for-openapi: http://localhost:9000/oauth2/auth
+  token-url-for-openapi: http://localhost:9000/oauth2/token
+  refresh-url-for-openapi: http://localhost:9000/oauth2/refresh-token
   cors:
     allowed-origins:
       - http://localhost:8080 # gateway project runs on port 8080

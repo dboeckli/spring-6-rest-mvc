@@ -48,7 +48,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @RecordApplicationEvents
-// TODO: PLACE CONTROLLER TESTS AND MOCKMVC TESTS IN SEPARATED CLASSES
 class BeerControllerIT {
 
     @Autowired

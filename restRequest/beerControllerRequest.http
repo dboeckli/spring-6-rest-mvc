@@ -1,17 +1,17 @@
 ###
-GET http://localhost:8081/api/v1/beer/listBeers
+GET http://localhost:{{application-port}}/api/v1/beer/listBeers
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
 
 ###
-GET http://localhost:8081/api/v1/beer/getBeerById/d7a6cb91-ce9d-4553-a51e-8a9e54d6c37a
+GET http://localhost:{{application-port}}/api/v1/beer/getBeerById/d7a6cb91-ce9d-4553-a51e-8a9e54d6c37a
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
 
 ###
-POST http://localhost:8081/api/v1/beer/createBeer
+POST http://localhost:{{application-port}}/api/v1/beer/createBeer
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
@@ -26,7 +26,7 @@ Authorization: Bearer {{$auth.token("auth-id")}}
 }
 
 ###
-PUT http://localhost:8081/api/v1/beer/editBeer/4908886e-8df4-4df1-bdb0-6ac0bae289af
+PUT http://localhost:{{application-port}}/api/v1/beer/editBeer/4908886e-8df4-4df1-bdb0-6ac0bae289af
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
@@ -41,7 +41,7 @@ Authorization: Bearer {{$auth.token("auth-id")}}
 }
 
 ###
-PATCH http://localhost:8081/api/v1/beer/patchBeer/9d07c34b-36fb-4108-b9ca-0de3393ea2ab
+PATCH http://localhost:{{application-port}}/api/v1/beer/patchBeer/9d07c34b-36fb-4108-b9ca-0de3393ea2ab
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
@@ -51,13 +51,13 @@ Authorization: Bearer {{$auth.token("auth-id")}}
 }
 
 ###
-DELETE http://localhost:8081/api/v1/beer/deleteBeer/6ab05faf-743d-443b-8ad6-5e8ae531d12d
+DELETE http://localhost:{{application-port}}/api/v1/beer/deleteBeer/6ab05faf-743d-443b-8ad6-5e8ae531d12d
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
 
 ### this one does not work anymore. we need a jwt token
-GET http://localhost:8081/api/v1/beer/listBeers
+GET http://localhost:{{application-port}}/api/v1/beer/listBeers
 Accept: application/json
 Content-Type: application/json
 Authorization: Basic master password

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 class MySql2IT {
     @Container
     @ServiceConnection
-    static MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.4.4");
+    static MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.4.5");
 
     @Autowired
     BeerRepository beerRepository;
