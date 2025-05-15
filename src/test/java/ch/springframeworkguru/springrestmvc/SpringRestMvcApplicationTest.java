@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest(useMainMethod = SpringBootTest.UseMainMethod.ALWAYS)
 @ActiveProfiles("test")
 @Slf4j
-class SpringRestMvcApplicationTests {
+class SpringRestMvcApplicationTest {
 
     @Autowired
     private ApplicationContext applicationContext;
