@@ -42,14 +42,14 @@ probes:
     failureThreshold: 6
 
 mysql:
-  database: mydatabase
+  database: restmvcdb
 
   port: 3306
   targetPort: 3306
   nodePort: 30306
 
-  user: myuser
-  password: secret
+  user: restadmin
+  password: password
 
   rootPassword: verysecret
 

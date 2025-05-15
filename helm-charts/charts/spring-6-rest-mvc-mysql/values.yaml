@@ -6,9 +6,9 @@ mysql:
   targetPort: 3306
   nodePort: 30306
   
-  database: "mydatabase"
+  database: "restmvcdb"
 
-  user: myuser
-  password: secret
+  user: restadmin
+  password: password
 
   rootPassword: verysecret

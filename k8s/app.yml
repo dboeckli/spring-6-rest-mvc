@@ -40,7 +40,7 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               value: localmysql
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mysql:3306/restdb?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+              value: jdbc:mysql://mysql:3306/restmvcdb?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
             - name: SPRING_DATASOURCE_USERNAME
               value: restadmin
             - name: SPRING_DATASOURCE_PASSWORD
