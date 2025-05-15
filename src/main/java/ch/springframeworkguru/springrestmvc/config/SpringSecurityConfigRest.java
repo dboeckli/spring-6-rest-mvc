@@ -36,19 +36,6 @@ public class SpringSecurityConfigRest {
     public void init() {
         log.info("### Allowed origins: {}", allowedOriginConfig);
     }
-    
-    /* http basic auth ./
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorizeRequests -> 
-                authorizeRequests.anyRequest().authenticated())
-            
-            .httpBasic(Customizer.withDefaults())
-            
-            .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.ignoringRequestMatchers("/api/**"));
-        return http.build();
-    }*/
-
 
     @Bean
     @Order(99)
