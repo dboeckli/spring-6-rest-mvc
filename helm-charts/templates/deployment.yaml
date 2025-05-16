@@ -41,11 +41,11 @@ spec:
               value: "http://{{ .Release.Name }}-spring-6-auth-server.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.authServer.port }}"
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
               value: "http://{{ .Release.Name }}-spring-6-auth-server.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.authServer.port }}"
-            - name: SECURITY_AUTHORIZATION_URL
+            - name: SECURITY_AUTHORIZATION_URL_FOR_OPENAPI
               value: "http://localhost:{{ .Values.authServer.nodePort }}/oauth2/auth"
-            - name: SECURITY_TOKEN_URL
+            - name: SECURITY_TOKEN_URL_FOR_OPENAPI
               value: "http://localhost:{{ .Values.authServer.nodePort }}/oauth2/token"
-            - name: SECURITY_REFRESH_URL
+            - name: SECURITY_REFRESH_URL_FOR_OPENAPI
               value: "http://localhost:{{ .Values.authServer.nodePort }}/oauth2/refresh-token"
           envFrom:
             - secretRef:
