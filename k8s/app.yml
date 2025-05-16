@@ -38,7 +38,7 @@ spec:
           image: @docker.repo@/@project.artifactId@:@project.version@
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: localmysql
+              value: mysql
             - name: SPRING_DATASOURCE_URL
               value: jdbc:mysql://mysql:3306/restmvcdb?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
             - name: SPRING_DATASOURCE_USERNAME

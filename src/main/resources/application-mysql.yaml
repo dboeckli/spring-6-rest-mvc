@@ -78,6 +78,7 @@ spring:
   docker:
     compose:
       enabled: true
+      file: compose.yaml
       stop:
         command: down
 
