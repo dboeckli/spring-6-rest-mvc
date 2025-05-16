@@ -90,7 +90,7 @@ class BeerControllerIT {
                     claims.put("scope", "message.write");
                 })
                 .subject("messaging-client")
-                .notBefore(Instant.now().minusSeconds(5l));
+                .notBefore(Instant.now().minusSeconds(5L));
         });
 
     @Test

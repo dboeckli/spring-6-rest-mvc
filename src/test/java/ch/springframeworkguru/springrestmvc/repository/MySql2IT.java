@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @SpringBootTest
 @Testcontainers
 @Slf4j
-@ActiveProfiles("localmysql")
+@ActiveProfiles("mysql")
 class MySql2IT {
     @Container
     @ServiceConnection
