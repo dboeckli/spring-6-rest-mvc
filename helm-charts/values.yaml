@@ -48,6 +48,8 @@ probes:
     failureThreshold: 6
 
 mysql:
+  enabled: true
+
   database: restmvcdb
 
   port: 3306
@@ -60,6 +62,8 @@ mysql:
   rootPassword: verysecret
 
 authServer:
+  enabled: true
+
   port: 9000
   targetPort: 9000
   nodePort: 30900
