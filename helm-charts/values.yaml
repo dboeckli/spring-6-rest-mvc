@@ -67,10 +67,6 @@ authServer:
 ingress:
   enabled: false
 
-# This allows us to overwrite these values when we use the project as a dependency
-env:
-  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ""
-
 # Section for overriding values in subcharts.
 
 spring-6-auth-server:
