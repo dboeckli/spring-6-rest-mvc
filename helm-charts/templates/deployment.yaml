@@ -29,6 +29,7 @@ spec:
           env:
             - name: JAVA_TIMEZONE
               value: "{{ .Values.global.timezone }}"
+
             - name: SPRING_PROFILES_ACTIVE
               value: {{ .Values.spring.profiles.active | default "local" }}
             - name: SPRING_LIQUIBASE_ENABLED
@@ -37,16 +38,18 @@ spec:
               value: "true"
             - name: SPRING_DATASOURCE_URL
               value: jdbc:mysql://{{ .Release.Name }}-spring-6-rest-mvc-mysql.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.mysql.port }}/{{ .Values.mysql.database }}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+
             - name: SECURITY_AUTH_SERVER_HEALTH_URL
-              value: "http://{{ .Release.Name }}-spring-6-auth-server.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.authServer.port }}"
+              value: {{ .Values.spring.oauth2ResourceServer.issuerUri | default (printf "http://%s-spring-6-auth-server.%s.svc.cluster.local:%s" .Release.Name .Release.Namespace (toString .Values.authServer.port)) | quote }}
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
-              value: "http://{{ .Release.Name }}-spring-6-auth-server.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.authServer.port }}"
-            - name: SECURITY_AUTHORIZATION_URL
-              value: "http://localhost:{{ .Values.authServer.nodePort }}/oauth2/auth"
-            - name: SECURITY_TOKEN_URL
-              value: "http://localhost:{{ .Values.authServer.nodePort }}/oauth2/token"
-            - name: SECURITY_REFRESH_URL
-              value: "http://localhost:{{ .Values.authServer.nodePort }}/oauth2/refresh-token"
+              value: {{ .Values.spring.oauth2ResourceServer.issuerUri | default (printf "http://%s-spring-6-auth-server.%s.svc.cluster.local:%s" .Release.Name .Release.Namespace (toString .Values.authServer.port)) | quote }}
+
+            - name: SECURITY_AUTHORIZATION_URL_FOR_OPENAPI
+              value: "{{ .Values.externalAccess.protocol }}://{{ .Values.externalAccess.host}}:{{ .Values.authServer.nodePort }}/oauth2/auth"
+            - name: SECURITY_TOKEN_URL_FOR_OPENAPI
+              value: "{{ .Values.externalAccess.protocol }}://{{ .Values.externalAccess.host}}:{{ .Values.authServer.nodePort }}/oauth2/token"
+            - name: SECURITY_REFRESH_URL_FOR_OPENAPI
+              value: "{{ .Values.externalAccess.protocol }}://{{ .Values.externalAccess.host}}:{{ .Values.authServer.nodePort }}/oauth2/refresh-token"
           envFrom:
             - secretRef:
                 name: {{ include "application-template.fullname" . }}-spring-mysql-secrets

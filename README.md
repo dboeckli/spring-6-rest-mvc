@@ -5,15 +5,23 @@ This is the Backend Part. Application is listening on port 8081/30081
 * default profile: runs with a in memory h2 database: 
 * mysql: requires mysql provided by a docker image
 
-![Spring Framework 6 Architecture](guru.png)
+![Spring Framework 6 Architecture](docs/guru.png)
 *Spring Framework 6 Architecture Diagram*
 
 When Testing this module requires that the authentication server is up and running at localhost on port 9000/30090. 
 
-- openapi api-docs: http://localhost:8081/v3/api-docs
-- openapi gui: http://localhost:8081/swagger-ui/index.html
-- openapi-yaml: http://localhost:8081/v3/api-docs.yaml
-- h2-console: http://localhost:8081/h2-console (check application.yaml for connection parameters)
+- openapi api-docs: 
+  - http://localhost:8081/v3/api-docs
+  - http://localhost:30081/v3/api-docs
+- openapi gui: 
+  - http://localhost:8081/swagger-ui/index.html
+  - http://localhost:30081/swagger-ui/index.html
+- openapi-yaml: 
+  - http://localhost:8081/v3/api-docs.yaml
+  - http://localhost:30081/v3/api-docs.yaml
+- h2-console: 
+  - http://localhost:8081/h2-console (check application.yaml for connection parameters)
+  - http://localhost:30081/h2-console (check application.yaml for connection parameters)
 
 ## Kubernetes
 
@@ -93,7 +101,7 @@ uninstall
 helm uninstall $APPLICATION_NAME --namespace spring-6-rest-mvc
 ```
 
-You can use the actuator rest call to verify via port 30083
+You can use the actuator rest call to verify via port 30081
 
 ## Docker
 
