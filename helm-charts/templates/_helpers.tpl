@@ -66,10 +66,11 @@ spring-6-rest-mvc-mysql service FQDN
 {{- printf "%s-%s.%s.svc.cluster.local" $fullname "spring-6-rest-mvc-mysql" .Release.Namespace }}
 {{- end -}}
 
+
 {{/*
-spring-6-auth-server service FQDN
+Use the aspring-6-auth-server service FQDN
 */}}
 {{- define "spring-6-auth-server.serviceFQDN" -}}
-{{- $fullname := include "spring-6-auth-server.fullname" . -}}
+{{- $fullname := include "application-template.fullname" . -}}
 {{- printf "%s-%s.%s.svc.cluster.local" $fullname "spring-6-auth-server" .Release.Namespace }}
 {{- end -}}
