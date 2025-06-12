@@ -68,7 +68,7 @@ spring-6-rest-mvc-mysql service FQDN
 
 
 {{/*
-Use the aspring-6-auth-server service FQDN
+Use the spring-6-auth-server service FQDN
 */}}
 {{- define "spring-6-auth-server.serviceFQDN" -}}
 {{- $fullname := include "application-template.fullname" . -}}
