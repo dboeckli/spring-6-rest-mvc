@@ -49,3 +49,11 @@ Selector labels
 app.kubernetes.io/name: {{ include "spring-6-rest-mvc-mysql.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+Create the FQDN for the service
+*/}}
+{{- define "spring-6-rest-mvc-mysql.serviceFQDN" -}}
+{{- $fullname := include "spring-6-rest-mvc-mysql.fullname" . -}}
+{{- printf "%s.%s.svc.cluster.local" $fullname .Release.Namespace }}
+{{- end }}
