@@ -57,20 +57,3 @@ Create the FQDN for the service
 {{- $fullname := include "application-template.fullname" . -}}
 {{- printf "%s.%s.svc.cluster.local" $fullname .Release.Namespace }}
 {{- end }}
-
-{{/*
-spring-6-rest-mvc-mysql service FQDN
-*/}}
-{{- define "spring-6-rest-mvc-mysql.serviceFQDN" -}}
-{{- $fullname := include "spring-6-rest-mvc-mysql.fullname" . -}}
-{{- printf "%s-%s.%s.svc.cluster.local" $fullname "spring-6-rest-mvc-mysql" .Release.Namespace }}
-{{- end -}}
-
-
-{{/*
-Use the spring-6-auth-server service FQDN
-*/}}
-{{- define "spring-6-auth-server.serviceFQDN" -}}
-{{- $fullname := include "application-template.fullname" . -}}
-{{- printf "%s-%s.%s.svc.cluster.local" $fullname "spring-6-auth-server" .Release.Namespace }}
-{{- end -}}
