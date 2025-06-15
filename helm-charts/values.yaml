@@ -61,12 +61,16 @@ mysql:
 
   rootPassword: verysecret
 
+  serviceFQDN: "spring-6-rest-mvc-spring-6-rest-mvc-mysql.spring-6-rest-mvc.svc.cluster.local"
+
 authServer:
   enabled: true
 
   port: 9000
   targetPort: 9000
   nodePort: 30900
+
+  serviceFQDN: "spring-6-rest-mvc-spring-6-auth-server.spring-6-rest-mvc.svc.cluster.local"
 
 ingress:
   enabled: false
