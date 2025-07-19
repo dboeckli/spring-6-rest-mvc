@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "spring-6-rest-mvc-mysql.fullname" . }}-mysql-init
+  name: {{ include "mysql.fullname" . }}-mysql-init
   namespace: {{ .Values.global.namespace }}
   labels:
-    {{- include "spring-6-rest-mvc-mysql.labels" . | nindent 4 }}
+    {{- include "mysql.labels" . | nindent 4 }}
 data:
   # TODO: USE VALUE FOR DB AND USER
   init.sql: |-

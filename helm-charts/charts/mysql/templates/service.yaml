@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "spring-6-rest-mvc-mysql.fullname" . }}
+  name: {{ include "mysql.fullname" . }}
   namespace: {{ .Values.global.namespace }}
   labels:
-    {{- include "spring-6-rest-mvc-mysql.labels" . | nindent 4 }}
+    {{- include "mysql.labels" . | nindent 4 }}
     app.kubernetes.io/component: database
 spec:
   selector:
-    {{- include "spring-6-rest-mvc-mysql.selectorLabels" . | nindent 4 }}
+    {{- include "mysql.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: database
   ports:
     - protocol: TCP

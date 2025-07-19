@@ -7,8 +7,10 @@ global:
 replicaCount: 1
 
 image:
-  repository: @docker.repo@/@project.artifactId@
-  tag: @project.version@
+  # Those values are set by Maven filtering
+  # and will be replaced with a valid version number during the build process.
+  registry: @docker.repo@
+  pullPolicy: IfNotPresent
 
 service:
   type: NodePort
@@ -61,7 +63,7 @@ mysql:
 
   rootPassword: verysecret
 
-  serviceFQDN: "spring-6-rest-mvc-spring-6-rest-mvc-mysql.spring-6-rest-mvc.svc.cluster.local"
+  serviceFQDN: "spring-6-rest-mvc-mysql.spring-6-rest-mvc.svc.cluster.local"
 
 authServer:
   enabled: true
