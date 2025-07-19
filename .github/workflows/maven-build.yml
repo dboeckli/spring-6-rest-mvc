@@ -372,8 +372,7 @@ jobs:
                   -Dsonar.branch.name=${BRANCH_NAME} \
                   -Dsonar.branch.target=master \
                   -Dsonar.verbose=true \
-                  -Dsonar.scanner.scm.echoAll=true \
-                  -Dsonar.scm.use.blame.algorithm=GIT_FILES_BLAME
+                  -Dsonar.scanner.scm.echoAll=true
           fi 
 
   Trigger-Deploy:
