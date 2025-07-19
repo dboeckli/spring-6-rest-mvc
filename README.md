@@ -3,7 +3,7 @@
 
 This is the Backend Part. Application is listening on port 8081/30081
 * default profile: runs with a in memory h2 database: 
-* mysql: requires mysql provided by a docker image
+* mysql: requires mysql provided by a docker image.
 
 ![Spring Framework 6 Architecture](docs/guru.png)
 *Spring Framework 6 Architecture Diagram*
@@ -109,6 +109,16 @@ helm test $APPLICATION_NAME --namespace spring-6-rest-mvc --logs
 uninstall
 ```powershell
 helm uninstall $APPLICATION_NAME --namespace spring-6-rest-mvc
+```
+
+delete all
+```powershell
+kubectl delete all --all -n spring-6-rest-mvc
+```
+
+create busybox sidecar
+```powershell
+kubectl run busybox-test --rm -it --image=busybox:1.36 --namespace=spring-6-rest-mvc --command -- sh
 ```
 
 You can use the actuator rest call to verify via port 30081

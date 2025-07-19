@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "spring-6-rest-mvc-mysql.fullname" . }}
+  name: {{ include "mysql.fullname" . }}
   namespace: {{ .Values.global.namespace }}
   labels:
-    {{- include "spring-6-rest-mvc-mysql.labels" . | nindent 4 }}
+    {{- include "mysql.labels" . | nindent 4 }}
     app.kubernetes.io/component: database
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "spring-6-rest-mvc-mysql.selectorLabels" . | nindent 6 }}
+      {{- include "mysql.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: database
   template:
     metadata:
       labels:
-        {{- include "spring-6-rest-mvc-mysql.selectorLabels" . | nindent 8 }}
+        {{- include "mysql.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: database
     spec:
       containers:
         - name: mysql
-          image: mysql:8.4.5
-          imagePullPolicy: IfNotPresent
+          image: {{ .Values.mysqlImage.repository }}:{{ .Values.mysqlImage.tag }}
+          imagePullPolicy: {{ .Values.mysqlImage.pullPolicy }}
           env:
             - name: MYSQL_DATABASE
               value: {{ .Values.mysql.database }}
@@ -29,7 +29,7 @@ spec:
               value: "true"
           envFrom:
             - secretRef:
-                name: {{ include "spring-6-rest-mvc-mysql.fullname" . }}-secrets
+                name: {{ include "mysql.fullname" . }}-secrets
           args:
             - --character-set-server=utf8mb4
             - --collation-server=utf8mb4_unicode_ci
@@ -53,4 +53,4 @@ spec:
           emptyDir: { }
         - name: mysql-init-script
           configMap:
-            name: {{ include "spring-6-rest-mvc-mysql.fullname" . }}-mysql-init
+            name: {{ include "mysql.fullname" . }}-mysql-init
