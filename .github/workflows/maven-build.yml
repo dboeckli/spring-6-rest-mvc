@@ -370,7 +370,10 @@ jobs:
                   -Dsonar.organization=${ORGANIZATION} \
                   -Dsonar.projectKey="${ORGANIZATION}_${ARTIFACT_ID}" \
                   -Dsonar.branch.name=${BRANCH_NAME} \
-                  -Dsonar.branch.target=master
+                  -Dsonar.branch.target=master \
+                  -Dsonar.verbose=true \
+                  -Dsonar.scanner.scm.echoAll=true \
+                  -Dsonar.scm.use.blame.algorithm=GIT_FILES_BLAME
           fi 
 
   Trigger-Deploy:
