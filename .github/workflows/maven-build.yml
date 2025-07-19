@@ -371,7 +371,7 @@ jobs:
                   -Dsonar.projectKey="${ORGANIZATION}_${ARTIFACT_ID}" \
                   -Dsonar.branch.name=${BRANCH_NAME} \
                   -Dsonar.branch.target=master \
-                  -Dsonar.scm.disabled=true
+                  -Dsonar.exclusions=**/*.jpg,**/*.png,**/*.pdf,**/*.ico
           fi 
 
   Trigger-Deploy:
