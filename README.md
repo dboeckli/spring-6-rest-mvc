@@ -3,7 +3,7 @@
 
 This is the Backend Part. Application is listening on port 8081/30081
 * default profile: runs with a in memory h2 database: 
-* mysql: requires mysql provided by a docker image
+* mysql: requires mysql provided by a docker image.
 
 ![Spring Framework 6 Architecture](docs/guru.png)
 *Spring Framework 6 Architecture Diagram*
