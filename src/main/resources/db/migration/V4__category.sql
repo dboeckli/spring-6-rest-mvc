@@ -7,7 +7,7 @@ create table category
     description        varchar(50),
     created_date       timestamp,
     last_modified_date datetime(6) DEFAULT NULL,
-    version            bigint      DEFAULT NULL
+    version            bigint DEFAULT NULL
 ) ENGINE = InnoDB;
 
 create table beer_category
