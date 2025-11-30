@@ -38,7 +38,7 @@ public class Beer {
 
     @NotNull
     @NotBlank
-    @Size(max=50)
+    @Size(max = 50)
     @Column(length = 50, nullable = false)
     private String beerName;
 
@@ -50,12 +50,12 @@ public class Beer {
     @NotBlank
     @Size(max = 255)
     private String upc;
-    
+
     private Integer quantityOnHand;
 
     @NotNull
     private BigDecimal price;
-    
+
     @OneToMany(mappedBy = "beer")
     @ToString.Exclude
     private Set<BeerOrderLine> beerOrderLines;
@@ -64,7 +64,12 @@ public class Beer {
     @ToString.Exclude
     @ManyToMany(mappedBy = "beers")
     private Set<Category> categories = new HashSet<>();
-    
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdDate;
+    @UpdateTimestamp
+    private LocalDateTime updateDate;
+
     public void addCategory(Category category) {
         categories.add(category);
         category.getBeers().add(this);
@@ -74,11 +79,4 @@ public class Beer {
         categories.remove(category);
         category.getBeers().remove(this);
     }
-
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime createdDate;
-
-    @UpdateTimestamp
-    private LocalDateTime updateDate;
 }

@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.ContainerTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,11 +21,11 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@EmbeddedKafka(controlledShutdown = true, topics = {KafkaConfig.ORDER_PLACED_TOPIC}, partitions = 1, kraft = true)
+@EmbeddedKafka(controlledShutdown = true, topics = {KafkaConfig.ORDER_PLACED_TOPIC}, partitions = 1)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class OrderPlacedListenerTest {
 
@@ -40,15 +40,13 @@ class OrderPlacedListenerTest {
 
     @Autowired
     DrinkListenerKafkaConsumer drinkListenerKafkaConsumer;
-    
+
     @Autowired
     DrinkSplitterRouter drinkSplitterRouter;
 
     @BeforeEach
     void setUp() {
-        kafkaListenerEndpointRegistry.getListenerContainers().forEach(container -> {
-            ContainerTestUtils.waitForAssignment(container, 1);
-        });
+        kafkaListenerEndpointRegistry.getListenerContainers().forEach(container -> ContainerTestUtils.waitForAssignment(container, 1));
     }
 
 
@@ -60,13 +58,11 @@ class OrderPlacedListenerTest {
 
         orderPlacedListener.listen(orderPlacedEvent);
 
-        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
-            assertEquals(1, orderPlacedKafkaListener.messageCounter.get());
-        });
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, orderPlacedKafkaListener.messageCounter.get()));
     }
 
     @Test
-    void listenSplitter()  {
+    void listenSplitter() {
         drinkSplitterRouter.receive(OrderPlacedEvent.builder()
             .beerOrderDTO(buildOrder())
             .build());
@@ -116,5 +112,5 @@ class OrderPlacedListenerTest {
             .beerOrderLines(beerOrderLines)
             .build();
     }
-    
+
 }

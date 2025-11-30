@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class DrinkPreparedListener {
-    
+
     BeerOrderLineRepository beerOrderLineRepository;
 
     @KafkaListener(topics = KafkaConfig.DRINK_PREPARED_TOPIC, groupId = "drinkPreparedListener")
@@ -25,5 +25,5 @@ public class DrinkPreparedListener {
             beerOrderLineRepository.save(beerOrderLine);
         }, () -> log.error("BeerOrderLine not found: {}", event.getBeerOrderLineDTO().getId()));
     }
-    
+
 }

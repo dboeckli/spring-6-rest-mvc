@@ -17,7 +17,7 @@ public class CacheConfiguration {
     @Bean
     public CacheManager cacheManager(@Value("${appconfig.cache.enabled}") boolean cacheEnabled) {
         log.info("Cache config enabled: " + cacheEnabled);
-        if(cacheEnabled) {
+        if (cacheEnabled) {
             log.info("Caching enabled");
             return new ConcurrentMapCacheManager();
         }

@@ -12,8 +12,8 @@ import org.springframework.security.core.Authentication;
 @Getter
 @Setter
 public class BeerPatchEvent implements BeerEvent {
-    
+
     private Beer beer;
-    
+
     private Authentication authentication;
 }

@@ -25,7 +25,7 @@ public class BeerOrderLine {
     @GeneratedValue(generator = "UUID")
     @UuidGenerator
     @JdbcTypeCode(SqlTypes.CHAR)
-    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false )
+    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
 
     @Version
@@ -37,25 +37,20 @@ public class BeerOrderLine {
 
     @UpdateTimestamp
     private Timestamp updateDate;
+    @Builder.Default
+    @Min(value = 1, message = "Quantity On Hand must be greater than 0")
+    private Integer orderQuantity = 1;
+    @Builder.Default
+    private Integer quantityAllocated = 0;
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private BeerOrderLineStatus orderLineStatus = BeerOrderLineStatus.NEW;
+    @ManyToOne
+    private BeerOrder beerOrder;
+    @ManyToOne
+    private Beer beer;
 
     public boolean isNew() {
         return this.id == null;
     }
-
-    @Builder.Default
-    @Min(value = 1, message = "Quantity On Hand must be greater than 0")
-    private Integer orderQuantity = 1;
-
-    @Builder.Default
-    private Integer quantityAllocated = 0;
-
-    @Builder.Default
-    @Enumerated(EnumType.STRING)
-    private BeerOrderLineStatus orderLineStatus = BeerOrderLineStatus.NEW;
-
-    @ManyToOne
-    private BeerOrder beerOrder;
-
-    @ManyToOne
-    private Beer beer;
 }

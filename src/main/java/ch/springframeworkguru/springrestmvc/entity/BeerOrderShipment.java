@@ -25,7 +25,7 @@ public class BeerOrderShipment {
     @GeneratedValue(generator = "UUID")
     @UuidGenerator
     @JdbcTypeCode(SqlTypes.CHAR)
-    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false )
+    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
 
     @Version
@@ -36,17 +36,15 @@ public class BeerOrderShipment {
 
     @NotBlank
     private String trackingNumber;
+    @CreationTimestamp
+    @Column(updatable = false)
+    private Timestamp createdDate;
+    @UpdateTimestamp
+    private Timestamp lastModifiedDate;
 
     @Override
     public int hashCode() {
         return super.hashCode();
     }
 
-    @CreationTimestamp
-    @Column(updatable = false)
-    private Timestamp createdDate;
-
-    @UpdateTimestamp
-    private Timestamp lastModifiedDate;
-   
 }

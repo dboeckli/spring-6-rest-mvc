@@ -26,7 +26,7 @@ public class CustomerServiceJpaImpl implements CustomerService {
     CustomerRepository customerRepository;
 
     CustomerMapper customerMapper;
-    
+
     CacheManager cacheManager;
 
     public CustomerServiceJpaImpl(CustomerRepository customerRepository, CustomerMapper customerMapper, CacheManager cacheManager) {
@@ -39,19 +39,19 @@ public class CustomerServiceJpaImpl implements CustomerService {
     @Cacheable(cacheNames = "customerListCache")
     public List<CustomerDTO> listCustomers() {
         return customerRepository
-                .findAll()
-                .stream()
-                .map(customerMapper::customerToCustomerDto)
-                .collect(Collectors.toList());
+            .findAll()
+            .stream()
+            .map(customerMapper::customerToCustomerDto)
+            .collect(Collectors.toList());
     }
 
     @Override
     @Cacheable(cacheNames = "customerCache")
     public Optional<CustomerDTO> getCustomerById(UUID id) {
         return Optional.ofNullable(customerMapper
-                .customerToCustomerDto(customerRepository
-                        .findById(id)
-                        .orElse(null)));
+            .customerToCustomerDto(customerRepository
+                .findById(id)
+                .orElse(null)));
     }
 
     @Override
@@ -74,7 +74,7 @@ public class CustomerServiceJpaImpl implements CustomerService {
     })
     public Optional<CustomerDTO> editCustomer(UUID customerId, CustomerDTO customerToEdit) {
         clearCache(customerId);
-        
+
         customerRepository.findById(customerId).ifPresent(foundCustomer -> {
             if (StringUtils.hasText(customerToEdit.getName())) {
                 foundCustomer.setName(customerToEdit.getName());
@@ -92,7 +92,7 @@ public class CustomerServiceJpaImpl implements CustomerService {
     })
     public Optional<CustomerDTO> patchCustomer(UUID customerId, CustomerDTO customerToPatch) {
         clearCache(customerId);
-        
+
         customerRepository.findById(customerId).ifPresent(foundCustomer -> {
             if (StringUtils.hasText(customerToPatch.getName())) {
                 foundCustomer.setName(customerToPatch.getName());
@@ -111,9 +111,9 @@ public class CustomerServiceJpaImpl implements CustomerService {
     })
     public Boolean deleteCustomer(UUID customerId) {
         if (customerRepository.existsById(customerId)) {
-            
+
             this.clearCache(customerId);
-            
+
             customerRepository.deleteById(customerId);
             return true;
         }

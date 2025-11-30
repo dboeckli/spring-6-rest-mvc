@@ -9,6 +9,7 @@ import ch.springframeworkguru.springrestmvc.event.events.BeerPatchEvent;
 import ch.springframeworkguru.springrestmvc.mapper.BeerMapper;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -31,19 +32,15 @@ import java.util.UUID;
 @Slf4j
 public class BeerServiceJpaImpl implements BeerService {
 
-    private final BeerRepository beerRepository;
-
-    private final BeerMapper beerMapper;
-
-    private final CacheManager cacheManager;
-    
-    private final ApplicationEventPublisher eventPublisher;
-    
     public static final int DEFAULT_PAGE_SIZE = 25;
     public static final int MAX_PAGE_SIZE = 1000;
     public static final int DEFAULT_PAGE_NUMBER = 0;
+    private final BeerRepository beerRepository;
+    private final BeerMapper beerMapper;
+    private final CacheManager cacheManager;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public BeerServiceJpaImpl(BeerRepository beerRepository, BeerMapper beerMapper , CacheManager cacheManager, ApplicationEventPublisher eventPublisher) {
+    public BeerServiceJpaImpl(BeerRepository beerRepository, BeerMapper beerMapper, CacheManager cacheManager, ApplicationEventPublisher eventPublisher) {
         this.beerRepository = beerRepository;
         this.beerMapper = beerMapper;
         this.cacheManager = cacheManager;
@@ -52,15 +49,15 @@ public class BeerServiceJpaImpl implements BeerService {
 
     @Override
     @Cacheable(cacheNames = "beerListCache")
-    public Page<BeerDTO> listBeers(String beerName,
-                                   BeerStyle beerStyle,
-                                   Boolean showInventory,
-                                   Integer pageNumber,
-                                   Integer pageSize) {
-        
+    public Page<@NonNull BeerDTO> listBeers(String beerName,
+                                            BeerStyle beerStyle,
+                                            Boolean showInventory,
+                                            Integer pageNumber,
+                                            Integer pageSize) {
+
         PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
-        
-        Page<Beer> beerPages;
+
+        Page<@NonNull Beer> beerPages;
         if (StringUtils.hasText(beerName) && beerStyle != null) {
             beerPages = listBeerByNameAndBeerStyle(beerName, beerStyle, pageRequest);
         } else if (StringUtils.hasText(beerName)) {
@@ -70,23 +67,23 @@ public class BeerServiceJpaImpl implements BeerService {
         } else {
             beerPages = beerRepository.findAll(pageRequest);
         }
-        
+
         if (showInventory == null || !showInventory) {
             beerPages.forEach(beer -> beer.setQuantityOnHand(null));
         }
         return beerPages.map(beerMapper::beerToBeerDto);
     }
-    
+
     private PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
         int pageNumberParameter;
         int pageSizeParameter;
-        
+
         if (pageNumber != null && pageNumber > 0) {
             pageNumberParameter = pageNumber - 1;
         } else {
             pageNumberParameter = DEFAULT_PAGE_NUMBER;
         }
-        
+
         if (pageSize == null) {
             pageSizeParameter = DEFAULT_PAGE_SIZE;
         } else {
@@ -98,19 +95,19 @@ public class BeerServiceJpaImpl implements BeerService {
         }
 
         Sort sort = Sort.by(Sort.Direction.ASC, "beerName");
-        
+
         return PageRequest.of(pageNumberParameter, pageSizeParameter, sort);
     }
-    
-    private Page<Beer> listBeerByName(String beerName, PageRequest pageRequest) {
+
+    private Page<@NonNull Beer> listBeerByName(String beerName, PageRequest pageRequest) {
         return beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%", pageRequest);
     }
 
-    private Page<Beer> listBeerByStyle(BeerStyle beerStyle, PageRequest pageRequest) {
+    private Page<@NonNull Beer> listBeerByStyle(BeerStyle beerStyle, PageRequest pageRequest) {
         return beerRepository.findAllByBeerStyle(beerStyle, pageRequest);
     }
 
-    private Page<Beer> listBeerByNameAndBeerStyle(String beerName, BeerStyle beerStyle, PageRequest pageRequest) {
+    private Page<@NonNull Beer> listBeerByNameAndBeerStyle(String beerName, BeerStyle beerStyle, PageRequest pageRequest) {
         return beerRepository.findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(beerStyle, "%" + beerName + "%", pageRequest);
     }
 
@@ -118,9 +115,9 @@ public class BeerServiceJpaImpl implements BeerService {
     @Cacheable(cacheNames = "beerCache")
     public Optional<BeerDTO> getBeerById(UUID id) {
         return Optional.ofNullable(beerMapper
-                .beerToBeerDto(beerRepository
-                        .findById(id)
-                        .orElse(null)));
+            .beerToBeerDto(beerRepository
+                .findById(id)
+                .orElse(null)));
     }
 
     @Override
@@ -134,13 +131,13 @@ public class BeerServiceJpaImpl implements BeerService {
         }
 
         Beer savedBeer = beerRepository.save(beerMapper.beerDtoToBeer(newBeer));
-        
+
         // publish an event
         log.info("Current Thread name: " + Thread.currentThread().getName());
         log.info("Current Thread ID: " + Thread.currentThread().threadId());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         eventPublisher.publishEvent(new BeerCreatedEvent(savedBeer, authentication));
-        
+
         return beerMapper.beerToBeerDto(savedBeer);
     }
 
@@ -151,7 +148,7 @@ public class BeerServiceJpaImpl implements BeerService {
     })
     public Optional<BeerDTO> editBeer(UUID beerId, BeerDTO beer) {
         clearCache(beerId);
-        
+
         beerRepository.findById(beerId).ifPresent(foundBeer -> {
             if (StringUtils.hasText(beer.getBeerName())) {
                 foundBeer.setBeerName(beer.getBeerName());
@@ -166,7 +163,7 @@ public class BeerServiceJpaImpl implements BeerService {
                 foundBeer.setPrice(beer.getPrice());
             }
             Beer updatedBeer = beerRepository.save(foundBeer);
-            
+
             // publish an event
             log.info("Current Thread name: " + Thread.currentThread().getName());
             log.info("Current Thread ID: " + Thread.currentThread().threadId());
@@ -184,7 +181,7 @@ public class BeerServiceJpaImpl implements BeerService {
     })
     public Optional<BeerDTO> patchBeer(UUID beerId, BeerDTO beer) {
         clearCache(beerId);
-        
+
         beerRepository.findById(beerId).ifPresent(foundBeer -> {
             if (StringUtils.hasText(beer.getBeerName())) {
                 foundBeer.setBeerName(beer.getBeerName());
@@ -223,7 +220,7 @@ public class BeerServiceJpaImpl implements BeerService {
             log.info("Current Thread ID: " + Thread.currentThread().threadId());
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             eventPublisher.publishEvent(new BeerDeleteEvent(Beer.builder().id(beerId).build(), authentication));
-            
+
             return true;
         }
         return false;

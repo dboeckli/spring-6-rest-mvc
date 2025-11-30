@@ -21,16 +21,41 @@ import java.util.UUID;
 @ToString
 public class BeerOrder {
 
-    public BeerOrder(UUID id, 
+    @Id
+    @GeneratedValue(generator = "UUID")
+    @UuidGenerator
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
+    private UUID id;
+    @Version
+    private Long version;
+    private BigDecimal paymentAmount;
+    @CreationTimestamp
+    @Column(updatable = false)
+    private Timestamp createdDate;
+    @UpdateTimestamp
+    private Timestamp updateDate;
+    private String customerRef;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ToString.Exclude
+    private Customer customer;
+    @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private Set<BeerOrderLine> beerOrderLines;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @ToString.Exclude
+    private BeerOrderShipment beerOrderShipment;
+
+    public BeerOrder(UUID id,
                      Long version,
                      BigDecimal paymentAmount,
-                     Timestamp createdDate, 
-                     Timestamp updateDate, 
-                     String customerRef, 
+                     Timestamp createdDate,
+                     Timestamp updateDate,
+                     String customerRef,
                      Customer customer,
                      Set<BeerOrderLine> beerOrderLines,
                      BeerOrderShipment beerOrderShipment) {
-        
+
         this.id = id;
         this.version = version;
         this.createdDate = createdDate;
@@ -42,34 +67,9 @@ public class BeerOrder {
         this.setBeerOrderShipment(beerOrderShipment);
     }
 
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @UuidGenerator
-    @JdbcTypeCode(SqlTypes.CHAR)
-    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false )
-    private UUID id;
-
-    @Version
-    private Long version;
-
-    private BigDecimal paymentAmount;
-
-    @CreationTimestamp
-    @Column(updatable = false)
-    private Timestamp createdDate;
-
-    @UpdateTimestamp
-    private Timestamp updateDate;
-
     public boolean isNew() {
         return this.id == null;
     }
-
-    private String customerRef;
-
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @ToString.Exclude
-    private Customer customer;
 
     public void setCustomer(Customer customer) {
         if (customer != null) {
@@ -79,15 +79,11 @@ public class BeerOrder {
     }
 
     public void setBeerOrderShipment(BeerOrderShipment beerOrderShipment) {
-        if(beerOrderShipment != null) {
+        if (beerOrderShipment != null) {
             this.beerOrderShipment = beerOrderShipment;
             beerOrderShipment.setBeerOrder(this);
         }
     }
-
-    @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL)
-    @ToString.Exclude
-    private Set<BeerOrderLine> beerOrderLines;
 
     public void setBeerOrderLines(Set<BeerOrderLine> beerOrderLines) {
         if (beerOrderLines != null) {
@@ -95,8 +91,4 @@ public class BeerOrder {
             beerOrderLines.forEach(beerOrderLine -> beerOrderLine.setBeerOrder(this));
         }
     }
-
-    @OneToOne(cascade = CascadeType.PERSIST)
-    @ToString.Exclude
-    private BeerOrderShipment beerOrderShipment;
 }

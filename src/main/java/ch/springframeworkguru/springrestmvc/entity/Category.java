@@ -26,7 +26,7 @@ public class Category {
     @GeneratedValue(generator = "UUID")
     @UuidGenerator
     @JdbcTypeCode(SqlTypes.CHAR)
-    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false )
+    @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
 
     @Version
@@ -64,5 +64,5 @@ public class Category {
         result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
         return result;
     }
-    
+
 }

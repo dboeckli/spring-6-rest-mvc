@@ -61,5 +61,5 @@ public class BeerAudit {
     private String principalName;
 
     private String auditEventType;
-    
+
 }

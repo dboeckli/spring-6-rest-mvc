@@ -1,16 +1,16 @@
 package ch.springframeworkguru.springrestmvc.core;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -23,13 +23,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class OpenApiTest {
 
     @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
     ObjectMapper objectMapper;
-    
     @Autowired
     BuildProperties buildProperties;
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
     void openapiGetJsonTest() throws Exception {
@@ -44,7 +42,7 @@ class OpenApiTest {
         assertThat(jsonNode.has("info")).isTrue();
         JsonNode infoNode = jsonNode.get("info");
         assertThat(infoNode.has("title")).isTrue();
-        assertThat(infoNode.get("title").asText()).isEqualTo(buildProperties.getName());
+        assertThat(infoNode.get("title").asString()).isEqualTo(buildProperties.getName());
     }
 
 }

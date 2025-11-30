@@ -8,7 +8,7 @@ import ch.springframeworkguru.springrestmvc.entity.Customer;
 import ch.springframeworkguru.springrestmvc.service.BeerCsvServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,20 +19,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DataJpaTest
 @Import({BootstrapData.class, BeerCsvServiceImpl.class, CacheConfiguration.class})
 class BeerOrderRepositoryTest {
-    
+
     @Autowired
     private BeerOrderRepository beerOrderRepository;
 
     @Autowired
-    private BeerRepository beerRepository;
-
-    @Autowired
     private CustomerRepository customerRepository;
-    
+
     @Test
     @Transactional
-    @Rollback(true)    
-    // TODO: FIXME. Customer and BeerOrder relations are not persisted in the database
+    @Rollback(true)
+        // TODO: FIXME. Customer and BeerOrder relations are not persisted in the database
     void testAddBeerOrder() {
         Customer testCustomer = customerRepository.findAll().getFirst();
 
@@ -49,9 +46,9 @@ class BeerOrderRepositoryTest {
         // see testAddCategoryUsingExistingBeer in CategoryRepositoryTest
         BeerOrder savedBeerOrder = beerOrderRepository.save(newBeerOrder);
         Customer savedCustomer = customerRepository.save(testCustomer);
-        
+
         beerOrderRepository.flush(); // Needed to trigger the association with the customer
-        
+
         assertNotNull(savedBeerOrder);
         assertNotNull(savedCustomer);
         assertEquals(7, beerOrderRepository.count());

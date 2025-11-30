@@ -4,13 +4,11 @@ import ch.guru.springframework.spring6restmvcapi.dto.CustomerDTO;
 import ch.springframeworkguru.springrestmvc.config.SpringSecurityConfigRest;
 import ch.springframeworkguru.springrestmvc.service.CustomerService;
 import ch.springframeworkguru.springrestmvc.service.CustomerServiceImpl;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
@@ -18,6 +16,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
 import java.util.List;
@@ -38,35 +38,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 class CustomerControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
+    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
+        jwt().jwt(jwt -> jwt.claims(claims -> {
+                claims.put("scope", "message.read");
+                claims.put("scope", "message.write");
+            })
+            .subject("messaging-client")
+            .notBefore(Instant.now().minusSeconds(5L)));
     @MockitoBean
     CustomerService customerService;
-
+    CustomerServiceImpl customerServiceImpl;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
     @Value("${controllers.customer-controller.request-path}")
     private String requestPath;
-
     @Value("${spring.security.user.name}")
     private String username;
-
     @Value("${spring.security.user.password}")
     private String password;
-
-    CustomerServiceImpl customerServiceImpl;
-
-    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
-        jwt().jwt(jwt -> {
-            jwt.claims(claims -> {
-                    claims.put("scope", "message.read");
-                    claims.put("scope", "message.write");
-                })
-                .subject("messaging-client")
-                .notBefore(Instant.now().minusSeconds(5L));
-        });
 
     @BeforeEach
     void setUp() {
@@ -82,11 +73,11 @@ class CustomerControllerTest {
                 .with(jwtRequestPostProcessor)
                 //.with(httpBasic(username,password))
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(givenCustomer.getId().toString())))
-                .andExpect(jsonPath("$.name", is(givenCustomer.getName())))
-                .andExpect(content().json(objectMapper.writeValueAsString(givenCustomer)));  // oder das ganze Object
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.id", is(givenCustomer.getId().toString())))
+            .andExpect(jsonPath("$.name", is(givenCustomer.getName())))
+            .andExpect(content().json(objectMapper.writeValueAsString(givenCustomer)));  // oder das ganze Object
     }
 
     @Test
@@ -95,9 +86,9 @@ class CustomerControllerTest {
         given(customerService.getCustomerById(givenCustomer.getId())).willReturn(Optional.of(givenCustomer));
 
         mockMvc.perform(get(requestPath + "/getCustomerById/" + givenCustomer.getId())
-                .with(httpBasic("wrongusername","wrongpassword"))
+                .with(httpBasic("wrongusername", "wrongpassword"))
                 .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isUnauthorized()); 
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -109,7 +100,7 @@ class CustomerControllerTest {
                 .with(jwtRequestPostProcessor)
                 //.with(httpBasic(username,password))
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -126,8 +117,8 @@ class CustomerControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(givenCustomer)))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+            .andExpect(status().isCreated())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
     }
 
@@ -144,9 +135,9 @@ class CustomerControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(givenCustomerToEdit)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(givenCustomerToEdit)));  // oder das ganze Object;
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(objectMapper.writeValueAsString(givenCustomerToEdit)));  // oder das ganze Object;
     }
 
     @Test
@@ -161,7 +152,7 @@ class CustomerControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(givenCustomerToDelete)))
-                .andExpect(status().isOk());  
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -178,7 +169,8 @@ class CustomerControllerTest {
             .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        List<CustomerDTO> customerList = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
+        List<CustomerDTO> customerList = objectMapper.readValue(jsonResponse, new TypeReference<>() {
+        });
 
         // Manuelle Assertions
         assertEquals(3, customerList.size());
@@ -197,8 +189,8 @@ class CustomerControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(givenCustomerToPatch)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(givenCustomerToPatch)));  // oder das
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(objectMapper.writeValueAsString(givenCustomerToPatch)));  // oder das
     }
 }

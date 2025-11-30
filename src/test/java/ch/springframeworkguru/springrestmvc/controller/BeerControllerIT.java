@@ -9,8 +9,7 @@ import ch.springframeworkguru.springrestmvc.event.events.BeerPatchEvent;
 import ch.springframeworkguru.springrestmvc.mapper.BeerMapper;
 import ch.springframeworkguru.springrestmvc.repository.BeerOrderLinesRepository;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +28,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -50,52 +51,40 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RecordApplicationEvents
 class BeerControllerIT {
 
+    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
+        jwt().jwt(jwt -> jwt.claims(claims -> {
+                claims.put("scope", "message.read");
+                claims.put("scope", "message.write");
+            })
+            .subject("messaging-client")
+            .notBefore(Instant.now().minusSeconds(5L)));
     @Autowired
     ApplicationEvents applicationEvents;
-
     @Autowired
     BeerController beerController;
-
     @Autowired
     BeerRepository beerRepository;
-
     @Autowired
     BeerOrderLinesRepository beerOrderLinesRepository;
-
     @Autowired
     BeerMapper beerMapper;
-
-    @Autowired
-    private CacheManager cacheManager;
-
     @Autowired
     ObjectMapper objectMapper;
-
+    @Autowired
+    WebApplicationContext webApplicationContext;
+    @Autowired
+    private CacheManager cacheManager;
     @Value("${spring.security.user.name}")
     private String username;
-
     @Value("${spring.security.user.password}")
     private String password;
-
     @Value("${controllers.beer-controller.request-path}")
     private String requestPath;
 
-    @Autowired
-    WebApplicationContext webApplicationContext;
-
-    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
-        jwt().jwt(jwt -> {
-            jwt.claims(claims -> {
-                    claims.put("scope", "message.read");
-                    claims.put("scope", "message.write");
-                })
-                .subject("messaging-client")
-                .notBefore(Instant.now().minusSeconds(5L));
-        });
-
     @Test
     @Transactional
-    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
+    @Rollback(true)
+        // we roll back to deletion to assure that the other tests are not failing
     void testDeleteBeerById() {
         Beer beer = beerRepository.findAll().getFirst();
         beerController.deleteBeer(beer.getId());
@@ -105,22 +94,24 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
+    @Rollback(true)
+        // we roll back to deletion to assure that the other tests are not failing
     void testDeleteBeerByIdNotFound() {
         assertThrows(NotFoundException.class, () -> beerController.deleteBeer(UUID.randomUUID()));
     }
 
     @Test
     @Transactional
-    @Rollback(true) // we rollback to deletion to assuere that the other tests are not failling
+    @Rollback(true)
+        // we rollback to deletion to assuere that the other tests are not failling
     void testSaveBeer() {
         BeerDTO newBeerDTO = BeerDTO.builder()
-                .beerName("verynewBeer")
-                .beerStyle(BeerStyle.GOSE)
-                .upc("upc")
-                .price(BigDecimal.valueOf(55))
-                .quantityOnHand(2)
-                .build();
+            .beerName("verynewBeer")
+            .beerStyle(BeerStyle.GOSE)
+            .upc("upc")
+            .price(BigDecimal.valueOf(55))
+            .quantityOnHand(2)
+            .build();
 
         BeerDTO createdBeer = beerController.createBeer(newBeerDTO).getBody();
         assertAll(() -> {
@@ -133,7 +124,7 @@ class BeerControllerIT {
     @Test
     void testSaveBeerWithMockMVC() throws Exception {
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
-        
+
         BeerDTO newBeerDTO = BeerDTO.builder()
             .beerName("verynewBeer")
             .beerStyle(BeerStyle.GOSE)
@@ -151,7 +142,8 @@ class BeerControllerIT {
             .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        BeerDTO beerDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
+        BeerDTO beerDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {
+        });
 
         assertAll(() -> {
             assertNotNull(beerDTO);
@@ -164,7 +156,8 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
+    @Rollback(true)
+        // we roll back to deletion to assure that the other tests are not failing
     void testUpdateExistingBeer() {
         Beer beer = beerRepository.findAll().getFirst();
         BeerDTO beerDTO = beerMapper.beerToBeerDto(beer);
@@ -185,7 +178,7 @@ class BeerControllerIT {
         Beer beerToUpdate = beerRepository.findAll().getFirst();
         BeerDTO beerToUpdateDTO = beerMapper.beerToBeerDto(beerToUpdate);
         beerToUpdateDTO.setBeerName("UPDATED BEER");
-        
+
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
 
         MvcResult result = mockMvc.perform(put(requestPath + "/editBeer/{beerId}", beerToUpdate.getId())
@@ -197,7 +190,8 @@ class BeerControllerIT {
             .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        BeerDTO beerDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
+        BeerDTO beerDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {
+        });
 
         assertAll(() -> {
             assertNotNull(beerDTO);
@@ -210,15 +204,17 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
+    @Rollback(true)
+        // we roll back to deletion to assure that the other tests are not failing
     void testUpdateExistingBeerButNotFound() {
-        assertThrows(NotFoundException.class, () -> 
+        assertThrows(NotFoundException.class, () ->
             beerController.editBeer(BeerDTO.builder().build(), UUID.randomUUID()));
     }
 
     @Test
     @Transactional
-    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
+    @Rollback(true)
+        // we roll back to deletion to assure that the other tests are not failing
     void testPatchBeer() {
         Beer givenBeer = beerRepository.findAll().getFirst();
         BeerDTO beerDTO = beerMapper.beerToBeerDto(givenBeer);
@@ -234,7 +230,8 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
+    @Rollback(true)
+        // we roll back to deletion to assure that the other tests are not failing
     void testPatchBeerDoesNotExist() {
         BeerDTO beerDTO = BeerDTO.builder().build();
 
@@ -258,7 +255,8 @@ class BeerControllerIT {
             .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-        BeerDTO beerDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
+        BeerDTO beerDTO = objectMapper.readValue(jsonResponse, new TypeReference<>() {
+        });
 
         assertAll(() -> {
             assertNotNull(beerDTO);
@@ -271,12 +269,12 @@ class BeerControllerIT {
 
     @Test
     void testListBeers() {
-        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, null);
-        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, null);
+        Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(2413, beersDtos.getTotalElements()); 
+            assertEquals(2413, beersDtos.getTotalElements());
             assertEquals(97, beersDtos.getTotalPages());
             assertEquals(25, beersDtos.getNumberOfElements());
             assertEquals(0, beersDtos.getNumber());
@@ -285,8 +283,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeersWithMaxPageSize() {
-        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, MAX_PAGE_SIZE+1);
-        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, MAX_PAGE_SIZE + 1);
+        Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
@@ -299,19 +297,19 @@ class BeerControllerIT {
 
     @Test
     void testListBeerByName() {
-        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", null, null, null, null);
-        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", null, null, null, null);
+        Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(336, beersDtos.getTotalElements()); 
+            assertEquals(336, beersDtos.getTotalElements());
         });
     }
 
     @Test
     void testListBeersByName() throws Exception {
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
-        
+
         mockMvc.perform(get(requestPath + "/listBeers")
                 //.with(httpBasic(username, password))
                 .with(jwtRequestPostProcessor)
@@ -334,8 +332,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeerByNamePage2() {
-        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", null, null, 2, 50);
-        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", null, null, 2, 50);
+        Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
@@ -348,8 +346,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeerByStyleAndBeerName() {
-        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", BeerStyle.IPA, null, null, null);
-        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", BeerStyle.IPA, null, null, null);
+        Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
@@ -359,8 +357,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeerNameWithShowInventory() {
-        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, true, null, null);
-        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, true, null, null);
+        Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
@@ -372,8 +370,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeerNameWithoutShowInventory() {
-        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, false, null, null);
-        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, false, null, null);
+        Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
@@ -385,8 +383,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeerNameWithNullShowInventory() {
-        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, null, null, null);
-        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, null, null, null);
+        Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
@@ -398,8 +396,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeerByStyle() {
-        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, BeerStyle.IPA, null, null, null);
-        Page<BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, BeerStyle.IPA, null, null, null);
+        Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
             assert beersDtos != null;
@@ -409,7 +407,8 @@ class BeerControllerIT {
 
     @Test
     @Transactional
-    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
+    @Rollback(true)
+        // we roll back to deletion to assure that the other tests are not failing
     void testEmptyListBeer() {
         beerOrderLinesRepository.deleteAll();
         beerRepository.deleteAll();
@@ -417,21 +416,22 @@ class BeerControllerIT {
         // we need to clear the cache, because the deleteAll (in the repository class) does not evict the cache
         Collection<String> cacheNames = cacheManager.getCacheNames();
         cacheNames.forEach(cacheName -> cacheManager.getCache(cacheName).clear());
-        
-        ResponseEntity<Page<BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, null);
-        Page<BeerDTO> beerDtos = beersDtoResponseEntity.getBody();
+
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, null);
+        Page<@NonNull BeerDTO> beerDtos = beersDtoResponseEntity.getBody();
 
         assertAll(
-                () -> {
-                    assert beerDtos != null;
-                    assertEquals(0, beerDtos.getTotalElements());
-                }
+            () -> {
+                assert beerDtos != null;
+                assertEquals(0, beerDtos.getTotalElements());
+            }
         );
     }
 
     @Test
     @Transactional
-    @Rollback(true) // we roll back to deletion to assure that the other tests are not failing
+    @Rollback(true)
+        // we roll back to deletion to assure that the other tests are not failing
     void testDeleteBeerWithMockMVC() throws Exception {
         Beer beerToDelete = beerRepository.findAll().getFirst();
 
@@ -454,14 +454,14 @@ class BeerControllerIT {
     void testGetBeerById() {
         UUID givenBeerId = beerRepository.findAll().getFirst().getId();
 
-        ResponseEntity<BeerDTO> beerDTOResponseEntity = beerController.getBeerById(givenBeerId);
+        ResponseEntity<@NonNull BeerDTO> beerDTOResponseEntity = beerController.getBeerById(givenBeerId);
         BeerDTO beerDTO = beerDTOResponseEntity.getBody();
 
         assertAll(
-                () -> {
-                    assert beerDTO != null;
-                    assertEquals(givenBeerId, beerDTO.getId());
-                }
+            () -> {
+                assert beerDTO != null;
+                assertEquals(givenBeerId, beerDTO.getId());
+            }
         );
     }
 

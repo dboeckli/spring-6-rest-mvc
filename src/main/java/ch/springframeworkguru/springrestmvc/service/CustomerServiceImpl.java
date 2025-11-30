@@ -16,28 +16,28 @@ public class CustomerServiceImpl implements CustomerService {
         this.customerMap = new HashMap<>();
 
         CustomerDTO customer1 = CustomerDTO.builder()
-                .id(UUID.randomUUID())
-                .name("Pumukel")
-                .createdDate(LocalDateTime.now())
-                .updateDate(LocalDateTime.now())
-                .version("1.0")
-                .build();
+            .id(UUID.randomUUID())
+            .name("Pumukel")
+            .createdDate(LocalDateTime.now())
+            .updateDate(LocalDateTime.now())
+            .version("1.0")
+            .build();
 
         CustomerDTO customer2 = CustomerDTO.builder()
-                .id(UUID.randomUUID())
-                .name("Pumukel")
-                .createdDate(LocalDateTime.now())
-                .updateDate(LocalDateTime.now())
-                .version("1.0")
-                .build();
+            .id(UUID.randomUUID())
+            .name("Pumukel")
+            .createdDate(LocalDateTime.now())
+            .updateDate(LocalDateTime.now())
+            .version("1.0")
+            .build();
 
         CustomerDTO customer3 = CustomerDTO.builder()
-                .id(UUID.randomUUID())
-                .name("Pumukel")
-                .createdDate(LocalDateTime.now())
-                .updateDate(LocalDateTime.now())
-                .version("1.0")
-                .build();
+            .id(UUID.randomUUID())
+            .name("Pumukel")
+            .createdDate(LocalDateTime.now())
+            .updateDate(LocalDateTime.now())
+            .version("1.0")
+            .build();
 
         customerMap.put(customer1.getId(), customer1);
         customerMap.put(customer2.getId(), customer2);
@@ -57,12 +57,12 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDTO saveNewCustomer(CustomerDTO newCustomer) {
         CustomerDTO customer = CustomerDTO.builder()
-                .id(UUID.randomUUID())
-                .name(newCustomer.getName())
-                .createdDate(LocalDateTime.now())
-                .updateDate(LocalDateTime.now())
-                .version(newCustomer.getVersion())
-                .build();
+            .id(UUID.randomUUID())
+            .name(newCustomer.getName())
+            .createdDate(LocalDateTime.now())
+            .updateDate(LocalDateTime.now())
+            .version(newCustomer.getVersion())
+            .build();
         customerMap.put(customer.getId(), customer);
         return customer;
     }

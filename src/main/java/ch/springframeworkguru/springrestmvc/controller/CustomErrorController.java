@@ -1,5 +1,6 @@
 package ch.springframeworkguru.springrestmvc.controller;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -11,9 +12,9 @@ import java.util.Map;
 
 @ControllerAdvice
 public class CustomErrorController {
-    
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    ResponseEntity<String> handleBindErrors(MethodArgumentNotValidException ex) {
+    ResponseEntity<@NonNull String> handleBindErrors(MethodArgumentNotValidException ex) {
 
         List<Map<String, String>> errorList = ex.getFieldErrors().stream().map(
             fieldError -> {
@@ -22,8 +23,8 @@ public class CustomErrorController {
                 return errorMap;
             }
         ).toList();
-        
+
         return ResponseEntity.badRequest().body(errorList.toString());
     }
-    
+
 }

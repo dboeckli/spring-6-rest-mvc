@@ -6,6 +6,7 @@ import ch.guru.springframework.spring6restmvcapi.events.OrderPlacedEvent;
 import ch.springframeworkguru.springrestmvc.config.KafkaConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@NullMarked
 public class DrinkSplitterRouter {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
@@ -90,5 +92,5 @@ public class DrinkSplitterRouter {
             .beerOrderLineDTO(beerOrderLineDTO)
             .build());
     }
-    
+
 }

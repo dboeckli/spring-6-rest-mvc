@@ -5,13 +5,13 @@ import ch.guru.springframework.spring6restmvcapi.dto.BeerStyle;
 import ch.springframeworkguru.springrestmvc.config.SpringSecurityConfigRest;
 import ch.springframeworkguru.springrestmvc.service.BeerService;
 import ch.springframeworkguru.springrestmvc.service.BeerServiceImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -20,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -42,35 +43,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 class BeerControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Value("${controllers.beer-controller.request-path}")
-    private String requestPath;
-
-    @Value("${spring.security.user.name}")
-    private String username;
-
-    @Value("${spring.security.user.password}")
-    private String password;
-
+    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
+        jwt().jwt(jwt -> jwt.claims(claims -> {
+                claims.put("scope", "message.read");
+                claims.put("scope", "message.write");
+            })
+            .subject("messaging-client")
+            .notBefore(Instant.now().minusSeconds(5L)));
     @MockitoBean
     BeerService beerService;
-
     BeerServiceImpl beerServiceImpl;
-
-    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
-        jwt().jwt(jwt -> {
-            jwt.claims(claims -> {
-                    claims.put("scope", "message.read");
-                    claims.put("scope", "message.write");
-                })
-                .subject("messaging-client")
-                .notBefore(Instant.now().minusSeconds(5L));
-        });
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Value("${controllers.beer-controller.request-path}")
+    private String requestPath;
+    @Value("${spring.security.user.name}")
+    private String username;
+    @Value("${spring.security.user.password}")
+    private String password;
 
     @BeforeEach
     void setUp() {
@@ -84,14 +76,14 @@ class BeerControllerTest {
 
         mockMvc.perform(get(requestPath + "/getBeerById/" + givenBeer.getId())
                 .with(jwtRequestPostProcessor))
-                /*
-                .with(httpBasic(username,password))
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())*/
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(givenBeer.getId().toString())))
-                .andExpect(jsonPath("$.beerName", is(givenBeer.getBeerName())))
-                .andExpect(content().json(objectMapper.writeValueAsString(givenBeer)));  // oder das ganze Object
+            /*
+            .with(httpBasic(username,password))
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())*/
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.id", is(givenBeer.getId().toString())))
+            .andExpect(jsonPath("$.beerName", is(givenBeer.getBeerName())))
+            .andExpect(content().json(objectMapper.writeValueAsString(givenBeer)));  // oder das ganze Object
     }
 
     @Test
@@ -100,9 +92,9 @@ class BeerControllerTest {
         given(beerService.getBeerById(givenBeer.getId())).willReturn(Optional.of(givenBeer));
 
         mockMvc.perform(get(requestPath + "/getBeerById/" + givenBeer.getId())
-                .with(httpBasic("wrongusername","wrongpassword"))
+                .with(httpBasic("wrongusername", "wrongpassword"))
                 .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isUnauthorized());  
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -114,33 +106,33 @@ class BeerControllerTest {
                 .with(jwtRequestPostProcessor)
                 //.with(httpBasic(username,password))
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+            .andExpect(status().isNotFound());
     }
 
     @Test
     void testListBeers() throws Exception {
-        Page<BeerDTO> givenBeers = beerServiceImpl.listBeers(null, null, null, null, null);
+        Page<@NonNull BeerDTO> givenBeers = beerServiceImpl.listBeers(null, null, null, null, null);
         given(beerService.listBeers(null, null, null, null, null)).willReturn(givenBeers);
 
         mockMvc.perform(get(requestPath + "/listBeers")
                 .with(jwtRequestPostProcessor)
                 //.with(httpBasic(username,password))
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.totalElements", is((Long.valueOf(givenBeers.getTotalElements())).intValue())));
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.totalElements", is((Long.valueOf(givenBeers.getTotalElements())).intValue())));
     }
 
     @Test
     void testListBeerByName() throws Exception {
-        Page<BeerDTO> givenBeers = beerServiceImpl.listBeers(null, null, null, null, null);
+        Page<@NonNull BeerDTO> givenBeers = beerServiceImpl.listBeers(null, null, null, null, null);
         given(beerService.listBeers("IPA", null, null, null, null)).willReturn(givenBeers);
-        
+
         mockMvc.perform(get(requestPath + "/listBeers")
-            .with(jwtRequestPostProcessor)
-            //.with(httpBasic(username,password))
-            .queryParam("beerName", "IPA"))
-            
+                .with(jwtRequestPostProcessor)
+                //.with(httpBasic(username,password))
+                .queryParam("beerName", "IPA"))
+
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.totalElements", is((Long.valueOf(givenBeers.getTotalElements())).intValue())));
@@ -183,11 +175,11 @@ class BeerControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(givenBeer)))
-                .andExpect(status().isBadRequest()).andReturn();
+            .andExpect(status().isBadRequest()).andReturn();
 
         assertThat(mvcResult.getResponse().getContentAsString(), Matchers
             .either(Matchers.is("[{beerName=must not be blank}, {beerName=must not be null}]"))
-                .or(Matchers.is("[{beerName=must not be null}, {beerName=must not be blank}]")));
+            .or(Matchers.is("[{beerName=must not be null}, {beerName=must not be blank}]")));
     }
 
     @Test
@@ -247,9 +239,9 @@ class BeerControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(givenBeerToEdit)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(givenBeerToEdit)));  // oder das ganze Object;
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(objectMapper.writeValueAsString(givenBeerToEdit)));  // oder das ganze Object;
     }
 
     @Test
@@ -267,7 +259,7 @@ class BeerControllerTest {
                 .content(objectMapper.writeValueAsString(givenBeerToEdit)))
             .andExpect(status().isBadRequest()).andReturn();
 
-       
+
         assertThat(mvcResult.getResponse().getContentAsString(), Matchers
             .either(Matchers.is("[{beerName=must not be blank}, {beerName=must not be null}]"))
             .or(Matchers.is("[{beerName=must not be null}, {beerName=must not be blank}]")));
@@ -282,10 +274,10 @@ class BeerControllerTest {
         mockMvc.perform(delete(requestPath + "/deleteBeer/" + givenBeerToDelete.getId())
                 .with(jwtRequestPostProcessor)
                 //.with(httpBasic(username,password))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(givenBeerToDelete)))
-                .andExpect(status().isOk());  // oder das
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(givenBeerToDelete)))
+            .andExpect(status().isOk());  // oder das
     }
 
     @Test
@@ -298,11 +290,11 @@ class BeerControllerTest {
         mockMvc.perform(patch(requestPath + "/patchBeer/" + givenBeerToPatch.getId())
                 .with(jwtRequestPostProcessor)
                 //.with(httpBasic(username,password))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(givenBeerToPatch)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(objectMapper.writeValueAsString(givenBeerToPatch)));  // oder das
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(givenBeerToPatch)))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(objectMapper.writeValueAsString(givenBeerToPatch)));  // oder das
     }
 }

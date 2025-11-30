@@ -3,9 +3,10 @@ package ch.springframeworkguru.springrestmvc.repository;
 import ch.guru.springframework.spring6restmvcapi.dto.BeerStyle;
 import ch.springframeworkguru.springrestmvc.entity.Beer;
 import jakarta.validation.ConstraintViolationException;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +20,7 @@ class BeerRepositoryTest {
 
     @Autowired
     BeerRepository beerRepository;
-    
+
     @Test
     void findBeerByName() {
         Beer savedBeer = beerRepository.save(Beer.builder()
@@ -29,7 +30,7 @@ class BeerRepositoryTest {
             .price(BigDecimal.valueOf(10))
             .build());
 
-        Page<Beer> beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCase("hallo", Pageable.unpaged());
+        Page<@NonNull Beer> beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCase("hallo", Pageable.unpaged());
 
         assertAll(
             () -> assertEquals(1, beerList.getTotalElements()),
@@ -62,7 +63,7 @@ class BeerRepositoryTest {
             .price(BigDecimal.valueOf(10))
             .build());
 
-        Page<Beer> beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%", Pageable.unpaged());
+        Page<@NonNull Beer> beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%", Pageable.unpaged());
 
         assertAll(
             () -> assertEquals(2, beerList.getTotalElements()),
@@ -97,13 +98,13 @@ class BeerRepositoryTest {
             .price(BigDecimal.valueOf(10))
             .build());
 
-        Page<Beer> beerLisPage1 = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%", PageRequest.of(0, 1));
-        Page<Beer> beerListPage2 = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%", PageRequest.of(1, 1));
+        Page<@NonNull Beer> beerLisPage1 = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%", PageRequest.of(0, 1));
+        Page<@NonNull Beer> beerListPage2 = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%", PageRequest.of(1, 1));
 
         assertAll(
             () -> assertEquals(2, beerLisPage1.getTotalElements()),
             () -> assertEquals(2, beerLisPage1.getTotalPages()),
-            
+
             () -> assertEquals(0, beerLisPage1.getNumber()),
             () -> assertEquals(1, beerLisPage1.getNumberOfElements()),
             () -> assertTrue(beerLisPage1.getContent().contains(firstBeer)),
@@ -132,7 +133,7 @@ class BeerRepositoryTest {
             .price(BigDecimal.valueOf(10))
             .build());
 
-        Page<Beer> beerList = beerRepository.findAllByBeerStyle(BeerStyle.PALE_ALE, Pageable.unpaged());
+        Page<@NonNull Beer> beerList = beerRepository.findAllByBeerStyle(BeerStyle.PALE_ALE, Pageable.unpaged());
 
         assertAll(
             () -> assertEquals(1, beerList.getTotalElements()),
@@ -158,7 +159,7 @@ class BeerRepositoryTest {
             .price(BigDecimal.valueOf(10))
             .build());
 
-        Page<Beer> beerList = beerRepository.findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(BeerStyle.PALE_ALE, "%hallo%", Pageable.unpaged());
+        Page<@NonNull Beer> beerList = beerRepository.findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(BeerStyle.PALE_ALE, "%hallo%", Pageable.unpaged());
 
         assertAll(
             () -> assertEquals(1, beerList.getTotalElements()),
@@ -171,19 +172,19 @@ class BeerRepositoryTest {
     @Test
     void testSave() {
         Beer savedBeer = beerRepository.save(Beer.builder()
-                .beerName("hallo")
-                .beerStyle(BeerStyle.PALE_ALE)
-                .upc("123")
-                .price(BigDecimal.valueOf(10))
-                .build());
+            .beerName("hallo")
+            .beerStyle(BeerStyle.PALE_ALE)
+            .upc("123")
+            .price(BigDecimal.valueOf(10))
+            .build());
 
         beerRepository.flush();
 
         assertAll(
-                () -> assertNotNull(savedBeer),
-                () -> assertNotNull(savedBeer.getId()),
-                () -> assertNotNull(savedBeer.getBeerName()),
-                () -> assertEquals("hallo", savedBeer.getBeerName())
+            () -> assertNotNull(savedBeer),
+            () -> assertNotNull(savedBeer.getId()),
+            () -> assertNotNull(savedBeer.getBeerName()),
+            () -> assertEquals("hallo", savedBeer.getBeerName())
         );
     }
 

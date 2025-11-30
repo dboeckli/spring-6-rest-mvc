@@ -3,7 +3,7 @@ package ch.springframeworkguru.springrestmvc.repository;
 import ch.springframeworkguru.springrestmvc.entity.Customer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,14 +16,14 @@ class CustomerRepositoryTest {
     @Test
     void testSave() {
         Customer savedCustomer = customer.save(Customer.builder()
-                .name("hallo")
-                .build());
+            .name("hallo")
+            .build());
 
         assertAll(
-                () -> assertNotNull(savedCustomer),
-                () -> assertNotNull(savedCustomer.getId()),
-                () -> assertNotNull(savedCustomer.getName()),
-                () -> assertEquals("hallo", savedCustomer.getName())
+            () -> assertNotNull(savedCustomer),
+            () -> assertNotNull(savedCustomer.getId()),
+            () -> assertNotNull(savedCustomer.getName()),
+            () -> assertEquals("hallo", savedCustomer.getName())
         );
     }
 

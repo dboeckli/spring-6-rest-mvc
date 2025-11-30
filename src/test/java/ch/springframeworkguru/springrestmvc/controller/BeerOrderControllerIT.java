@@ -12,8 +12,6 @@ import ch.springframeworkguru.springrestmvc.entity.Customer;
 import ch.springframeworkguru.springrestmvc.repository.BeerOrderRepository;
 import ch.springframeworkguru.springrestmvc.repository.BeerRepository;
 import ch.springframeworkguru.springrestmvc.repository.CustomerRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -47,9 +47,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 class BeerOrderControllerIT {
 
-    @Value("${controllers.beer-order-controller.request-path}")
-    private String requestPath;
-
+    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
+        jwt().jwt(jwt -> jwt.claims(claims -> {
+                claims.put(OAuth2TokenIntrospectionClaimNames.SCOPE, "message.read");
+                claims.put(OAuth2TokenIntrospectionClaimNames.SCOPE, "message.write");
+            })
+            .subject("messaging-client")
+            .notBefore(Instant.now().minusSeconds(5L)));
     @Autowired
     WebApplicationContext wac;
 
@@ -66,6 +70,8 @@ class BeerOrderControllerIT {
     BeerRepository beerRepository;
 
     MockMvc mockMvc;
+    @Value("${controllers.beer-order-controller.request-path}")
+    private String requestPath;
 
     @BeforeEach
     void setUp() {
@@ -73,16 +79,6 @@ class BeerOrderControllerIT {
             .apply(springSecurity())
             .build();
     }
-
-    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
-        jwt().jwt(jwt -> {
-            jwt.claims(claims -> {
-                    claims.put(OAuth2TokenIntrospectionClaimNames.SCOPE, "message.read");
-                    claims.put(OAuth2TokenIntrospectionClaimNames.SCOPE, "message.write");
-                })
-                .subject("messaging-client")
-                .notBefore(Instant.now().minusSeconds(5L));
-        });
 
     @Test
     void testListBeerOrders() throws Exception {
@@ -155,14 +151,12 @@ class BeerOrderControllerIT {
         BeerOrder beerOrderToUpdate = beerOrderRepository.findAll().getFirst();
 
         Set<BeerOrderLineUpdateDTO> lines = new HashSet<>();
-        beerOrderToUpdate.getBeerOrderLines().forEach(beerOrderLine -> {
-            lines.add(BeerOrderLineUpdateDTO.builder()
-                .id(beerOrderLine.getId())
-                .beerId(beerOrderLine.getBeer().getId())
-                .orderQuantity(beerOrderLine.getOrderQuantity())
-                .quantityAllocated(beerOrderLine.getQuantityAllocated())
-                .build());
-        });
+        beerOrderToUpdate.getBeerOrderLines().forEach(beerOrderLine -> lines.add(BeerOrderLineUpdateDTO.builder()
+            .id(beerOrderLine.getId())
+            .beerId(beerOrderLine.getBeer().getId())
+            .orderQuantity(beerOrderLine.getOrderQuantity())
+            .quantityAllocated(beerOrderLine.getQuantityAllocated())
+            .build()));
 
         BeerOrderUpdateDTO beerOrderUpdateDTO = BeerOrderUpdateDTO.builder()
             .customerId(beerOrderToUpdate.getCustomer().getId())
@@ -197,7 +191,7 @@ class BeerOrderControllerIT {
         mockMvc.perform(delete(requestPath + DELETE_BEER_ORDER_BY_ID, beerOrderToDelete.getId())
                 .with(jwtRequestPostProcessor))
             .andExpect(status().isNoContent());
-        
+
         assertTrue(beerOrderRepository.findById(beerOrderToDelete.getId()).isEmpty());
         assertFalse(beerOrderRepository.existsById(beerOrderToDelete.getId()));
 

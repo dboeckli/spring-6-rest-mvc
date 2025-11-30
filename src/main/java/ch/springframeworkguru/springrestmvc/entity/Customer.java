@@ -27,7 +27,7 @@ public class Customer {
     @Column(length = 36, columnDefinition = "varchar", updatable = false, nullable = false)
     @JdbcTypeCode(SqlTypes.CHAR)
     private UUID id;
-    
+
     private String name;
 
     @Column(length = 255)

@@ -8,7 +8,7 @@ import ch.springframeworkguru.springrestmvc.entity.Category;
 import ch.springframeworkguru.springrestmvc.service.BeerCsvServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DataJpaTest
 @Import({BootstrapData.class, BeerCsvServiceImpl.class, CacheConfiguration.class})
 class CategoryRepositoryTest {
-    
+
     @Autowired
     private CategoryRepository categoryRepository;
 
@@ -37,12 +37,12 @@ class CategoryRepositoryTest {
 
         testBeer.addCategory(newCategory);
 
-        Category savedCategory = categoryRepository.save(newCategory);
-        Beer savedBeer = beerRepository.save(testBeer);
+        categoryRepository.save(newCategory);
+        beerRepository.save(testBeer);
 
         assertEquals(2413, beerRepository.count());
         assertEquals(1, categoryRepository.count());
-        assertEquals(1, categoryRepository.findAll().getFirst().getBeers().size()); 
+        assertEquals(1, categoryRepository.findAll().getFirst().getBeers().size());
         assertEquals(1, beerRepository.findAll().getFirst().getCategories().size());
     }
 
@@ -60,14 +60,14 @@ class CategoryRepositoryTest {
             .build();
 
         newBeer.getCategories().add(newCategory);
-        newCategory.getBeers().add(newBeer); 
+        newCategory.getBeers().add(newBeer);
 
         Category savedCategory = categoryRepository.save(newCategory);
         Beer savedBeer = beerRepository.save(newBeer);
 
         assertEquals(2414, beerRepository.count());
         assertEquals(1, categoryRepository.count());
-        assertEquals(1, savedCategory.getBeers().size()); 
+        assertEquals(1, savedCategory.getBeers().size());
         assertEquals(1, savedBeer.getCategories().size());
     }
 

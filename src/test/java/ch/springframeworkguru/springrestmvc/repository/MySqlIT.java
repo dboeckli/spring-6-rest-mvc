@@ -8,9 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.mysql.MySQLContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @ActiveProfiles("mysql")
 class MySqlIT {
     @Container
-    static MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.4.5");
+    static org.testcontainers.mysql.MySQLContainer mySQLContainer = new MySQLContainer(DockerImageName.parse("mysql:8.4.5"));
 
     @Autowired
     BeerRepository beerRepository;
@@ -33,7 +34,7 @@ class MySqlIT {
         registry.add("spring.datasource.password", mySQLContainer::getPassword);
         registry.add("spring.datasource.url", mySQLContainer::getJdbcUrl);
     }
-    
+
     @Test
     void testListBeers() {
         List<Beer> beers = beerRepository.findAll();

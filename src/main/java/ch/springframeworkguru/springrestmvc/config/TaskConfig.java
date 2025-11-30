@@ -18,10 +18,10 @@ and log statement in the BeerCreatedListener class
 @Configuration
 @EnableAsync
 public class TaskConfig {
-    
+
     @Bean(TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME)
     public AsyncTaskExecutor taskExecutor() {
         return new TaskExecutorAdapter(Executors.newVirtualThreadPerTaskExecutor());
     }
-    
+
 }

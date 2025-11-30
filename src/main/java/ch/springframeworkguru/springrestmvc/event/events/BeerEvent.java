@@ -8,5 +8,5 @@ public interface BeerEvent {
     Beer getBeer();
 
     Authentication getAuthentication();
-    
+
 }
