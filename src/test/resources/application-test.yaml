@@ -1,18 +1,18 @@
 spring:
   application:
     name: springRestMvc
-    
+
   flyway:
-    enabled: false  
-    
+    enabled: false
+
   security:
     user:
       name: master
-      password: password  
-      
+      password: password
+
   cache:
-    cache-names: "beerCache,beerListCache,customerCache,customerListCache"  
-    
+    cache-names: "beerCache,beerListCache,customerCache,customerListCache"
+
   kafka:
     consumer:
       group-id: sfg
@@ -23,8 +23,8 @@ spring:
         spring.json.trusted.packages: "*"
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer    
-    
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
   docker:
     compose:
       enabled: true
@@ -36,22 +36,22 @@ spring:
 
 appconfig:
   cache:
-    enabled: true    
-      
+    enabled: true
+
 logging:
   level:
     org.springframework.security: INFO
     # kafka is very verbose here
     org.apache.kafka.clients.NetworkClient: ERROR
-    
+
 controllers:
   customer-controller:
     request-path: "/api/v1/customer"
   beer-controller:
     request-path: "/api/v1/beer"
   beer-order-controller:
-    request-path: "/api/v1/beerOrder"  
-    
+    request-path: "/api/v1/beerOrder"
+
 springdoc:
   show-oauth2-endpoints: true
   api-docs:
@@ -60,8 +60,8 @@ springdoc:
     oauth:
       # do that not on production!
       client-id: messaging-client
-      client-secret: secret    
-      
+      client-secret: secret
+
 security:
   auth-server-health-url: http://localhost:9000
   cors:

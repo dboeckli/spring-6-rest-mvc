@@ -4,10 +4,10 @@ server:
 spring:
   application:
     name: spring-6-rest-mvc
-    
+
   flyway:
-    enabled: true  
-    
+    enabled: true
+
   datasource:
     username: restadmin
     password: password
@@ -27,7 +27,7 @@ spring:
         cacheServerConfiguration: true
         elideSetAutoCommits: true
         maintainTimeStats: false
-        
+
   jpa:
     database: mysql
     properties:
@@ -38,15 +38,15 @@ spring:
         show_sql: false
         # Format SQL
         format_sql: true
-        
+
   security:
     user:
       name: master
-      password: password   
-      
+      password: password
+
   cache:
-    cache-names: "beerCache,beerListCache,customerCache,customerListCache"   
-    
+    cache-names: "beerCache,beerListCache,customerCache,customerListCache"
+
   kafka:
     consumer:
       group-id: sfg
@@ -57,8 +57,8 @@ spring:
         spring.json.trusted.packages: "*"
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer  
-    
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
   docker:
     compose:
       enabled: true
@@ -134,7 +134,7 @@ management:
 
 appconfig:
   cache:
-    enabled: true    
+    enabled: true
 
 # Show bind values
 logging:
@@ -150,8 +150,8 @@ controllers:
   beer-controller:
     request-path: "/api/v1/beer"
   beer-order-controller:
-    request-path: "/api/v1/beerOrder"  
-    
+    request-path: "/api/v1/beerOrder"
+
 springdoc:
   show-oauth2-endpoints: true
   api-docs:
@@ -161,7 +161,7 @@ springdoc:
       # do that not on production!
       client-id: messaging-client
       client-secret: secret
-        
+
 security:
   auth-server-health-url: http://localhost:9000
   authorization-url-for-openapi: http://localhost:9000/oauth2/auth

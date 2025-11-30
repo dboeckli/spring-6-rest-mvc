@@ -1,37 +1,37 @@
 server:
   port: 8081
-  
+
 spring:
   application:
     name: spring-6-rest-mvc
-    
+
   h2:
     console:
       enabled: true
       settings:
-        web-allow-others: true  
-    
-  datasource: 
+        web-allow-others: true
+
+  datasource:
     url: "jdbc:h2:mem:restmvcdb"
     driverClassName: "org.h2.Driver"
     username: sa
     password: password
-    
+
   flyway:
     enabled: false
   
   jpa:
     #hibernate:
-      #ddl-auto: create-drop
+    #ddl-auto: create-drop
     properties:
       jakarta:
         persistence:
           schema-generation:
             scripts:
-              #action: drop-and-create
-              #create-source: metadata
-              #drop-target: scripts/drop-and-create.sql
-              #create-target: scripts/drop-and-create.sql
+            #action: drop-and-create
+            #create-source: metadata
+            #drop-target: scripts/drop-and-create.sql
+            #create-target: scripts/drop-and-create.sql
 
   security:
     # basic auth disabled and replace by resource server
@@ -42,14 +42,14 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:9000
-          
+
   kafka:
     consumer:
       group-id: sfg
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties: 
+      properties:
         spring.json.trusted.packages: "*"
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -130,7 +130,7 @@ management:
     metrics:
       export:
         enabled: false
-        
+
 appconfig:
   cache:
     enabled: true
@@ -139,10 +139,10 @@ controllers:
   customer-controller:
     request-path: "/api/v1/customer"
   beer-controller:
-    request-path: "/api/v1/beer"  
+    request-path: "/api/v1/beer"
   beer-order-controller:
-    request-path: "/api/v1/beerOrder"  
-  
+    request-path: "/api/v1/beerOrder"
+
 springdoc:
   show-oauth2-endpoints: true
   api-docs:
