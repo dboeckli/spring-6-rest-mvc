@@ -1,16 +1,14 @@
 package ch.dboeckli.spring.restmvc.event.events;
 
 import ch.dboeckli.spring.restmvc.entity.Beer;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.Authentication;
 
 @Builder
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class BeerCreatedEvent implements BeerEvent {
 
     private Beer beer;

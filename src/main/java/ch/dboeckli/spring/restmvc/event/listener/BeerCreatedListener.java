@@ -4,6 +4,7 @@ import ch.dboeckli.spring.restmvc.entity.BeerAudit;
 import ch.dboeckli.spring.restmvc.event.events.*;
 import ch.dboeckli.spring.restmvc.mapper.BeerMapper;
 import ch.dboeckli.spring.restmvc.repository.BeerAuditRepository;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -18,14 +19,12 @@ public class BeerCreatedListener {
     private final BeerAuditRepository beerAuditRepository;
     private final BeerMapper beerMapper;
 
+    @Observed(name = "beer.created")
     @Async
     @EventListener
     public void listen(BeerEvent event) {
-        log.info("Beer Event Listener called for event: " + event.getClass().getName());
-        log.info("Beer Event Listener called for event: {}", event.getBeer().getId());
-        log.info("Beer Event Listener called for event: {}", event.getAuthentication().getName());
-        log.info("Current Thread name: " + Thread.currentThread().getName());
-        log.info("Current Thread ID: " + Thread.currentThread().threadId());
+        log.info("Beer Event Listener called for event: {}", event);
+        log.info("Current Thread name: {}, Current Thread ID: {}", Thread.currentThread().getName(), Thread.currentThread().threadId());
 
         String eventType;
         switch (event) {
@@ -35,6 +34,7 @@ public class BeerCreatedListener {
             case BeerDeleteEvent beerDeletedEvent -> eventType = "BEER_DELETED";
             default -> eventType = "UNKNOWN";
         }
+        log.info("New Beer Event Type to audit: {}", eventType);
 
         BeerAudit beerAudit = beerMapper.beerToBeerAudit(event.getBeer());
         beerAudit.setAuditEventType(eventType);

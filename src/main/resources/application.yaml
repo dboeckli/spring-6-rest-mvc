@@ -5,6 +5,15 @@ spring:
   application:
     name: spring-6-rest-mvc
 
+  #
+  # This configuration enables that the event handling is running in different threads.
+  # See log statement in the method saveNewBeer of the BeerServiceJpaImpl class
+  # and log statement in the BeerCreatedListener class
+  #
+  threads:
+    virtual:
+      enabled: true
+
   h2:
     console:
       enabled: true
@@ -44,6 +53,10 @@ spring:
           issuer-uri: http://localhost:9000
 
   kafka:
+    template:
+      observation-enabled: true
+    listener:
+      observation-enabled: true
     consumer:
       group-id: sfg
       auto-offset-reset: earliest
@@ -104,6 +117,8 @@ management:
       enabled: true
       include: request_headers, response_headers, session_id, time_taken
   observations:
+    annotations:
+      enabled: true
     http:
       server:
         requests:
@@ -111,6 +126,7 @@ management:
       client:
         requests:
           name: http-client-requests
+
   otlp:
     metrics:
       export:
@@ -121,6 +137,7 @@ management:
         enabled: false
     sampling:
       probability: 1.0
+
   logging:
     export:
       enabled: false
