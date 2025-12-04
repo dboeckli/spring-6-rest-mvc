@@ -1,60 +1,46 @@
 server:
   port: 8081
-  
-management:
-  health:
-    readinessstate:
-      enabled: true
-    livenessstate:
-      enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    configprops:
-      # WARNING: SECURITY RISK - DO NOT USE IN PRODUCTION ENVIRONMENT
-      # This configuration exposes sensitive data and should only be used for development or testing purposes.
-      # Ensure this is disabled in any environment where security is a concern.
-      show-values: ALWAYS
-    health:
-      probes:
-        enabled: true
-      show-details: always
-            
-  
+
 spring:
-  
   application:
     name: spring-6-rest-mvc
-    
+
+  #
+  # This configuration enables that the event handling is running in different threads.
+  # See log statement in the method saveNewBeer of the BeerServiceJpaImpl class
+  # and log statement in the BeerCreatedListener class
+  #
+  threads:
+    virtual:
+      enabled: true
+
   h2:
     console:
       enabled: true
       settings:
-        web-allow-others: true  
-    
-  datasource: 
+        web-allow-others: true
+
+  datasource:
     url: "jdbc:h2:mem:restmvcdb"
     driverClassName: "org.h2.Driver"
     username: sa
     password: password
-    
+
   flyway:
     enabled: false
   
   jpa:
     #hibernate:
-      #ddl-auto: create-drop
+    #ddl-auto: create-drop
     properties:
       jakarta:
         persistence:
           schema-generation:
             scripts:
-              #action: drop-and-create
-              #create-source: metadata
-              #drop-target: scripts/drop-and-create.sql
-              #create-target: scripts/drop-and-create.sql
+            #action: drop-and-create
+            #create-source: metadata
+            #drop-target: scripts/drop-and-create.sql
+            #create-target: scripts/drop-and-create.sql
 
   security:
     # basic auth disabled and replace by resource server
@@ -65,14 +51,18 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://localhost:9000
-          
+
   kafka:
+    template:
+      observation-enabled: true
+    listener:
+      observation-enabled: true
     consumer:
       group-id: sfg
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties: 
+      properties:
         spring.json.trusted.packages: "*"
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -87,7 +77,77 @@ spring:
       file: compose-h2.yaml
       stop:
         command: down
-        
+
+management:
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+  endpoints:
+    access:
+      default: unrestricted
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    configprops:
+      # WARNING: SECURITY RISK - DO NOT USE IN PRODUCTION ENVIRONMENT
+      # This configuration exposes sensitive data and should only be used for development or testing purposes.
+      # Ensure this is disabled in any environment where security is a concern.
+      show-values: ALWAYS
+    health:
+      probes:
+        enabled: true
+      show-details: always
+  info:
+    build:
+      enabled: true
+    env:
+      enabled: true
+    java:
+      enabled: true
+    os:
+      enabled: true
+    git:
+      enabled: true
+      mode: full
+  httpexchanges:
+    recording:
+      enabled: true
+      include: request_headers, response_headers, session_id, time_taken
+  observations:
+    annotations:
+      enabled: true
+    http:
+      server:
+        requests:
+          name: http.server.requests
+      client:
+        requests:
+          name: http-client-requests
+
+  otlp:
+    metrics:
+      export:
+        enabled: false
+  tracing:
+    export:
+      otlp:
+        enabled: false
+    sampling:
+      probability: 1.0
+
+  logging:
+    export:
+      enabled: false
+      otlp:
+        enabled: false
+  simple:
+    metrics:
+      export:
+        enabled: false
+
 appconfig:
   cache:
     enabled: true
@@ -96,10 +156,10 @@ controllers:
   customer-controller:
     request-path: "/api/v1/customer"
   beer-controller:
-    request-path: "/api/v1/beer"  
+    request-path: "/api/v1/beer"
   beer-order-controller:
-    request-path: "/api/v1/beerOrder"  
-  
+    request-path: "/api/v1/beerOrder"
+
 springdoc:
   show-oauth2-endpoints: true
   api-docs:
@@ -112,32 +172,9 @@ springdoc:
 
 logging:
   level:
-    org.zalando.logbook: TRACE
     # kafka is very verbose here
     org.apache.kafka.clients.NetworkClient: ERROR
-    
-logbook:
-  filter:
-    enabled: true
-  format:
-    style: http
-  obfuscate:
-    headers:
-      - Authorization
-      - X-Secret
-    parameters:
-      - access_token
-      - password
-  predicate:
-    exclude:
-      # Exclude HTML-related calls and specific endpoints that Logbook doesn't handle correctly
-      - path: /actuator/health/**
-      - path: /h2-console/**  # Exclude H2 console
-      - path: /swagger-ui/**  # Exclude Swagger UI if used
-      - path: /v3/api-docs/** # Exclude OpenAPI docs if used
-      - path: /favicon.ico
-        # Add more exclusions as needed
-        
+
 security:
   auth-server-health-url: http://localhost:9000
   authorization-url-for-openapi: http://localhost:9000/oauth2/auth
