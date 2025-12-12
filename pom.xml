@@ -135,12 +135,23 @@
             <url>https://maven.pkg.github.com/${project.organization.name}/${project.artifactId}</url>
         </repository>
     </distributionManagement>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-parent</artifactId>
+                <version>2025.0.0</version>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     
     <dependencies>
         <dependency>
             <groupId>ch.dboeckli.guru.springframework</groupId>
             <artifactId>spring-6-rest-mvc-api</artifactId>
-            <version>0.0.3</version>
+            <version>0.0.4</version>
         </dependency>
         
         <dependency>

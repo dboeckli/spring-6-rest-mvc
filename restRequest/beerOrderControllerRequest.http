@@ -10,30 +10,35 @@ Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
 
-### create a order
+### create a order. get a valid customer id from the list of customers before
 POST http://localhost:{{application-port}}/api/v1/beerOrder/createBeerOrder
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
 
 {
-  "customerId": "be62a619-c804-4503-b7ca-af7efb705085",
+  "customerId": "61edc9d7-e949-4539-b75b-9b66970a1832",
   "customerRef": "bootstrap1"
 }
 
-### update a order
-PUT http://localhost:{{application-port}}/api/v1/beerOrder/updateBeerOrder/4908886e-8df4-4df1-bdb0-6ac0bae289af
+### update a order. CREATE a new order if the id does not exist. UPDATE an existing order if the id exists.
+# TODO: Implement the update functionality and check if kafka trace id is forwarded
+PUT http://localhost:{{application-port}}/api/v1/beerOrder/updateBeerOrder/4078c137-90a1-473c-8570-8f47fa8c4e30
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
 
 {
-  "version": 0,
-  "beerName": "altered Beername",
-  "beerStyle": "LAGER",
-  "upc": "",
-  "quantityOnHand": 0,
-  "price": 27.16
+    "customerId": "61edc9d7-e949-4539-b75b-9b66970a1832",
+    "customerRef": "bootstrap1",
+    "beerOrderLines": [
+        {
+            "beerId": "f33929b7-a065-48f3-a1b0-fc8b307fb613",
+            "orderQuantity": 5,
+            "quantityAllocated": 0
+        }
+    ],
+    "paymentAmount": 99.99
 }
 
 ### delete a order by id

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 import static ch.dboeckli.spring.restmvc.config.OpenApiConfiguration.SECURITY_SCHEME_NAME;
@@ -56,6 +57,9 @@ public class BeerOrderController {
     @PostMapping(value = CREATE_BEER_ORDER)
     public ResponseEntity<@NonNull BeerOrderDTO> createBeerOrder(@Validated @RequestBody BeerOrderCreateDTO newBeerOrder) {
         log.info("createBeerOrder newBeerOrder={}", newBeerOrder);
+        if (newBeerOrder.getBeerOrderLines() == null) {
+            newBeerOrder.setBeerOrderLines(new HashSet<>());
+        }
         BeerOrderDTO savedBeerOrder = beerOrderService.saveNewBeerOrder(newBeerOrder);
 
         HttpHeaders headers = new HttpHeaders();
