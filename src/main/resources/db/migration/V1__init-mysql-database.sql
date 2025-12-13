@@ -15,10 +15,10 @@ create table beer
 );
 create table customer
 (
-    version            integer,
-    created_date       timestamp(6),
-    update_date        timestamp(6),
-    id                 varchar(36) not null,
-    name               varchar(255),
+    version      integer,
+    created_date timestamp(6),
+    update_date  timestamp(6),
+    id           varchar(36) not null,
+    name         varchar(255),
     primary key (id)
 );

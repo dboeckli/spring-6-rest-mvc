@@ -3,7 +3,7 @@
     <option name="ACTIVE_PROFILES" value="mysql" />
     <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
     <module name="spring-6-rest-mvc" />
-    <option name="SPRING_BOOT_MAIN_CLASS" value="ch.springframeworkguru.springrestmvc.SpringRestMvcApplication" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="ch.dboeckli.spring.restmvc.SpringRestMvcApplication" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

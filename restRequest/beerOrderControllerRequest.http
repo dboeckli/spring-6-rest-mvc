@@ -1,53 +1,48 @@
-###
-GET http://localhost:{{application-port}}/api/v1/beer/listBeerOrders
+### list beer order
+GET http://localhost:{{application-port}}/api/v1/beerOrder/listBeerOrders
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
 
-###
-GET http://localhost:{{application-port}}/api/v1/beer/getBeerOrderyById/0cb49969-8f19-4fe7-90bb-c2a1b9456bb3
+### get beer order by id
+GET http://localhost:{{application-port}}/api/v1/beerOrder/getBeerOrderyById/bb669f5b-427b-46b3-b0b9-1e003227f6dc
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
 
-###
-POST http://localhost:{{application-port}}/api/v1/beer/createBeerOrder
-Accept: application/json
-Content-Type: application/json
-Authorization: Bearer {{$auth.token("auth-id")}}
-
-{
-  "customerId": 0,
-  "customerRef": "abc"
-}
-
-### TODO: CHANGE TO ORDER
-PUT http://localhost:{{application-port}}/api/v1/beer/editBeer/4908886e-8df4-4df1-bdb0-6ac0bae289af
+### create a order. get a valid customer id from the list of customers before
+POST http://localhost:{{application-port}}/api/v1/beerOrder/createBeerOrder
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
 
 {
-  "version": 0,
-  "beerName": "altered Beername",
-  "beerStyle": "LAGER",
-  "upc": "",
-  "quantityOnHand": 0,
-  "price": 27.16
+  "customerId": "61edc9d7-e949-4539-b75b-9b66970a1832",
+  "customerRef": "bootstrap1"
 }
 
-### TODO: CHANGE TO ORDER
-PATCH http://localhost:{{application-port}}/api/v1/beer/patchBeer/9d07c34b-36fb-4108-b9ca-0de3393ea2ab
+### update a order. CREATE a new order if the id does not exist. UPDATE an existing order if the id exists.
+# TODO: Implement the update functionality and check if kafka trace id is forwarded
+PUT http://localhost:{{application-port}}/api/v1/beerOrder/updateBeerOrder/4078c137-90a1-473c-8570-8f47fa8c4e30
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
 
 {
-  "beerName": "patched Beername"
+    "customerId": "61edc9d7-e949-4539-b75b-9b66970a1832",
+    "customerRef": "bootstrap1",
+    "beerOrderLines": [
+        {
+            "beerId": "f33929b7-a065-48f3-a1b0-fc8b307fb613",
+            "orderQuantity": 5,
+            "quantityAllocated": 0
+        }
+    ],
+    "paymentAmount": 99.99
 }
 
-### TODO: CHANGE TO ORDER
-DELETE http://localhost:{{application-port}}/api/v1/beer/deleteBeer/6ab05faf-743d-443b-8ad6-5e8ae531d12d
+### delete a order by id
+DELETE http://localhost:{{application-port}}/api/v1/beerOrder/deleteBeerOrder/6ab05faf-743d-443b-8ad6-5e8ae531d12d
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}

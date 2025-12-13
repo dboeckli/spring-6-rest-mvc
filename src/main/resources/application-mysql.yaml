@@ -1,34 +1,22 @@
 server:
   port: 8081
-  
-management:
-  health:
-    readinessstate:
-      enabled: true
-    livenessstate:
-      enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    configprops:
-      # WARNING: SECURITY RISK - DO NOT USE IN PRODUCTION ENVIRONMENT
-      # This configuration exposes sensitive data and should only be used for development or testing purposes.
-      # Ensure this is disabled in any environment where security is a concern.
-      show-values: ALWAYS
-    health:
-      probes:
-        enabled: true
-      show-details: always  
 
 spring:
   application:
     name: spring-6-rest-mvc
-    
+
+  #
+  # This configuration enables that the event handling is running in different threads.
+  # See log statement in the method saveNewBeer of the BeerServiceJpaImpl class
+  # and log statement in the BeerCreatedListener class
+  #
+  threads:
+    virtual:
+      enabled: true
+
   flyway:
-    enabled: true  
-    
+    enabled: true
+
   datasource:
     username: restadmin
     password: password
@@ -48,7 +36,7 @@ spring:
         cacheServerConfiguration: true
         elideSetAutoCommits: true
         maintainTimeStats: false
-        
+
   jpa:
     database: mysql
     properties:
@@ -59,16 +47,20 @@ spring:
         show_sql: false
         # Format SQL
         format_sql: true
-        
+
   security:
     user:
       name: master
-      password: password   
-      
+      password: password
+
   cache:
-    cache-names: "beerCache,beerListCache,customerCache,customerListCache"   
-    
+    cache-names: "beerCache,beerListCache,customerCache,customerListCache"
+
   kafka:
+    template:
+      observation-enabled: true
+    listener:
+      observation-enabled: true
     consumer:
       group-id: sfg
       auto-offset-reset: earliest
@@ -78,8 +70,8 @@ spring:
         spring.json.trusted.packages: "*"
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer  
-    
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
   docker:
     compose:
       enabled: true
@@ -87,9 +79,77 @@ spring:
       stop:
         command: down
 
+management:
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+  endpoints:
+    access:
+      default: unrestricted
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    configprops:
+      # WARNING: SECURITY RISK - DO NOT USE IN PRODUCTION ENVIRONMENT
+      # This configuration exposes sensitive data and should only be used for development or testing purposes.
+      # Ensure this is disabled in any environment where security is a concern.
+      show-values: ALWAYS
+    health:
+      probes:
+        enabled: true
+      show-details: always
+  info:
+    build:
+      enabled: true
+    env:
+      enabled: true
+    java:
+      enabled: true
+    os:
+      enabled: true
+    git:
+      enabled: true
+      mode: full
+  httpexchanges:
+    recording:
+      enabled: true
+      include: request_headers, response_headers, session_id, time_taken
+  observations:
+    annotations:
+      enabled: true
+    http:
+      server:
+        requests:
+          name: http.server.requests
+      client:
+        requests:
+          name: http-client-requests
+  otlp:
+    metrics:
+      export:
+        enabled: false
+  tracing:
+    export:
+      otlp:
+        enabled: false
+    sampling:
+      probability: 1.0
+  logging:
+    export:
+      enabled: false
+      otlp:
+        enabled: false
+  simple:
+    metrics:
+      export:
+        enabled: false
+
 appconfig:
   cache:
-    enabled: true    
+    enabled: true
 
 # Show bind values
 logging:
@@ -99,36 +159,14 @@ logging:
     # kafka is very verbose here
     org.apache.kafka.clients.NetworkClient: ERROR
 
-logbook:
-  filter:
-    enabled: true
-  format:
-    style: http
-  obfuscate:
-    headers:
-      - Authorization
-      - X-Secret
-    parameters:
-      - access_token
-      - password
-  predicate:
-    exclude:
-      # Exclude HTML-related calls and specific endpoints that Logbook doesn't handle correctly
-      - path: /actuator/health/**
-      - path: /h2-console/**  # Exclude H2 console
-      - path: /swagger-ui/**  # Exclude Swagger UI if used
-      - path: /v3/api-docs/** # Exclude OpenAPI docs if used
-      - path: /favicon.ico
-      # Add more exclusions as needed
-  
 controllers:
   customer-controller:
     request-path: "/api/v1/customer"
   beer-controller:
     request-path: "/api/v1/beer"
   beer-order-controller:
-    request-path: "/api/v1/beerOrder"  
-    
+    request-path: "/api/v1/beerOrder"
+
 springdoc:
   show-oauth2-endpoints: true
   api-docs:
@@ -138,7 +176,7 @@ springdoc:
       # do that not on production!
       client-id: messaging-client
       client-secret: secret
-        
+
 security:
   auth-server-health-url: http://localhost:9000
   authorization-url-for-openapi: http://localhost:9000/oauth2/auth
