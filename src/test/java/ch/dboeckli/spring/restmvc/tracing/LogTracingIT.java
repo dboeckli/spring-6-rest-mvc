@@ -25,7 +25,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -50,9 +52,7 @@ public class LogTracingIT {
     private ObjectMapper objectMapper;
 
     public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
-        jwt().jwt(jwt -> jwt.claims(claims -> {
-                claims.put("scope", "message.write");
-            })
+        jwt().jwt(jwt -> jwt.claims(claims -> claims.put("scope", "message.write"))
             .subject("messaging-client")
             .notBefore(Instant.now().minusSeconds(5L)));
 
@@ -110,6 +110,10 @@ public class LogTracingIT {
             .andExpect(header().exists("Location"));
 
         List<ILoggingEvent> logEvents = listAppender.list;
+        await()
+            .atMost(5, SECONDS)
+            .pollInterval(100, java.util.concurrent.TimeUnit.MILLISECONDS)
+            .untilAsserted(() -> assertEquals(5, logEvents.size()));
         assertAll(
             () -> assertNotNull(logEvents),
             () -> assertEquals(5, logEvents.size()),
