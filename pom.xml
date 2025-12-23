@@ -316,7 +316,7 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>5.5.6</version>  <!-- TODO: NOT SUPPORTED IN SPRING-BOOT 4-->
+            <version>6.0.0</version>  <!-- TODO: NOT SUPPORTED IN SPRING-BOOT 4-->
             <scope>test</scope>
         </dependency>
         <dependency>
