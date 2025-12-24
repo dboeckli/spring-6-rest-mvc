@@ -291,8 +291,8 @@ class BeerControllerIT {
         assertAll(() -> {
             assert beersDtos != null;
             assertEquals(254, beersDtos.getTotalElements());
-            assertEquals(1, beersDtos.getTotalPages());
-            assertEquals(254, beersDtos.getNumberOfElements());
+            assertEquals(3, beersDtos.getTotalPages());
+            assertEquals(100, beersDtos.getNumberOfElements());
             assertEquals(0, beersDtos.getNumber());
         });
     }
