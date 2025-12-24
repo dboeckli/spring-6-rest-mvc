@@ -45,7 +45,7 @@ import static ch.dboeckli.spring.restmvc.config.OpenApiConfiguration.SECURITY_SC
 @RequiredArgsConstructor
 public class OpenApiConfiguration {
 
-    public static final String SECURITY_SCHEME_NAME = "Bearer Authentication";
+    public static final String SECURITY_SCHEME_NAME = "Bearer_Authentication";
     private final BuildProperties buildProperties;
     @Value("${security.authorization-url-for-openapi:http://localhost:9000/oauth2/auth}")
     private String authorizationUrl;
