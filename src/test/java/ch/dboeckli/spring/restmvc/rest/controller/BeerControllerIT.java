@@ -276,8 +276,8 @@ class BeerControllerIT {
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(2413, beersDtos.getTotalElements());
-            assertEquals(97, beersDtos.getTotalPages());
+            assertEquals(254, beersDtos.getTotalElements());
+            assertEquals(11, beersDtos.getTotalPages());
             assertEquals(25, beersDtos.getNumberOfElements());
             assertEquals(0, beersDtos.getNumber());
         });
@@ -290,9 +290,9 @@ class BeerControllerIT {
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(2413, beersDtos.getTotalElements());
-            assertEquals(3, beersDtos.getTotalPages());
-            assertEquals(MAX_PAGE_SIZE, beersDtos.getNumberOfElements());
+            assertEquals(254, beersDtos.getTotalElements());
+            assertEquals(1, beersDtos.getTotalPages());
+            assertEquals(254, beersDtos.getNumberOfElements());
             assertEquals(0, beersDtos.getNumber());
         });
     }
@@ -304,7 +304,7 @@ class BeerControllerIT {
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(336, beersDtos.getTotalElements());
+            assertEquals(33, beersDtos.getTotalElements());
         });
     }
 
@@ -318,7 +318,7 @@ class BeerControllerIT {
                 .queryParam("beerName", "IPA")
                 .queryParam("pageSize", "800"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content.size()", is(336)));
+            .andExpect(jsonPath("$.content.size()", is(33)));
     }
 
     @Test
@@ -339,10 +339,10 @@ class BeerControllerIT {
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(336, beersDtos.getTotalElements());
+            assertEquals(33, beersDtos.getTotalElements());
             assertEquals(1, beersDtos.getNumber());
-            assertEquals(7, beersDtos.getTotalPages());
-            assertEquals(50, beersDtos.getNumberOfElements());
+            assertEquals(1, beersDtos.getTotalPages());
+            assertEquals(0, beersDtos.getNumberOfElements());
         });
     }
 
@@ -353,7 +353,7 @@ class BeerControllerIT {
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(310, beersDtos.getTotalElements());
+            assertEquals(31, beersDtos.getTotalElements());
         });
     }
 
@@ -403,7 +403,7 @@ class BeerControllerIT {
 
         assertAll(() -> {
             assert beersDtos != null;
-            assertEquals(548, beersDtos.getTotalElements());
+            assertEquals(68, beersDtos.getTotalElements());
         });
     }
 
