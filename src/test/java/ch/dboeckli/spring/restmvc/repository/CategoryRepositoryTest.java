@@ -40,7 +40,7 @@ class CategoryRepositoryTest {
         categoryRepository.save(newCategory);
         beerRepository.save(testBeer);
 
-        assertEquals(2413, beerRepository.count());
+        assertEquals(503, beerRepository.count());
         assertEquals(1, categoryRepository.count());
         assertEquals(1, categoryRepository.findAll().getFirst().getBeers().size());
         assertEquals(1, beerRepository.findAll().getFirst().getCategories().size());
@@ -65,7 +65,7 @@ class CategoryRepositoryTest {
         Category savedCategory = categoryRepository.save(newCategory);
         Beer savedBeer = beerRepository.save(newBeer);
 
-        assertEquals(2414, beerRepository.count());
+        assertEquals(504, beerRepository.count());
         assertEquals(1, categoryRepository.count());
         assertEquals(1, savedCategory.getBeers().size());
         assertEquals(1, savedBeer.getCategories().size());

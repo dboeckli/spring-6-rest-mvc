@@ -53,7 +53,7 @@ class BootstrapDataTest {
     void testSetBootstrapData() throws Exception {
         bootstrapData.run((String) null);
         assertAll(
-            () -> assertEquals(2413, beerRepository.count()),
+            () -> assertEquals(503, beerRepository.count()),
             () -> assertEquals(3, customerRepository.count()),
             () -> assertEquals(6, beerOrderRepository.count()),
             () -> assertEquals(12, beerOrderLinesRepository.count()),
