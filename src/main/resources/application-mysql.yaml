@@ -154,8 +154,7 @@ appconfig:
 # Show bind values
 logging:
   level:
-    org.hibernate.orm.jdbc.bind: INFO
-    org.zalando.logbook: TRACE
+    org.hibernate.orm.jdbc.bind: WARN
     # kafka is very verbose here
     org.apache.kafka.clients.NetworkClient: ERROR
 
