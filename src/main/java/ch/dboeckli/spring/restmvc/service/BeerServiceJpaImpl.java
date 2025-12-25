@@ -33,7 +33,7 @@ import java.util.UUID;
 public class BeerServiceJpaImpl implements BeerService {
 
     public static final int DEFAULT_PAGE_SIZE = 25;
-    public static final int MAX_PAGE_SIZE = 1000;
+    public static final int MAX_PAGE_SIZE = 100;
     public static final int DEFAULT_PAGE_NUMBER = 0;
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
