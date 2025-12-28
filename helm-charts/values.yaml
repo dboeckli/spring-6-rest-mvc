@@ -65,6 +65,11 @@ mysql:
 
   serviceFQDN: "spring-6-rest-mvc-mysql.spring-6-rest-mvc.svc.cluster.local"
 
+kafka:
+  enabled: true
+  port: 9092
+  serviceFQDN: "spring-6-rest-mvc-kafka.spring-6-rest-mvc.svc.cluster.local"
+
 authServer:
   enabled: true
 

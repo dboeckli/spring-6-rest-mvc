@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "kafka.fullname" . }}-test-connection"
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "kafka.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: test-kafka-connection
+      image: {{ .Values.kafkaImage.repository }}:{{ .Values.kafkaImage.tag }}
+      imagePullPolicy: {{ .Values.kafkaImage.pullPolicy }}
+      command: [ "/bin/sh", "-c" ]
+      args:
+        - |
+          set -e
+
+          BOOTSTRAP="{{ include "kafka.fullname" . }}:{{ .Values.kafka.service.port }}"
+          echo "### Test: Kafka connection using bootstrap-server: ${BOOTSTRAP}"
+
+          echo "Waiting for Kafka to become reachable..."
+          for i in $(seq 1 30); do
+            if /opt/kafka/bin/kafka-topics.sh --bootstrap-server "${BOOTSTRAP}" --list >/tmp/topics.txt 2>/tmp/kafka_err.txt; then
+              echo "Kafka reachable."
+              break
+            fi
+            echo "Attempt ${i}/30 failed; retrying in 2s..."
+            sleep 2
+          done
+
+          echo "### Topics (if any):"
+          cat /tmp/topics.txt || true
+
+          echo "### Result"
+          /opt/kafka/bin/kafka-topics.sh --bootstrap-server "${BOOTSTRAP}" --list >/dev/null
+          echo "OK"
+  restartPolicy: Never

@@ -8,12 +8,14 @@ import ch.guru.springframework.spring6restmvcapi.dto.BeerStyle;
 import ch.guru.springframework.spring6restmvcapi.events.OrderPlacedEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.ContainerTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,8 +27,14 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@EmbeddedKafka(controlledShutdown = true, topics = {KafkaConfig.ORDER_PLACED_TOPIC}, partitions = 1)
+@EmbeddedKafka(
+    controlledShutdown = true,
+    topics = {KafkaConfig.ORDER_PLACED_TOPIC},
+    partitions = 1,
+    ports = {0})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@ActiveProfiles("embedded_kafka_test")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OrderPlacedListenerTest {
 
     @Autowired
@@ -48,7 +56,6 @@ class OrderPlacedListenerTest {
     void setUp() {
         kafkaListenerEndpointRegistry.getListenerContainers().forEach(container -> ContainerTestUtils.waitForAssignment(container, 1));
     }
-
 
     @Test
     void listen() {

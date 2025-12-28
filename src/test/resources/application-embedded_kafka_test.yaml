@@ -1,9 +1,6 @@
-server:
-  port: 8081
-
 spring:
   application:
-    name: spring-6-rest-mvc
+    name: springRestMvc
 
   #
   # This configuration enables that the event handling is running in different threads.
@@ -15,38 +12,7 @@ spring:
       enabled: true
 
   flyway:
-    enabled: true
-
-  datasource:
-    username: restadmin
-    password: password
-    url: jdbc:mysql://localhost:3306/restmvcdb?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari:
-      pool-name: RestDB-Pool
-      maximum-pool-size: 5
-      data-source-properties:
-        cachePrepStmts: true
-        prepStmtCacheSize: 250
-        prepStmtCacheSqlLimit: 2048
-        useServerPrepStmts: true
-        useLocalSessionState: true
-        rewriteBatchedStatements: true
-        cacheResultSetMetadata: true
-        cacheServerConfiguration: true
-        elideSetAutoCommits: true
-        maintainTimeStats: false
-
-  jpa:
-    database: mysql
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        ddl-auto: validate
-        # Show SQL  
-        show_sql: false
-        # Format SQL
-        format_sql: true
+    enabled: false
 
   security:
     user:
@@ -57,17 +23,17 @@ spring:
     cache-names: "beerCache,beerListCache,customerCache,customerListCache"
 
   kafka:
-    bootstrap-servers: "[::1]:9092"
+    bootstrap-servers: ${spring.embedded.kafka.brokers}
     admin:
       properties:
-        bootstrap.servers: "[::1]:9092"
+        bootstrap.servers: ${spring.embedded.kafka.brokers}
       auto-create: false
     template:
       observation-enabled: true
     listener:
       observation-enabled: true
     consumer:
-      bootstrap-servers: "[::1]:9092"
+      bootstrap-servers: ${spring.embedded.kafka.brokers}
       group-id: sfg
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -81,9 +47,11 @@ spring:
   docker:
     compose:
       enabled: true
-      file: compose.yaml
+      file: compose-h2.yaml
       stop:
         command: down
+      skip:
+        in-tests: true
 
 management:
   health:
@@ -133,34 +101,14 @@ management:
       client:
         requests:
           name: http-client-requests
-  otlp:
-    metrics:
-      export:
-        enabled: false
-  tracing:
-    export:
-      otlp:
-        enabled: false
-    sampling:
-      probability: 1.0
-  logging:
-    export:
-      enabled: false
-      otlp:
-        enabled: false
-  simple:
-    metrics:
-      export:
-        enabled: false
 
 appconfig:
   cache:
     enabled: true
 
-# Show bind values
 logging:
   level:
-    org.hibernate.orm.jdbc.bind: WARN
+    org.springframework.security: INFO
     # kafka is very verbose here
     org.apache.kafka.clients.NetworkClient: ERROR
 
@@ -184,13 +132,9 @@ springdoc:
 
 security:
   auth-server-health-url: http://localhost:9000
-  authorization-url-for-openapi: http://localhost:9000/oauth2/auth
-  token-url-for-openapi: http://localhost:9000/oauth2/token
-  refresh-url-for-openapi: http://localhost:9000/oauth2/refresh-token
   cors:
     allowed-origins:
       - http://localhost:8080 # gateway project runs on port 8080
       - http://127.0.0.1:8080 # gateway project runs on port 8080
       - http://localhost:30080 # gateway project runs on port 30080
       - http://127.0.0.1:30080 # gateway project runs on port 30080
-  

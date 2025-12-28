@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kafka.fullname" . }}
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "kafka.labels" . | nindent 4 }}
+    app.kubernetes.io/component: messaging
+spec:
+  replicas: {{ .Values.kafka.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "kafka.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: messaging
+  template:
+    metadata:
+      labels:
+        {{- include "kafka.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: messaging
+    spec:
+      containers:
+        - name: kafka
+          image: {{ .Values.kafkaImage.repository }}:{{ .Values.kafkaImage.tag }}
+          imagePullPolicy: {{ .Values.kafkaImage.pullPolicy }}
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
+            - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+              value: "1@$(POD_NAME):{{ .Values.kafka.ports.controller }}"
+
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: "PLAINTEXT://{{ include "kafka.fullname" . }}:{{ .Values.kafka.ports.broker }}"
+
+            {{- with .Values.kafka.env }}
+            {{- range $key, $value := . }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- end }}
+          ports:
+            - name: broker
+              containerPort: {{ .Values.kafka.ports.broker }}
+              protocol: TCP
+            - name: controller
+              containerPort: {{ .Values.kafka.ports.controller }}
+              protocol: TCP
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.kafka.ports.broker }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.kafka.ports.broker }}

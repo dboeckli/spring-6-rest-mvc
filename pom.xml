@@ -313,18 +313,6 @@
             <artifactId>spring-boot-starter-opentelemetry-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <version>6.0.0</version>  <!-- TODO: NOT SUPPORTED IN SPRING-BOOT 4-->
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.oai</groupId>
-            <artifactId>swagger-request-validator-restassured</artifactId>
-            <version>${swagger-request-validator.version}</version>
-            <scope>test</scope>
-        </dependency>
         <!-- test containers -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
