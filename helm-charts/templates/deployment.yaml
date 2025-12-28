@@ -24,6 +24,10 @@ spec:
           image: {{.Values.busyboxImage.repository }}:{{.Values.busyboxImage.tag }}
           imagePullPolicy: {{.Values.busyboxImage.pullPolicy }}
           command: [ 'sh', '-c', 'until nc -z {{ .Values.authServer.serviceFQDN  }} {{ .Values.authServer.port }}; do echo "[busybox: wait-for-auth-server] waiting for auth-server"; sleep 2; done; echo "[busybox: wait-for-auth-server] auth-server is available"' ]
+        - name: wait-for-kafka
+          image: {{.Values.busyboxImage.repository }}:{{.Values.busyboxImage.tag }}
+          imagePullPolicy: {{.Values.busyboxImage.pullPolicy }}
+          command: [ 'sh', '-c', 'until nc -z {{ .Values.kafka.serviceFQDN }} {{ .Values.kafka.port }}; do echo "[busybox: wait-for-kafka] waiting for kafka"; sleep 2; done; echo "[busybox: wait-for-kafka] kafka is available"' ]
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.registry }}/@project.artifactId@:{{ .Chart.AppVersion }}"
@@ -40,6 +44,13 @@ spec:
               value: "true"
             - name: SPRING_DATASOURCE_URL
               value: jdbc:mysql://{{ .Values.mysql.serviceFQDN  }}:{{ .Values.mysql.port }}/{{ .Values.mysql.database }}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "{{ .Values.kafka.serviceFQDN }}:{{ .Values.kafka.port }}"
+            - name: SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS
+              value: "{{ .Values.kafka.serviceFQDN }}:{{ .Values.kafka.port }}"
+            - name: SPRING_KAFKA_ADMIN_PROPERTIES_BOOTSTRAP_SERVERS
+              value: "{{ .Values.kafka.serviceFQDN }}:{{ .Values.kafka.port }}"
 
             - name: SECURITY_AUTH_SERVER_HEALTH_URL
               value: "http://{{ .Values.authServer.serviceFQDN }}:{{ .Values.authServer.port }}"

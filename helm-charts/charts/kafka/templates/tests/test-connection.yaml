@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "kafka.fullname" . }}-test-connection"
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "kafka.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: test-kafka-connection
+      image: {{ .Values.kafkaImage.repository }}:{{ .Values.kafkaImage.tag }}
+      imagePullPolicy: {{ .Values.kafkaImage.pullPolicy }}
+      command: [ "/bin/sh", "-c" ]
+      args:
+        - |
+          ERROR_OCCURED=0
+          BOOTSTRAP="{{ include "kafka.fullname" . }}:{{ .Values.kafka.service.port }}"
+          echo "### Test: Kafka connection using bootstrap-server: ${BOOTSTRAP}"
+
+          echo "Waiting for Kafka to become reachable..."
+          REACHABLE=0
+          for i in $(seq 1 30); do
+            /opt/kafka/bin/kafka-topics.sh --bootstrap-server "${BOOTSTRAP}" --list >/tmp/topics.txt 2>/tmp/kafka_err.txt
+            rc=$?
+            if [ $rc -eq 0 ]; then
+              echo "Kafka reachable."
+              REACHABLE=1
+              break
+            fi
+            echo "Attempt ${i}/30 failed (rc=${rc}); retrying in 2s..."
+            sleep 2
+          done
+
+          if [ $REACHABLE -ne 1 ]; then
+            echo "Kafka not reachable after retries."
+            ERROR_OCCURED=1
+          fi
+
+          echo "### Topics (if any):"
+          if [ -f /tmp/topics.txt ]; then
+            cat /tmp/topics.txt
+          else
+            echo "(no topics list produced)"
+          fi
+
+          if [ $ERROR_OCCURED -ne 0 ]; then
+            echo "### kafka-topics stderr:"
+            if [ -f /tmp/kafka_err.txt ]; then
+              cat /tmp/kafka_err.txt
+            fi
+            echo "### DNS Configuration:"
+            cat /etc/resolv.conf || true
+
+            echo "### Testing DNS resolution:"
+            KAFKA_FQDN="{{ include "kafka.serviceFQDN" . }}"
+            echo "nslookup KAFKA_FQDN: ${KAFKA_FQDN}"
+            nslookup "${KAFKA_FQDN}" || true
+
+            exit 1
+          fi
+
+          exit 0
+  restartPolicy: Never

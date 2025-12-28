@@ -1,0 +1,43 @@
+global:
+  namespace: spring-6-rest-mvc
+
+kafka:
+  replicaCount: 1
+
+  service:
+    type: NodePort
+    port: 9092
+    targetPort: 9092
+    nodePort: 30092
+
+  ports:
+    broker: 9092
+    controller: 19093
+
+  env:
+    KAFKA_PROCESS_ROLES: "broker,controller"
+    KAFKA_NODE_ID: "1"
+    KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:19093"
+    KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+    KAFKA_LOG_DIRS: "/var/lib/kafka/data"
+    KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+
+  persistence:
+    enabled: false
+    # falls du später persistieren willst:
+    # size: 5Gi
+
+  resources: {}
+  # resources:
+  #   requests:
+  #     cpu: 250m
+  #     memory: 512Mi
+  #   limits:
+  #     cpu: 500m
+  #     memory: 1Gi
+
+kafkaImage:
+  repository: apache/kafka
+  tag: "4.1.1"
+  pullPolicy: IfNotPresent
