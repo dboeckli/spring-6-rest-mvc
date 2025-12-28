@@ -47,3 +47,10 @@ Selector labels
 app.kubernetes.io/name: {{ include "kafka.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+Fully qualified DNS name for the Kafka Service inside the cluster.
+*/}}
+{{- define "kafka.serviceFQDN" -}}
+{{- printf "%s.%s.svc.cluster.local" (include "kafka.fullname" .) .Values.global.namespace -}}
+{{- end }}
