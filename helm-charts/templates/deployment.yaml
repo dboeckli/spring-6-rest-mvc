@@ -16,18 +16,36 @@ spec:
         {{- include "application-template.selectorLabels" . | nindent 8 }}
     spec:
       initContainers:
+        - name: wait-for-kafka
+          image: {{.Values.kcatImage.repository }}:{{.Values.kcatImage.tag }}
+          imagePullPolicy: {{.Values.kcatImage.pullPolicy }}
+          command:
+            - /scripts/wait-for-kafka.sh
+          args:
+            - "{{ default (printf "%s-spring-6-rest-mvc-kafka.%s.svc.cluster.local" .Release.Name .Release.Namespace) .Values.kafka.serviceFQDN }}:{{ .Values.kafka.port }}"
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+              readOnly: true
         - name: wait-for-mysql
           image: {{.Values.busyboxImage.repository }}:{{.Values.busyboxImage.tag }}
           imagePullPolicy: {{.Values.busyboxImage.pullPolicy }}
           command: [ 'sh', '-c', 'until nc -z {{ .Values.mysql.serviceFQDN  }} {{ .Values.mysql.port }}; do echo "[busybox: wait-for-mysql] waiting for mysql"; sleep 2; done; echo "[busybox: wait-for-mysql] mysql is available"' ]
+
         - name: wait-for-auth-server
           image: {{.Values.busyboxImage.repository }}:{{.Values.busyboxImage.tag }}
           imagePullPolicy: {{.Values.busyboxImage.pullPolicy }}
-          command: [ 'sh', '-c', 'until nc -z {{ .Values.authServer.serviceFQDN  }} {{ .Values.authServer.port }}; do echo "[busybox: wait-for-auth-server] waiting for auth-server"; sleep 2; done; echo "[busybox: wait-for-auth-server] auth-server is available"' ]
-        - name: wait-for-kafka
-          image: {{.Values.busyboxImage.repository }}:{{.Values.busyboxImage.tag }}
-          imagePullPolicy: {{.Values.busyboxImage.pullPolicy }}
-          command: [ 'sh', '-c', 'until nc -z {{ .Values.kafka.serviceFQDN }} {{ .Values.kafka.port }}; do echo "[busybox: wait-for-kafka] waiting for kafka"; sleep 2; done; echo "[busybox: wait-for-kafka] kafka is available"' ]
+          command:
+            - /scripts/wait-for-readiness.sh
+          args:
+            - authServer
+            - {{ default (printf "%s-spring-6-auth-server.%s.svc.cluster.local" .Release.Name .Release.Namespace) .Values.authServer.serviceFQDN | quote }}
+            - {{ .Values.authServer.port | quote }}
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+              readOnly: true
+
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.registry }}/@project.artifactId@:{{ .Chart.AppVersion }}"
@@ -102,3 +120,7 @@ spec:
           hostPath:
             path: {{ .Values.global.timezonePath }}
             type: ""
+        - name: scripts
+          configMap:
+            name: {{ include "application-template.fullname" . }}-scripts
+            defaultMode: 0555
