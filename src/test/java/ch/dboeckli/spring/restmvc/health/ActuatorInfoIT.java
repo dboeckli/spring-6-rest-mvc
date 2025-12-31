@@ -69,6 +69,7 @@ class ActuatorInfoIT {
     void kafkaHealthIndicatorTest() throws Exception {
         mockMvc.perform(get("/actuator/health/kafka"))
             .andExpect(status().isOk())
+            .andDo(result -> log.info("Response (pretty):\n{}", pretty(result.getResponse().getContentAsString())))
             .andExpect(jsonPath("$.status").value("UP"))
             .andExpect(jsonPath("$.details.kafkaBootstrapServers").value(bootstrapServers))
             .andExpect(jsonPath("$.details.kafkaResponse").value("Topic: health-check, Partition: 0, Offset: 0"))
@@ -85,7 +86,7 @@ class ActuatorInfoIT {
                 "drink.request.cold",
                 "drink.request.icecold",
                 "order.placed"
-            ))).andDo(result -> log.info("Response:\n{}", result.getResponse().getContentAsString()));
+            )));
     }
 
     private String pretty(String body) {
