@@ -75,9 +75,13 @@ class ActuatorInfoIT {
             .andExpect(jsonPath("$.details.kafkaResponse").value("Topic: health-check, Partition: 0, Offset: 0"))
             .andExpect(jsonPath("$.details.clusterId").isNotEmpty())
             .andExpect(jsonPath("$.details.nodes").isArray())
-            .andExpect(jsonPath("$.details.nodes[0]").value("localhost:9092"))
+            .andExpect(jsonPath("$.details.nodes[0]").value("localhost:29092"))
             .andExpect(jsonPath("$.details.consumerGroups").isArray())
-            .andExpect(jsonPath("$.details.consumerGroups").isEmpty())
+            .andExpect(jsonPath("$.details.consumerGroups").value(containsInAnyOrder(
+                "DrinkSplitterRouter",
+                "drinkPreparedListener",
+                "KafkaIntegrationTest"
+            )))
             .andExpect(jsonPath("$.details.topics").isArray())
             .andExpect(jsonPath("$.details.topics").value(containsInAnyOrder(
                 "health-check",

@@ -53,17 +53,17 @@ spring:
           issuer-uri: http://localhost:9000
 
   kafka:
-    bootstrap-servers: "[::1]:9092"
+    bootstrap-servers: "localhost:29092"
     admin:
       properties:
-        bootstrap.servers: "[::1]:9092"
+        bootstrap.servers: "localhost:29092"
       auto-create: true
     template:
       observation-enabled: true
     listener:
       observation-enabled: true
     consumer:
-      bootstrap-servers: "[::1]:9092"
+      bootstrap-servers: "localhost:29092"
       group-id: sfg
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
