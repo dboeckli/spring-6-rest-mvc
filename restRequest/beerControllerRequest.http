@@ -1,8 +1,26 @@
 ###
+< {%
+    function randomHex(length) {
+        let result = '';
+        const chars = '0123456789abcdef';
+        for (let i = 0; i < length; i++) {
+            result += chars[Math.floor(Math.random() * chars.length)];
+        }
+        return result;
+    }
+
+    const traceId = randomHex(32);
+    const spanId  = randomHex(16);
+
+    request.variables.set("traceId", traceId);
+    request.variables.set("spanId", spanId);
+%}
 GET http://localhost:{{application-port}}/api/v1/beer/listBeers
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=listBeers
 
 ###
 GET http://localhost:{{application-port}}/api/v1/beer/getBeerById/c5327dfa-ef05-42ff-bb8b-f5500536483b
