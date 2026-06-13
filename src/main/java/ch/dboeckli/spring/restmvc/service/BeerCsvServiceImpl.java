@@ -11,6 +11,7 @@ import java.util.List;
 
 @Service
 public class BeerCsvServiceImpl implements BeerCsvService {
+
     @Override
     public List<BeerCSVRecord> convertCSV(File csvFile) {
         try {
@@ -19,8 +20,10 @@ public class BeerCsvServiceImpl implements BeerCsvService {
                 .build()
                 .parse();
             return beerCSVRecordList;
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
+
 }

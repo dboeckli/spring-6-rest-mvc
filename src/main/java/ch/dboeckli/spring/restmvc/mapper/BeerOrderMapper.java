@@ -6,7 +6,9 @@ import org.mapstruct.Mapper;
 
 @Mapper
 public interface BeerOrderMapper {
+
     BeerOrder beerOrderDtoToBeerOrder(BeerOrderDTO beerOrderDto);
 
     BeerOrderDTO beerOrderToBeerOrderDto(BeerOrder beerOrder);
+
 }

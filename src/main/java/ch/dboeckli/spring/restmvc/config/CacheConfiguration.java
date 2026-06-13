@@ -24,4 +24,5 @@ public class CacheConfiguration {
         log.info("Caching disabled");
         return new NoOpCacheManager();
     }
+
 }

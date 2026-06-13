@@ -10,8 +10,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 @Slf4j
 public class DrinkListenerKafkaConsumer {
+
     AtomicInteger iceColdMessageCounter = new AtomicInteger(0);
+
     AtomicInteger coldMessageCounter = new AtomicInteger(0);
+
     AtomicInteger coolMessageCounter = new AtomicInteger(0);
 
     @KafkaListener(groupId = "KafkaIntegrationTest", topics = KafkaConfig.DRINK_REQUEST_ICE_COLD_TOPIC)
@@ -20,17 +23,18 @@ public class DrinkListenerKafkaConsumer {
         iceColdMessageCounter.incrementAndGet();
     }
 
-    //list cold beer
+    // list cold beer
     @KafkaListener(groupId = "KafkaIntegrationTest", topics = KafkaConfig.DRINK_REQUEST_COLD_TOPIC)
     public void listenCold() {
         log.info("I am listening - cold");
         coldMessageCounter.incrementAndGet();
     }
 
-    //listen cool beer
+    // listen cool beer
     @KafkaListener(groupId = "KafkaIntegrationTest", topics = KafkaConfig.DRINK_REQUEST_COOL_TOPIC)
     public void listenCool() {
         log.info("I am listening - cool");
         coolMessageCounter.incrementAndGet();
     }
+
 }

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-@Import({BeerCsvServiceImpl.class, CacheConfiguration.class})
+@Import({ BeerCsvServiceImpl.class, CacheConfiguration.class })
 class BootstrapDataTest {
 
     @Autowired
@@ -46,21 +46,18 @@ class BootstrapDataTest {
 
     @BeforeEach
     void setUp() {
-        bootstrapData = new BootstrapData(beerRepository, customerRepository, beerCsvService, beerOrderRepository, cacheManager);
+        bootstrapData = new BootstrapData(beerRepository, customerRepository, beerCsvService, beerOrderRepository,
+                cacheManager);
     }
 
     @Test
     void testSetBootstrapData() throws Exception {
         bootstrapData.run((String) null);
-        assertAll(
-            () -> assertEquals(503, beerRepository.count()),
-            () -> assertEquals(3, customerRepository.count()),
-            () -> assertEquals(6, beerOrderRepository.count()),
-            () -> assertEquals(12, beerOrderLinesRepository.count()),
-            () -> assertEquals(0, beerAuditRepository.count()),
-            () -> assertEquals(0, categoryRepository.count()),
-            () -> assertEquals(0, cacheManager.getCacheNames().size())
-        );
+        assertAll(() -> assertEquals(503, beerRepository.count()), () -> assertEquals(3, customerRepository.count()),
+                () -> assertEquals(6, beerOrderRepository.count()),
+                () -> assertEquals(12, beerOrderLinesRepository.count()),
+                () -> assertEquals(0, beerAuditRepository.count()), () -> assertEquals(0, categoryRepository.count()),
+                () -> assertEquals(0, cacheManager.getCacheNames().size()));
     }
 
 }

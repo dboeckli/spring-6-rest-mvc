@@ -28,7 +28,7 @@ spring:
 
   flyway:
     enabled: false
-  
+
   jpa:
     #hibernate:
     #ddl-auto: create-drop
@@ -46,7 +46,7 @@ spring:
     # basic auth disabled and replace by resource server
     #user:
     #  name: master
-    #  password: password 
+    #  password: password
     oauth2:
       resourceserver:
         jwt:
@@ -73,7 +73,7 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-  
+
   cache:
     cache-names: "beerCache,beerListCache,customerCache,customerListCache"
 
@@ -180,6 +180,7 @@ logging:
   level:
     # kafka is very verbose here
     org.apache.kafka.clients.NetworkClient: ERROR
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
 
 security:
   auth-server-health-url: http://localhost:9000

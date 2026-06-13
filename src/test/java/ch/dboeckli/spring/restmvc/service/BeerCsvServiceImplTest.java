@@ -21,4 +21,5 @@ class BeerCsvServiceImplTest {
 
         assertThat(beerCSVRecordList.size()).isEqualTo(500);
     }
+
 }

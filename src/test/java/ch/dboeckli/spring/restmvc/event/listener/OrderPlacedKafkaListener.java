@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 @Slf4j
 public class OrderPlacedKafkaListener {
+
     AtomicInteger messageCounter = new AtomicInteger(0);
 
     @KafkaListener(groupId = "KafkaIntegrationTest", topics = KafkaConfig.ORDER_PLACED_TOPIC)

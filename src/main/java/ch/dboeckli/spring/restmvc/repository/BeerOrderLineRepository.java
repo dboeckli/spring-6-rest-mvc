@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @NullMarked
 public interface BeerOrderLineRepository extends JpaRepository<BeerOrderLine, UUID> {
+
 }

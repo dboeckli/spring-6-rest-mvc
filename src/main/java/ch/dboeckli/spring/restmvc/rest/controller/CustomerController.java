@@ -44,7 +44,8 @@ public class CustomerController {
     @GetMapping(value = "/getCustomerById/{customerId}")
     public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable("customerId") UUID customerId) {
         log.info("getCustomerById customerId={}", customerId);
-        return new ResponseEntity<>(customerService.getCustomerById(customerId).orElseThrow(NotFoundException::new), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.getCustomerById(customerId).orElseThrow(NotFoundException::new),
+                HttpStatus.OK);
     }
 
     @PostMapping(value = "/createCustomer")
@@ -55,24 +56,29 @@ public class CustomerController {
     }
 
     @PutMapping(value = "/editCustomer/{customerId}")
-    public ResponseEntity<CustomerDTO> editCustomer(@RequestBody CustomerDTO customerToEdit, @PathVariable("customerId") UUID customerId) {
+    public ResponseEntity<CustomerDTO> editCustomer(@RequestBody CustomerDTO customerToEdit,
+            @PathVariable("customerId") UUID customerId) {
         log.info("editCustomer customerId={}", customerId);
         Optional<CustomerDTO> updatedCustomer = customerService.editCustomer(customerId, customerToEdit);
         if (updatedCustomer.isEmpty()) {
             throw new NotFoundException();
-        } else {
+        }
+        else {
             return new ResponseEntity<>(updatedCustomer.get(), HttpStatus.OK);
         }
     }
 
     @PatchMapping(value = "/patchCustomer/{customerId}")
-    public ResponseEntity<CustomerDTO> patchCustomer(@RequestBody CustomerDTO customer, @PathVariable("customerId") UUID customerId) {
+    public ResponseEntity<CustomerDTO> patchCustomer(@RequestBody CustomerDTO customer,
+            @PathVariable("customerId") UUID customerId) {
         log.info("patchCustomer customerId={}", customerId);
         Optional<CustomerDTO> patchedCustomer = customerService.patchCustomer(customerId, customer);
         if (patchedCustomer.isEmpty()) {
             throw new NotFoundException();
-        } else {
+        }
+        else {
             return new ResponseEntity<>(patchedCustomer.get(), HttpStatus.OK);
         }
     }
+
 }

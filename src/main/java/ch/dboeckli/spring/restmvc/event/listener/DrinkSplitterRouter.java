@@ -24,9 +24,8 @@ public class DrinkSplitterRouter {
     public void receive(@Payload OrderPlacedEvent orderPlacedEvent) {
         log.info("Received order placed event: {}", orderPlacedEvent);
 
-        if (orderPlacedEvent.getBeerOrderDTO() == null ||
-            orderPlacedEvent.getBeerOrderDTO().getBeerOrderLines() == null ||
-            orderPlacedEvent.getBeerOrderDTO().getBeerOrderLines().isEmpty()) {
+        if (orderPlacedEvent.getBeerOrderDTO() == null || orderPlacedEvent.getBeerOrderDTO().getBeerOrderLines() == null
+                || orderPlacedEvent.getBeerOrderDTO().getBeerOrderLines().isEmpty()) {
             log.error("Invalid Order Placed Event");
             return;
         }
@@ -75,23 +74,20 @@ public class DrinkSplitterRouter {
 
     private void sendIceColdBeer(BeerOrderLineDTO beerOrderLineDTO) {
         // send ice cold beer
-        kafkaTemplate.send(KafkaConfig.DRINK_REQUEST_ICE_COLD_TOPIC, DrinkRequestEvent.builder()
-            .beerOrderLineDTO(beerOrderLineDTO)
-            .build());
+        kafkaTemplate.send(KafkaConfig.DRINK_REQUEST_ICE_COLD_TOPIC,
+                DrinkRequestEvent.builder().beerOrderLineDTO(beerOrderLineDTO).build());
     }
 
     private void sendColdBeer(BeerOrderLineDTO beerOrderLineDTO) {
         // send cold beer
-        kafkaTemplate.send(KafkaConfig.DRINK_REQUEST_COLD_TOPIC, DrinkRequestEvent.builder()
-            .beerOrderLineDTO(beerOrderLineDTO)
-            .build());
+        kafkaTemplate.send(KafkaConfig.DRINK_REQUEST_COLD_TOPIC,
+                DrinkRequestEvent.builder().beerOrderLineDTO(beerOrderLineDTO).build());
     }
 
     private void sendCoolBeer(BeerOrderLineDTO beerOrderLineDTO) {
         // send cool beer
-        kafkaTemplate.send(KafkaConfig.DRINK_REQUEST_COOL_TOPIC, DrinkRequestEvent.builder()
-            .beerOrderLineDTO(beerOrderLineDTO)
-            .build());
+        kafkaTemplate.send(KafkaConfig.DRINK_REQUEST_COOL_TOPIC,
+                DrinkRequestEvent.builder().beerOrderLineDTO(beerOrderLineDTO).build());
     }
 
 }

@@ -26,6 +26,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 public class Beer {
+
     @Id
     @GeneratedValue(generator = "UUID")
     @UuidGenerator
@@ -64,9 +65,11 @@ public class Beer {
     @ToString.Exclude
     @ManyToMany(mappedBy = "beers")
     private Set<Category> categories = new HashSet<>();
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdDate;
+
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
@@ -79,4 +82,5 @@ public class Beer {
         categories.remove(category);
         category.getBeers().remove(this);
     }
+
 }

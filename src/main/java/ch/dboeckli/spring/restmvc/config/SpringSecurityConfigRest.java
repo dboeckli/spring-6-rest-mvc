@@ -28,6 +28,7 @@ import java.util.List;
 public class SpringSecurityConfigRest {
 
     private static final List<String> ALLOWED_HEADERS = List.of("*");
+
     private static final List<String> ALLOWED_METHODS = List.of("POST", "GET", "PUT", "OPTIONS", "DELETE", "PATCH");
 
     private final AllowedOriginConfig allowedOriginConfig;
@@ -40,27 +41,25 @@ public class SpringSecurityConfigRest {
     @Bean
     @Order(99)
     public SecurityFilterChain filterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) {
-        http
-            .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers(
-                    "/v3/api-docs**",
-                    "/v3/api-docs/**",
-                    "/swagger-ui/**",
-                    "/swagger-ui.html",
-                    "/swagger-resources/**",
-                    "/webjars/**",
-                    "/h2-console/**")
-                .permitAll() // permit all swagger/openapi endpoints
-                //.requestMatchers("/actuator/**").permitAll()
-                .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()  // permit all actuator endpoints
-                .anyRequest().authenticated())
+        http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
+            .requestMatchers("/v3/api-docs**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
+                    "/swagger-resources/**", "/webjars/**", "/h2-console/**")
+            .permitAll() // permit all swagger/openapi endpoints
+            // .requestMatchers("/actuator/**").permitAll()
+            .requestMatchers(EndpointRequest.toAnyEndpoint())
+            .permitAll() // permit all actuator endpoints
+            .anyRequest()
+            .authenticated())
             .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
-            .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/h2-console/**") // CSRF-Schutz für H2-Console deaktivieren
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**") // CSRF-Schutz
+                                                                         // für H2-Console
+                                                                         // deaktivieren
             )
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
-            .headers(headers -> headers
-                .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable) // Neue Syntax für Frame-Optionen
+            .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable) // Neue
+                                                                                                    // Syntax
+                                                                                                    // für
+                                                                                                    // Frame-Optionen
             );
         return http.build();
     }
@@ -84,7 +83,9 @@ public class SpringSecurityConfigRest {
     @ConfigurationProperties(prefix = "security.cors")
     @Data
     public static class AllowedOriginConfig {
+
         private List<String> allowedOrigins;
+
     }
 
 }

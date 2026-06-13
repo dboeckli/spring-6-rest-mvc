@@ -32,7 +32,9 @@ import java.util.UUID;
 public class BeerOrderServiceJpaImpl implements BeerOrderService {
 
     public static final int DEFAULT_PAGE_SIZE = 25;
+
     public static final int MAX_PAGE_SIZE = 100;
+
     public static final int DEFAULT_PAGE_NUMBER = 0;
 
     private final BeerOrderRepository beerOrderRepository;
@@ -55,10 +57,8 @@ public class BeerOrderServiceJpaImpl implements BeerOrderService {
 
     @Override
     public Optional<BeerOrderDTO> getBeerOrderById(UUID beerOrderId) {
-        return Optional.ofNullable(beerOrderMapper
-            .beerOrderToBeerOrderDto(beerOrderRepository
-                .findById(beerOrderId)
-                .orElse(null)));
+        return Optional.ofNullable(
+                beerOrderMapper.beerOrderToBeerOrderDto(beerOrderRepository.findById(beerOrderId).orElse(null)));
     }
 
     @Override
@@ -88,39 +88,48 @@ public class BeerOrderServiceJpaImpl implements BeerOrderService {
     public BeerOrderDTO editBeerOrder(UUID beerOrderId, BeerOrderUpdateDTO beerOrderUpdateDTO) {
         BeerOrder beerOrder = beerOrderRepository.findById(beerOrderId).orElseThrow(NotFoundException::new);
 
-        beerOrder.setCustomer(customerRepository.findById(beerOrderUpdateDTO.getCustomerId()).orElseThrow(NotFoundException::new));
+        beerOrder.setCustomer(
+                customerRepository.findById(beerOrderUpdateDTO.getCustomerId()).orElseThrow(NotFoundException::new));
         beerOrder.setCustomerRef(beerOrderUpdateDTO.getCustomerRef());
 
         beerOrderUpdateDTO.getBeerOrderLines().forEach(beerOrderLine -> {
             if (beerOrderLine.getBeerId() != null) {
-                BeerOrderLine foundLine = beerOrder.getBeerOrderLines().stream()
+                BeerOrderLine foundLine = beerOrder.getBeerOrderLines()
+                    .stream()
                     .filter(beerOrderLine1 -> beerOrderLine1.getId().equals(beerOrderLine.getId()))
-                    .findFirst().orElseThrow(NotFoundException::new);
-                foundLine.setBeer(beerRepository.findById(beerOrderLine.getBeerId()).orElseThrow(NotFoundException::new));
+                    .findFirst()
+                    .orElseThrow(NotFoundException::new);
+                foundLine
+                    .setBeer(beerRepository.findById(beerOrderLine.getBeerId()).orElseThrow(NotFoundException::new));
                 foundLine.setOrderQuantity(beerOrderLine.getOrderQuantity());
                 foundLine.setQuantityAllocated(beerOrderLine.getQuantityAllocated());
-            } else {
-                beerOrder.getBeerOrderLines().add(BeerOrderLine.builder()
-                    .beer(beerRepository.findById(beerOrderLine.getBeerId()).orElseThrow(NotFoundException::new))
-                    .orderQuantity(beerOrderLine.getOrderQuantity())
-                    .quantityAllocated(beerOrderLine.getQuantityAllocated())
-                    .build());
+            }
+            else {
+                beerOrder.getBeerOrderLines()
+                    .add(BeerOrderLine.builder()
+                        .beer(beerRepository.findById(beerOrderLine.getBeerId()).orElseThrow(NotFoundException::new))
+                        .orderQuantity(beerOrderLine.getOrderQuantity())
+                        .quantityAllocated(beerOrderLine.getQuantityAllocated())
+                        .build());
             }
         });
 
-        if (beerOrderUpdateDTO.getBeerOrderShipment() != null && beerOrderUpdateDTO.getBeerOrderShipment().getTrackingNumber() != null) {
+        if (beerOrderUpdateDTO.getBeerOrderShipment() != null
+                && beerOrderUpdateDTO.getBeerOrderShipment().getTrackingNumber() != null) {
             if (beerOrder.getBeerOrderShipment() == null) {
-                beerOrder.setBeerOrderShipment(BeerOrderShipment.builder().trackingNumber(beerOrderUpdateDTO.getBeerOrderShipment().getTrackingNumber()).build());
-            } else {
-                beerOrder.getBeerOrderShipment().setTrackingNumber(beerOrderUpdateDTO.getBeerOrderShipment().getTrackingNumber());
+                beerOrder.setBeerOrderShipment(BeerOrderShipment.builder()
+                    .trackingNumber(beerOrderUpdateDTO.getBeerOrderShipment().getTrackingNumber())
+                    .build());
+            }
+            else {
+                beerOrder.getBeerOrderShipment()
+                    .setTrackingNumber(beerOrderUpdateDTO.getBeerOrderShipment().getTrackingNumber());
             }
         }
 
         BeerOrderDTO beerOrderDTO = beerOrderMapper.beerOrderToBeerOrderDto(beerOrderRepository.save(beerOrder));
         if (beerOrderUpdateDTO.getPaymentAmount() != null) {
-            applicationEventPublisher.publishEvent(OrderPlacedEvent.builder()
-                .beerOrderDTO(beerOrderDTO)
-                .build());
+            applicationEventPublisher.publishEvent(OrderPlacedEvent.builder().beerOrderDTO(beerOrderDTO).build());
         }
 
         return beerOrderDTO;
@@ -148,20 +157,24 @@ public class BeerOrderServiceJpaImpl implements BeerOrderService {
 
         if (pageNumber != null && pageNumber > 0) {
             pageNumberParameter = pageNumber - 1;
-        } else {
+        }
+        else {
             pageNumberParameter = DEFAULT_PAGE_NUMBER;
         }
 
         if (pageSize == null) {
             pageSizeParameter = DEFAULT_PAGE_SIZE;
-        } else {
+        }
+        else {
             if (pageSize > MAX_PAGE_SIZE) {
                 pageSizeParameter = MAX_PAGE_SIZE;
-            } else {
+            }
+            else {
                 pageSizeParameter = pageSize;
             }
         }
         Sort sort = Sort.by(Sort.Direction.ASC, "customerRef");
         return PageRequest.of(pageNumberParameter, pageSizeParameter, sort);
     }
+
 }

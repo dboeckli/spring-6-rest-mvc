@@ -43,7 +43,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         ddl-auto: validate
-        # Show SQL  
+        # Show SQL
         show_sql: false
         # Format SQL
         format_sql: true
@@ -163,6 +163,7 @@ logging:
     org.hibernate.orm.jdbc.bind: WARN
     # kafka is very verbose here
     org.apache.kafka.clients.NetworkClient: ERROR
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
 
 controllers:
   customer-controller:
@@ -193,4 +194,4 @@ security:
       - http://127.0.0.1:8080 # gateway project runs on port 8080
       - http://localhost:30080 # gateway project runs on port 30080
       - http://127.0.0.1:30080 # gateway project runs on port 30080
-  
+

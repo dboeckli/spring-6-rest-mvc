@@ -27,11 +27,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@EmbeddedKafka(
-    controlledShutdown = true,
-    topics = {KafkaConfig.ORDER_PLACED_TOPIC},
-    partitions = 1,
-    ports = {0})
+@EmbeddedKafka(controlledShutdown = true, topics = { KafkaConfig.ORDER_PLACED_TOPIC }, partitions = 1, ports = { 0 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @ActiveProfiles("embedded_kafka_test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -54,33 +50,36 @@ class OrderPlacedListenerTest {
 
     @BeforeEach
     void setUp() {
-        kafkaListenerEndpointRegistry.getListenerContainers().forEach(container -> ContainerTestUtils.waitForAssignment(container, 1));
+        kafkaListenerEndpointRegistry.getListenerContainers()
+            .forEach(container -> ContainerTestUtils.waitForAssignment(container, 1));
     }
 
     @Test
     void listen() {
-        OrderPlacedEvent orderPlacedEvent = OrderPlacedEvent.builder().beerOrderDTO(BeerOrderDTO.builder()
-            .id(UUID.randomUUID())
-            .build()).build();
+        OrderPlacedEvent orderPlacedEvent = OrderPlacedEvent.builder()
+            .beerOrderDTO(BeerOrderDTO.builder().id(UUID.randomUUID()).build())
+            .build();
 
         orderPlacedListener.listen(orderPlacedEvent);
 
-        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, orderPlacedKafkaListener.messageCounter.get()));
+        await().atMost(20, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, orderPlacedKafkaListener.messageCounter.get()));
     }
 
     @Test
     void listenSplitter() {
-        drinkSplitterRouter.receive(OrderPlacedEvent.builder()
-            .beerOrderDTO(buildOrder())
-            .build());
+        drinkSplitterRouter.receive(OrderPlacedEvent.builder().beerOrderDTO(buildOrder()).build());
 
-        await().atMost(15, TimeUnit.SECONDS).pollDelay(100, TimeUnit.MILLISECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
+            .pollDelay(100, TimeUnit.MILLISECONDS)
             .until(drinkListenerKafkaConsumer.iceColdMessageCounter::get, greaterThan(0));
 
-        await().atMost(15, TimeUnit.SECONDS).pollDelay(100, TimeUnit.MILLISECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
+            .pollDelay(100, TimeUnit.MILLISECONDS)
             .until(drinkListenerKafkaConsumer.coldMessageCounter::get, greaterThan(0));
 
-        await().atMost(15, TimeUnit.SECONDS).pollDelay(100, TimeUnit.MILLISECONDS)
+        await().atMost(15, TimeUnit.SECONDS)
+            .pollDelay(100, TimeUnit.MILLISECONDS)
             .until(drinkListenerKafkaConsumer.coolMessageCounter::get, greaterThan(0));
     }
 
@@ -89,35 +88,20 @@ class OrderPlacedListenerTest {
         Set<BeerOrderLineDTO> beerOrderLines = new HashSet<>();
 
         beerOrderLines.add(BeerOrderLineDTO.builder()
-            .beer(BeerDTO.builder()
-                .id(UUID.randomUUID())
-                .beerStyle(BeerStyle.IPA)
-                .beerName("Test Beer")
-                .build())
+            .beer(BeerDTO.builder().id(UUID.randomUUID()).beerStyle(BeerStyle.IPA).beerName("Test Beer").build())
             .build());
 
-        //add lager
+        // add lager
         beerOrderLines.add(BeerOrderLineDTO.builder()
-            .beer(BeerDTO.builder()
-                .id(UUID.randomUUID())
-                .beerStyle(BeerStyle.LAGER)
-                .beerName("Test Beer")
-                .build())
+            .beer(BeerDTO.builder().id(UUID.randomUUID()).beerStyle(BeerStyle.LAGER).beerName("Test Beer").build())
             .build());
 
-        //add gose
+        // add gose
         beerOrderLines.add(BeerOrderLineDTO.builder()
-            .beer(BeerDTO.builder()
-                .id(UUID.randomUUID())
-                .beerStyle(BeerStyle.GOSE)
-                .beerName("Test Beer")
-                .build())
+            .beer(BeerDTO.builder().id(UUID.randomUUID()).beerStyle(BeerStyle.GOSE).beerName("Test Beer").build())
             .build());
 
-        return BeerOrderDTO.builder()
-            .id(UUID.randomUUID())
-            .beerOrderLines(beerOrderLines)
-            .build();
+        return BeerOrderDTO.builder().id(UUID.randomUUID()).beerOrderLines(beerOrderLines).build();
     }
 
 }

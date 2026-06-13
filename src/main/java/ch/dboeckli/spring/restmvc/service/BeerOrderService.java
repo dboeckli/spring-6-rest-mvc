@@ -21,4 +21,5 @@ public interface BeerOrderService {
     Optional<BeerOrderDTO> patchBeerOrder(UUID beerOrderId, BeerOrderDTO beerOrder);
 
     Boolean deleteBeerOrder(UUID beerOrderId);
+
 }

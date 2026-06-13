@@ -27,34 +27,36 @@ public class BeerOrder {
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
     private UUID id;
+
     @Version
     private Long version;
+
     private BigDecimal paymentAmount;
+
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdDate;
+
     @UpdateTimestamp
     private Timestamp updateDate;
+
     private String customerRef;
+
     @ManyToOne(cascade = CascadeType.PERSIST)
     @ToString.Exclude
     private Customer customer;
+
     @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL)
     @ToString.Exclude
     private Set<BeerOrderLine> beerOrderLines;
+
     @OneToOne(cascade = CascadeType.PERSIST)
     @ToString.Exclude
     private BeerOrderShipment beerOrderShipment;
 
-    public BeerOrder(UUID id,
-                     Long version,
-                     BigDecimal paymentAmount,
-                     Timestamp createdDate,
-                     Timestamp updateDate,
-                     String customerRef,
-                     Customer customer,
-                     Set<BeerOrderLine> beerOrderLines,
-                     BeerOrderShipment beerOrderShipment) {
+    public BeerOrder(UUID id, Long version, BigDecimal paymentAmount, Timestamp createdDate, Timestamp updateDate,
+            String customerRef, Customer customer, Set<BeerOrderLine> beerOrderLines,
+            BeerOrderShipment beerOrderShipment) {
 
         this.id = id;
         this.version = version;
@@ -91,4 +93,5 @@ public class BeerOrder {
             beerOrderLines.forEach(beerOrderLine -> beerOrderLine.setBeerOrder(this));
         }
     }
+
 }

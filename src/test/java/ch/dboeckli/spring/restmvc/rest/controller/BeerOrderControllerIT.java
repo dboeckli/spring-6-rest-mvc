@@ -49,13 +49,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class BeerOrderControllerIT {
 
-    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
-        jwt().jwt(jwt -> jwt.claims(claims -> {
-                claims.put(OAuth2TokenIntrospectionClaimNames.SCOPE, "message.read");
-                claims.put(OAuth2TokenIntrospectionClaimNames.SCOPE, "message.write");
-            })
-            .subject("messaging-client")
-            .notBefore(Instant.now().minusSeconds(5L)));
+    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor = jwt()
+        .jwt(jwt -> jwt.claims(claims -> {
+            claims.put(OAuth2TokenIntrospectionClaimNames.SCOPE, "message.read");
+            claims.put(OAuth2TokenIntrospectionClaimNames.SCOPE, "message.write");
+        }).subject("messaging-client").notBefore(Instant.now().minusSeconds(5L)));
+
     @Autowired
     WebApplicationContext wac;
 
@@ -72,36 +71,36 @@ class BeerOrderControllerIT {
     BeerRepository beerRepository;
 
     MockMvc mockMvc;
+
     @Value("${controllers.beer-order-controller.request-path}")
     private String requestPath;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
-            .apply(springSecurity())
-            .build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply(springSecurity()).build();
     }
 
     @Test
     void testListBeerOrders() throws Exception {
-        MvcResult result = mockMvc.perform(get(requestPath + LIST_BEER_ORDERS)
-                .with(jwtRequestPostProcessor))
+        MvcResult result = mockMvc.perform(get(requestPath + LIST_BEER_ORDERS).with(jwtRequestPostProcessor))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content.size()", greaterThan(0)))
             .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
         // TODO. DOES NOT WORK. PageImpl is not Serializable
-        // TODO: SEE https://stackoverflow.com/questions/52490399/spring-boot-page-deserialization-pageimpl-no-constructor
-        //PageImpl<List<BeerOrderDTO>> beerOrderDTOSs = objectMapper.readValue(jsonResponse, new TypeReference<>() {}); 
+        // TODO: SEE
+        // https://stackoverflow.com/questions/52490399/spring-boot-page-deserialization-pageimpl-no-constructor
+        // PageImpl<List<BeerOrderDTO>> beerOrderDTOSs =
+        // objectMapper.readValue(jsonResponse, new TypeReference<>() {});
     }
 
     @Test
     void testGetBeerOrderById() throws Exception {
         BeerOrder beerOrder = beerOrderRepository.findAll().getFirst();
 
-        MvcResult result = mockMvc.perform(get(requestPath + GET_BEER_ORDER_BY_ID, beerOrder.getId())
-                .with(jwtRequestPostProcessor))
+        MvcResult result = mockMvc
+            .perform(get(requestPath + GET_BEER_ORDER_BY_ID, beerOrder.getId()).with(jwtRequestPostProcessor))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id", is(beerOrder.getId().toString())))
             .andReturn();
@@ -122,14 +121,11 @@ class BeerOrderControllerIT {
         BeerOrderCreateDTO newBeerOrderDTO = BeerOrderCreateDTO.builder()
             .customerId(customer.getId())
             .customerRef("ABC123")
-            .beerOrderLines(Set.of(BeerOrderLineCreateDTO.builder()
-                .beerId(beer.getId())
-                .orderQuantity(1)
-                .build()))
+            .beerOrderLines(Set.of(BeerOrderLineCreateDTO.builder().beerId(beer.getId()).orderQuantity(1).build()))
             .build();
 
-        MvcResult result = mockMvc.perform(post(requestPath + CREATE_BEER_ORDER)
-                .with(jwtRequestPostProcessor)
+        MvcResult result = mockMvc
+            .perform(post(requestPath + CREATE_BEER_ORDER).with(jwtRequestPostProcessor)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newBeerOrderDTO)))
@@ -153,24 +149,23 @@ class BeerOrderControllerIT {
         BeerOrder beerOrderToUpdate = beerOrderRepository.findAll().getFirst();
 
         Set<BeerOrderLineUpdateDTO> lines = new HashSet<>();
-        beerOrderToUpdate.getBeerOrderLines().forEach(beerOrderLine -> lines.add(BeerOrderLineUpdateDTO.builder()
-            .id(beerOrderLine.getId())
-            .beerId(beerOrderLine.getBeer().getId())
-            .orderQuantity(beerOrderLine.getOrderQuantity())
-            .quantityAllocated(beerOrderLine.getQuantityAllocated())
-            .build()));
+        beerOrderToUpdate.getBeerOrderLines()
+            .forEach(beerOrderLine -> lines.add(BeerOrderLineUpdateDTO.builder()
+                .id(beerOrderLine.getId())
+                .beerId(beerOrderLine.getBeer().getId())
+                .orderQuantity(beerOrderLine.getOrderQuantity())
+                .quantityAllocated(beerOrderLine.getQuantityAllocated())
+                .build()));
 
         BeerOrderUpdateDTO beerOrderUpdateDTO = BeerOrderUpdateDTO.builder()
             .customerId(beerOrderToUpdate.getCustomer().getId())
             .customerRef("UpdatedTestRef")
             .beerOrderLines(lines)
-            .beerOrderShipment(BeerOrderShipmentUpdateDTO.builder()
-                .trackingNumber("123456")
-                .build())
+            .beerOrderShipment(BeerOrderShipmentUpdateDTO.builder().trackingNumber("123456").build())
             .build();
 
-        MvcResult result = mockMvc.perform(put(requestPath + UPDATE_BEER_ORDER_BY_ID, beerOrderToUpdate.getId())
-                .with(jwtRequestPostProcessor)
+        MvcResult result = mockMvc
+            .perform(put(requestPath + UPDATE_BEER_ORDER_BY_ID, beerOrderToUpdate.getId()).with(jwtRequestPostProcessor)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(beerOrderUpdateDTO)))
@@ -190,15 +185,18 @@ class BeerOrderControllerIT {
     void testDeleteBeerOrder() throws Exception {
         BeerOrder beerOrderToDelete = beerOrderRepository.findAll().getFirst();
 
-        mockMvc.perform(delete(requestPath + DELETE_BEER_ORDER_BY_ID, beerOrderToDelete.getId())
+        mockMvc
+            .perform(delete(requestPath + DELETE_BEER_ORDER_BY_ID, beerOrderToDelete.getId())
                 .with(jwtRequestPostProcessor))
             .andExpect(status().isNoContent());
 
         assertTrue(beerOrderRepository.findById(beerOrderToDelete.getId()).isEmpty());
         assertFalse(beerOrderRepository.existsById(beerOrderToDelete.getId()));
 
-        mockMvc.perform(delete(requestPath + DELETE_BEER_ORDER_BY_ID, beerOrderToDelete.getId())
+        mockMvc
+            .perform(delete(requestPath + DELETE_BEER_ORDER_BY_ID, beerOrderToDelete.getId())
                 .with(jwtRequestPostProcessor))
             .andExpect(status().isNotFound());
     }
+
 }

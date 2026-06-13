@@ -29,9 +29,13 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class BootstrapData implements CommandLineRunner {
+
     private final BeerRepository beerRepository;
+
     private final CustomerRepository customerRepository;
+
     private final BeerCsvService beerCsvService;
+
     private final BeerOrderRepository beerOrderRepository;
 
     private final CacheManager cacheManager;
@@ -39,12 +43,8 @@ public class BootstrapData implements CommandLineRunner {
     @Override
     @Transactional
     // Eviction does not work. We are using explicitly the cachemanager
-    @Caching(evict = {
-        @CacheEvict(cacheNames = "customerCache"),
-        @CacheEvict(cacheNames = "customerListCache"),
-        @CacheEvict(cacheNames = "beerCache"),
-        @CacheEvict(cacheNames = "beerListCache")
-    })
+    @Caching(evict = { @CacheEvict(cacheNames = "customerCache"), @CacheEvict(cacheNames = "customerListCache"),
+            @CacheEvict(cacheNames = "beerCache"), @CacheEvict(cacheNames = "beerListCache") })
     public void run(String... args) throws Exception {
         clearCache();
         loadBeerData();
@@ -66,7 +66,8 @@ public class BootstrapData implements CommandLineRunner {
             for (BeerCSVRecord beerCSVRecord : beerCSVRecordList) {
                 BeerStyle beerStyle = switch (beerCSVRecord.getStyle()) {
                     case "American Pale Lager" -> BeerStyle.LAGER;
-                    case "American Pale Ale (APA)", "American Black Ale", "Belgian Dark Ale", "American Blonde Ale" -> BeerStyle.ALE;
+                    case "American Pale Ale (APA)", "American Black Ale", "Belgian Dark Ale", "American Blonde Ale" ->
+                        BeerStyle.ALE;
                     case "American IPA", "American Double / Imperial IPA", "Belgian IPA" -> BeerStyle.IPA;
                     case "American Porter" -> BeerStyle.PORTER;
                     case "Oatmeal Stout", "American Stout" -> BeerStyle.STOUT;
@@ -128,17 +129,11 @@ public class BootstrapData implements CommandLineRunner {
     private void loadCustomerData() {
 
         if (customerRepository.count() == 0) {
-            Customer customer1 = Customer.builder()
-                .name("Customer 1")
-                .build();
+            Customer customer1 = Customer.builder().name("Customer 1").build();
 
-            Customer customer2 = Customer.builder()
-                .name("Customer 2")
-                .build();
+            Customer customer2 = Customer.builder().name("Customer 2").build();
 
-            Customer customer3 = Customer.builder()
-                .name("Customer 3")
-                .build();
+            Customer customer3 = Customer.builder().name("Customer 3").build();
 
             customerRepository.saveAll(Arrays.asList(customer1, customer2, customer3));
 
@@ -159,30 +154,16 @@ public class BootstrapData implements CommandLineRunner {
                 beerOrderRepository.save(BeerOrder.builder()
                     .customer(customer)
                     .customerRef("bootstrap1")
-                    .beerOrderLines(Set.of(
-                        BeerOrderLine.builder()
-                            .beer(beerIterator.next())
-                            .orderQuantity(1)
-                            .build(),
-                        BeerOrderLine.builder()
-                            .beer(beerIterator.next())
-                            .orderQuantity(2)
-                            .build()
-                    )).build());
+                    .beerOrderLines(Set.of(BeerOrderLine.builder().beer(beerIterator.next()).orderQuantity(1).build(),
+                            BeerOrderLine.builder().beer(beerIterator.next()).orderQuantity(2).build()))
+                    .build());
 
                 beerOrderRepository.save(BeerOrder.builder()
                     .customer(customer)
                     .customerRef("bootstrap2")
-                    .beerOrderLines(Set.of(
-                        BeerOrderLine.builder()
-                            .beer(beerIterator.next())
-                            .orderQuantity(1)
-                            .build(),
-                        BeerOrderLine.builder()
-                            .beer(beerIterator.next())
-                            .orderQuantity(2)
-                            .build()
-                    )).build());
+                    .beerOrderLines(Set.of(BeerOrderLine.builder().beer(beerIterator.next()).orderQuantity(1).build(),
+                            BeerOrderLine.builder().beer(beerIterator.next()).orderQuantity(2).build()))
+                    .build());
             });
 
             beerOrderRepository.flush();
@@ -190,4 +171,5 @@ public class BootstrapData implements CommandLineRunner {
             log.info("Created {} BeerOrders: {}", orders.size(), orders);
         }
     }
+
 }

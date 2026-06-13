@@ -51,8 +51,8 @@ public class LogTracingIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
-        jwt().jwt(jwt -> jwt.claims(claims -> claims.put("scope", "message.write"))
+    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor = jwt()
+        .jwt(jwt -> jwt.claims(claims -> claims.put("scope", "message.write"))
             .subject("messaging-client")
             .notBefore(Instant.now().minusSeconds(5L)));
 
@@ -63,20 +63,18 @@ public class LogTracingIT {
         listAppender.start();
         logger.addAppender(listAppender);
 
-
-        mockMvc.perform(get(requestPath + "/listBeers")
-                .with(jwtRequestPostProcessor)
-                .accept(MediaType.APPLICATION_JSON))
+        mockMvc
+            .perform(get(requestPath + "/listBeers").with(jwtRequestPostProcessor).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
 
         List<ILoggingEvent> logEvents = listAppender.list;
-        assertAll(
-            () -> assertNotNull(logEvents),
-            () -> assertEquals(1, logEvents.size()),
-            () -> assertThat(logEvents.getFirst().getFormattedMessage()).isEqualTo("listBeers beerName=null"),
-            () -> assertThat(logEvents.getFirst().getMDCPropertyMap().get("traceId")).isNotBlank().matches("[0-9a-f]{32}"),
-            () -> assertThat(logEvents.getFirst().getMDCPropertyMap().get("spanId")).as("span_id").isNotBlank().matches("[0-9a-f]{16}")
-        );
+        assertAll(() -> assertNotNull(logEvents), () -> assertEquals(1, logEvents.size()),
+                () -> assertThat(logEvents.getFirst().getFormattedMessage()).isEqualTo("listBeers beerName=null"),
+                () -> assertThat(logEvents.getFirst().getMDCPropertyMap().get("traceId")).isNotBlank()
+                    .matches("[0-9a-f]{32}"),
+                () -> assertThat(logEvents.getFirst().getMDCPropertyMap().get("spanId")).as("span_id")
+                    .isNotBlank()
+                    .matches("[0-9a-f]{16}"));
 
         logger.detachAppender(listAppender);
         listAppender.stop();
@@ -93,16 +91,15 @@ public class LogTracingIT {
         beerControllerLogger.addAppender(listAppender);
         beerCreatedListenerLogger.addAppender(listAppender);
 
-        BeerDTO beerToCreate = BeerDTO
-            .builder()
+        BeerDTO beerToCreate = BeerDTO.builder()
             .beerName("pilgrim")
             .beerStyle(BeerStyle.PALE_ALE)
             .upc("123456789")
             .price(BigDecimal.valueOf(5L))
             .build();
 
-        mockMvc.perform(post(requestPath + "/createBeer")
-                .with(jwtRequestPostProcessor)
+        mockMvc
+            .perform(post(requestPath + "/createBeer").with(jwtRequestPostProcessor)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(beerToCreate)))
@@ -110,25 +107,28 @@ public class LogTracingIT {
             .andExpect(header().exists("Location"));
 
         List<ILoggingEvent> logEvents = listAppender.list;
-        await()
-            .atMost(5, SECONDS)
+        await().atMost(5, SECONDS)
             .pollInterval(100, java.util.concurrent.TimeUnit.MILLISECONDS)
             .untilAsserted(() -> assertEquals(5, logEvents.size()));
-        assertAll(
-            () -> assertNotNull(logEvents),
-            () -> assertEquals(5, logEvents.size()),
-            () -> assertThat(logEvents.getFirst().getFormattedMessage()).startsWith("createBeer newBeer=BeerDTO"),
-            () -> assertThat(logEvents.getFirst().getMDCPropertyMap().get("traceId")).isNotBlank().matches("[0-9a-f]{32}"),
-            () -> assertThat(logEvents.getFirst().getMDCPropertyMap().get("spanId")).isNotBlank().matches("[0-9a-f]{16}"),
-            () -> assertThat(logEvents.get(1).getFormattedMessage()).startsWith("Beer Event Listener called for event"),
-            () -> assertThat(logEvents.get(1).getMDCPropertyMap().get("traceId")).isNotBlank().matches("[0-9a-f]{32}"),
-            () -> assertThat(logEvents.get(1).getMDCPropertyMap().get("spanId")).isNotBlank().matches("[0-9a-f]{16}"),
+        assertAll(() -> assertNotNull(logEvents), () -> assertEquals(5, logEvents.size()),
+                () -> assertThat(logEvents.getFirst().getFormattedMessage()).startsWith("createBeer newBeer=BeerDTO"),
+                () -> assertThat(logEvents.getFirst().getMDCPropertyMap().get("traceId")).isNotBlank()
+                    .matches("[0-9a-f]{32}"),
+                () -> assertThat(logEvents.getFirst().getMDCPropertyMap().get("spanId")).isNotBlank()
+                    .matches("[0-9a-f]{16}"),
+                () -> assertThat(logEvents.get(1).getFormattedMessage())
+                    .startsWith("Beer Event Listener called for event"),
+                () -> assertThat(logEvents.get(1).getMDCPropertyMap().get("traceId")).isNotBlank()
+                    .matches("[0-9a-f]{32}"),
+                () -> assertThat(logEvents.get(1).getMDCPropertyMap().get("spanId")).isNotBlank()
+                    .matches("[0-9a-f]{16}"),
 
-            () -> assertThat(logEvents.getFirst().getMDCPropertyMap().get("traceId")).isEqualTo(logEvents.get(1).getMDCPropertyMap().get("traceId")),
-            () -> assertThat(logEvents.getFirst().getMDCPropertyMap().get("spanId")).isNotEqualTo(logEvents.get(1).getMDCPropertyMap().get("spanId")),
+                () -> assertThat(logEvents.getFirst().getMDCPropertyMap().get("traceId"))
+                    .isEqualTo(logEvents.get(1).getMDCPropertyMap().get("traceId")),
+                () -> assertThat(logEvents.getFirst().getMDCPropertyMap().get("spanId"))
+                    .isNotEqualTo(logEvents.get(1).getMDCPropertyMap().get("spanId")),
 
-            () -> assertThat(logEvents.getFirst().getThreadName()).isNotEqualTo(logEvents.get(1).getThreadName())
-        );
+                () -> assertThat(logEvents.getFirst().getThreadName()).isNotEqualTo(logEvents.get(1).getThreadName()));
 
         beerControllerLogger.detachAppender(listAppender);
         beerCreatedListenerLogger.detachAppender(listAppender);

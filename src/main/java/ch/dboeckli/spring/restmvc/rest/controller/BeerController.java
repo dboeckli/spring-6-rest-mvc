@@ -28,6 +28,7 @@ import static ch.dboeckli.spring.restmvc.config.OpenApiConfiguration.SECURITY_SC
 public class BeerController {
 
     private final BeerService beerService;
+
     @Value("${controllers.beer-controller.request-path}")
     private String requestPath;
 
@@ -42,12 +43,11 @@ public class BeerController {
 
     @GetMapping(value = "/listBeers")
     public ResponseEntity<@NonNull Page<@NonNull BeerDTO>> listBeers(@RequestParam(required = false) String beerName,
-                                                                     @RequestParam(required = false) BeerStyle beerStyle,
-                                                                     @RequestParam(required = false) Boolean showInventory,
-                                                                     @RequestParam(required = false) Integer pageNumber,
-                                                                     @RequestParam(required = false) Integer pageSize) {
+            @RequestParam(required = false) BeerStyle beerStyle, @RequestParam(required = false) Boolean showInventory,
+            @RequestParam(required = false) Integer pageNumber, @RequestParam(required = false) Integer pageSize) {
         log.info("listBeers beerName={}", beerName);
-        return new ResponseEntity<>(beerService.listBeers(beerName, beerStyle, showInventory, pageNumber, pageSize), HttpStatus.OK);
+        return new ResponseEntity<>(beerService.listBeers(beerName, beerStyle, showInventory, pageNumber, pageSize),
+                HttpStatus.OK);
     }
 
     @GetMapping(value = "/getBeerById/{beerId}")
@@ -68,12 +68,14 @@ public class BeerController {
     }
 
     @PutMapping(value = "/editBeer/{beerId}")
-    public ResponseEntity<@NonNull BeerDTO> editBeer(@Validated @RequestBody BeerDTO beer, @PathVariable("beerId") UUID beerId) {
+    public ResponseEntity<@NonNull BeerDTO> editBeer(@Validated @RequestBody BeerDTO beer,
+            @PathVariable("beerId") UUID beerId) {
         log.info("editBeer beer={}", beer);
         Optional<BeerDTO> updatedBeer = beerService.editBeer(beerId, beer);
         if (updatedBeer.isEmpty()) {
             throw new NotFoundException();
-        } else {
+        }
+        else {
             return new ResponseEntity<>(updatedBeer.get(), HttpStatus.OK);
         }
     }
@@ -84,8 +86,10 @@ public class BeerController {
         Optional<BeerDTO> patchedBeer = beerService.patchBeer(beerId, beer);
         if (patchedBeer.isEmpty()) {
             throw new NotFoundException();
-        } else {
+        }
+        else {
             return new ResponseEntity<>(patchedBeer.get(), HttpStatus.OK);
         }
     }
+
 }
