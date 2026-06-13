@@ -22,8 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @Slf4j
 @ActiveProfiles("mysql")
 class MySqlIT {
+
     @Container
-    static org.testcontainers.mysql.MySQLContainer mySQLContainer = new MySQLContainer(DockerImageName.parse("mysql:8.4.5"));
+    static org.testcontainers.mysql.MySQLContainer mySQLContainer = new MySQLContainer(
+            DockerImageName.parse("mysql:8.4.5"));
 
     @Autowired
     BeerRepository beerRepository;
@@ -40,4 +42,5 @@ class MySqlIT {
         List<Beer> beers = beerRepository.findAll();
         assertFalse(beers.isEmpty());
     }
+
 }

@@ -1,25 +1,26 @@
 # Spring Framework 6: Beginner to Guru
+
 ## Spring 6 Rest MVC API
 
 This is the Backend Part. Application is listening on port 8081/30081
-* default profile: runs with a in memory h2 database: 
+* default profile: runs with a in memory h2 database:
 * mysql: requires mysql provided by a docker image.
 
 ![Spring Framework 6 Architecture](docs/guru.png)
 *Spring Framework 6 Architecture Diagram*
 
-When Testing this module requires that the authentication server is up and running at localhost on port 9000/30090. 
+When Testing this module requires that the authentication server is up and running at localhost on port 9000/30090.
 
-- openapi api-docs: 
+- openapi api-docs:
   - http://localhost:8081/v3/api-docs
   - http://localhost:30081/v3/api-docs
-- openapi gui: 
+- openapi gui:
   - http://localhost:8081/swagger-ui/index.html
   - http://localhost:30081/swagger-ui/index.html
-- openapi-yaml: 
+- openapi-yaml:
   - http://localhost:8081/v3/api-docs.yaml
   - http://localhost:30081/v3/api-docs.yaml
-- h2-console: 
+- h2-console:
   - http://localhost:8081/h2-console (check application.yaml for connection parameters)
   - http://localhost:30081/h2-console (check application.yaml for connection parameters)
 
@@ -28,6 +29,7 @@ When Testing this module requires that the authentication server is up and runni
 ### Generate Config Map for mysql init script
 
 When updating 'src/scripts/init-mysql-mysql.sql', apply the changes to the Kubernetes ConfigMap:
+
 ```bash
 kubectl create configmap mysql-init-script --from-file=init.sql=src/scripts/init-mysql.sql --dry-run=client -o yaml | Out-File -Encoding utf8 k8s/mysql-init-script-configmap.yaml
 ```
@@ -37,16 +39,19 @@ kubectl create configmap mysql-init-script --from-file=init.sql=src/scripts/init
 Deployment goes into the default namespace.
 
 To deploy all resources:
+
 ```bash
 kubectl apply -f target/k8s/
 ```
 
 To remove all resources:
+
 ```bash
 kubectl delete -f target/k8s/
 ```
 
 Check
+
 ```bash
 kubectl get deployments -o wide
 kubectl get pods -o wide
@@ -59,27 +64,33 @@ You can use the actuator rest call to verify via port 30081
 Be aware that we are using a different namespace here (not default).
 
 Go to the directory where the tgz file has been created after 'mvn install'
+
 ```powershell
 cd target/helm/repo
 ```
 
 unpack
+
 ```powershell
 $file = Get-ChildItem -Filter spring-6-rest-mvc-v*.tgz | Select-Object -First 1
 tar -xvf $file.Name
 ```
 
 install
+
 ```powershell
 $APPLICATION_NAME = Get-ChildItem -Directory | Where-Object { $_.LastWriteTime -ge $file.LastWriteTime } | Select-Object -ExpandProperty Name
 helm upgrade --install $APPLICATION_NAME ./$APPLICATION_NAME --namespace spring-6-rest-mvc --create-namespace --wait --timeout 5m --debug --render-subchart-notes
 ```
 
 show logs and show event
+
 ```powershell
 kubectl get pods -n spring-6-rest-mvc
 ```
+
 replace $POD with pods from the command above
+
 ```powershell
 kubectl logs $POD -n spring-6-rest-mvc --all-containers
 ```
@@ -87,36 +98,43 @@ kubectl logs $POD -n spring-6-rest-mvc --all-containers
 Show Details and Event
 
 $POD_NAME can be: spring-6-rest-mvc-mongodb, spring-6-rest-mvc
+
 ```powershell
 kubectl describe pod $POD_NAME -n spring-6-rest-mvc
 ```
 
 Show Endpoints
+
 ```powershell
 kubectl get endpoints -n spring-6-rest-mvc
 ```
 
 status
+
 ```powershell
 helm status $APPLICATION_NAME --namespace spring-6-rest-mvc
 ```
 
 test
+
 ```powershell
 helm test $APPLICATION_NAME --namespace spring-6-rest-mvc --logs
 ```
 
 uninstall
+
 ```powershell
 helm uninstall $APPLICATION_NAME --namespace spring-6-rest-mvc
 ```
 
 delete all
+
 ```powershell
 kubectl delete all --all -n spring-6-rest-mvc
 ```
 
 create busybox sidecar
+
 ```powershell
 kubectl run busybox-test --rm -it --image=busybox:1.36 --namespace=spring-6-rest-mvc --command -- sh
 ```
@@ -126,10 +144,13 @@ You can use the actuator rest call to verify via port 30081
 ## Docker
 
 ### create image
+
 ```shell
 .\mvnw clean package spring-boot:build-image
 ```
+
 or just run
+
 ```shell
 .\mvnw clean install
 ```
@@ -150,3 +171,4 @@ docker stop rest-mvc
 docker rm rest-mvc
 docker start rest-mvc
 ```
+

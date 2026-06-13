@@ -18,13 +18,11 @@ public class CustomErrorController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<@NonNull String> handleBindErrors(MethodArgumentNotValidException ex) {
         log.info("handleBindErrors", ex);
-        List<Map<String, String>> errorList = ex.getFieldErrors().stream().map(
-            fieldError -> {
-                Map<String, String> errorMap = new HashMap<>();
-                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
-                return errorMap;
-            }
-        ).toList();
+        List<Map<String, String>> errorList = ex.getFieldErrors().stream().map(fieldError -> {
+            Map<String, String> errorMap = new HashMap<>();
+            errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+            return errorMap;
+        }).toList();
 
         return ResponseEntity.badRequest().body(errorList.toString());
     }

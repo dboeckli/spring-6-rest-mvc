@@ -65,7 +65,8 @@ public class BeerServiceImpl implements BeerService {
 
     @Override
     @NullMarked
-    public Page<BeerDTO> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory, Integer page, Integer pageSize) {
+    public Page<BeerDTO> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory, Integer page,
+            Integer pageSize) {
         return new PageImpl<>(new ArrayList<>(beerMap.values()));
     }
 
@@ -141,4 +142,5 @@ public class BeerServiceImpl implements BeerService {
         }
         return Optional.of(beerToChange);
     }
+
 }

@@ -38,13 +38,14 @@ class CustomerControllerIT {
 
     @Autowired
     private CacheManager cacheManager;
+
     @Autowired
     private BeerOrderRepository beerOrderRepository;
 
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back to deletion to assure that the other tests are not failing
+    // we roll back to deletion to assure that the other tests are not failing
     void testDeleteCustomer() {
         UUID givenCustomerId = customerRepository.findAll().getFirst().getId();
 
@@ -56,7 +57,7 @@ class CustomerControllerIT {
     @Test
     @Transactional
     @Rollback(true)
-        // we rollback to deletion to assuere that the other tests are not failling
+    // we rollback to deletion to assuere that the other tests are not failling
     void testDeleteCustomerDoesNotExist() {
         assertThrows(NotFoundException.class, () -> customerController.deleteCustomer(UUID.randomUUID()));
     }
@@ -64,7 +65,7 @@ class CustomerControllerIT {
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back to deletion to assure that the other tests are not failing
+    // we roll back to deletion to assure that the other tests are not failing
     void testUpdateCustomer() {
         Customer givenCustomer = customerRepository.findAll().getFirst();
         CustomerDTO customerDTO = customerMapper.customerToCustomerDto(givenCustomer);
@@ -81,7 +82,7 @@ class CustomerControllerIT {
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back to deletion to assure that the other tests are not failing
+    // we roll back to deletion to assure that the other tests are not failing
     void testUpdateCustomerDoesNotExist() {
         CustomerDTO customerDTO = CustomerDTO.builder().build();
 
@@ -91,7 +92,7 @@ class CustomerControllerIT {
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back to deletion to assure that the other tests are not failing
+    // we roll back to deletion to assure that the other tests are not failing
     void testPatchCustomer() {
         Customer givenCustomer = customerRepository.findAll().getFirst();
 
@@ -108,7 +109,7 @@ class CustomerControllerIT {
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back to deletion to assure that the other tests are not failing
+    // we roll back to deletion to assure that the other tests are not failing
     void testPatchCustomerDoesNotExist() {
         CustomerDTO customerDTO = CustomerDTO.builder().build();
 
@@ -118,11 +119,9 @@ class CustomerControllerIT {
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back to deletion to assure that the other tests are not failing
+    // we roll back to deletion to assure that the other tests are not failing
     void testCreateCustomer() {
-        CustomerDTO customerDTO = CustomerDTO.builder()
-            .name("Fridolin")
-            .build();
+        CustomerDTO customerDTO = CustomerDTO.builder().name("Fridolin").build();
 
         CustomerDTO createdCustomer = customerController.createCustomer(customerDTO).getBody();
 
@@ -134,38 +133,37 @@ class CustomerControllerIT {
 
     @Test
     void testListCustomer() {
-        ResponseEntity<@NonNull List<@NonNull CustomerDTO>> customersDtoResponseEntity = customerController.listCustomer();
+        ResponseEntity<@NonNull List<@NonNull CustomerDTO>> customersDtoResponseEntity = customerController
+            .listCustomer();
         List<CustomerDTO> customerDtos = customersDtoResponseEntity.getBody();
 
-        assertAll(
-            () -> {
-                assert customerDtos != null;
-                assertEquals(3, customerDtos.size());
-            }
-        );
+        assertAll(() -> {
+            assert customerDtos != null;
+            assertEquals(3, customerDtos.size());
+        });
     }
 
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back the deletion to assure that the other tests are not failing
+    // we roll back the deletion to assure that the other tests are not failing
     void testEmptyListCustomer() {
         beerOrderRepository.deleteAll();
         customerRepository.deleteAll();
 
-        // we need to clear the cache, because the deleteAll (in the repository class) does not evict the cache
+        // we need to clear the cache, because the deleteAll (in the repository class)
+        // does not evict the cache
         Collection<String> cacheNames = cacheManager.getCacheNames();
         cacheNames.forEach(cacheName -> cacheManager.getCache(cacheName).clear());
 
-        ResponseEntity<@NonNull List<@NonNull CustomerDTO>> customersDtoResponseEntity = customerController.listCustomer();
+        ResponseEntity<@NonNull List<@NonNull CustomerDTO>> customersDtoResponseEntity = customerController
+            .listCustomer();
         List<CustomerDTO> customerDtos = customersDtoResponseEntity.getBody();
 
-        assertAll(
-            () -> {
-                assert customerDtos != null;
-                assertEquals(0, customerDtos.size());
-            }
-        );
+        assertAll(() -> {
+            assert customerDtos != null;
+            assertEquals(0, customerDtos.size());
+        });
     }
 
     @Test
@@ -175,16 +173,15 @@ class CustomerControllerIT {
         ResponseEntity<CustomerDTO> customerDtoResponseEntity = customerController.getCustomerById(givenCustomerId);
         CustomerDTO customerDTO = customerDtoResponseEntity.getBody();
 
-        assertAll(
-            () -> {
-                assert customerDTO != null;
-                assertEquals(givenCustomerId, customerDTO.getId());
-            }
-        );
+        assertAll(() -> {
+            assert customerDTO != null;
+            assertEquals(givenCustomerId, customerDTO.getId());
+        });
     }
 
     @Test
     void testGetCustomerByIdNotFound() {
         assertThrows(NotFoundException.class, () -> customerController.getCustomerById(UUID.randomUUID()));
     }
+
 }

@@ -14,4 +14,5 @@ public class BeerCreatedEvent implements BeerEvent {
     private Beer beer;
 
     private Authentication authentication;
+
 }

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BeerCSVRecord {
+
     @CsvBindByName
     private Integer row;
 
@@ -50,4 +51,5 @@ public class BeerCSVRecord {
 
     @CsvBindByName
     private String label;
+
 }

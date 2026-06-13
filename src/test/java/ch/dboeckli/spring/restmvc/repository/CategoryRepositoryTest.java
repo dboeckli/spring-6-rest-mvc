@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-@Import({BootstrapData.class, BeerCsvServiceImpl.class, CacheConfiguration.class})
+@Import({ BootstrapData.class, BeerCsvServiceImpl.class, CacheConfiguration.class })
 class CategoryRepositoryTest {
 
     @Autowired
@@ -31,9 +31,7 @@ class CategoryRepositoryTest {
     void testAddCategoryUsingExistingBeer() {
         Beer testBeer = beerRepository.findAll().getFirst();
 
-        Category newCategory = Category.builder()
-            .description("Ales")
-            .build();
+        Category newCategory = Category.builder().description("Ales").build();
 
         testBeer.addCategory(newCategory);
 
@@ -55,9 +53,7 @@ class CategoryRepositoryTest {
             .beerStyle(BeerStyle.PALE_ALE)
             .price(BigDecimal.valueOf(5))
             .build();
-        Category newCategory = Category.builder()
-            .description("Ales")
-            .build();
+        Category newCategory = Category.builder().description("Ales").build();
 
         newBeer.getCategories().add(newCategory);
         newCategory.getBeers().add(newBeer);

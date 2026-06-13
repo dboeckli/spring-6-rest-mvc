@@ -9,12 +9,11 @@ import org.springframework.http.ResponseEntity;
 @Slf4j
 public class ExceptionHandlerController {
 
-    //@ExceptionHandler(NotfoundException.class)
+    // @ExceptionHandler(NotfoundException.class)
     @NullMarked
     public ResponseEntity<NotFoundException> handleNotFoundException() {
         log.info("handleNotFoundException");
-        return ResponseEntity
-            .notFound()
-            .build();
+        return ResponseEntity.notFound().build();
     }
+
 }

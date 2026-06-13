@@ -32,12 +32,9 @@ class BeerRepositoryTest {
 
         Page<@NonNull Beer> beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCase("hallo", Pageable.unpaged());
 
-        assertAll(
-            () -> assertEquals(1, beerList.getTotalElements()),
-            () -> assertEquals(1, beerList.getTotalPages()),
-            () -> assertEquals(0, beerList.getNumber()),
-            () -> assertEquals(savedBeer, beerList.getContent().getFirst())
-        );
+        assertAll(() -> assertEquals(1, beerList.getTotalElements()), () -> assertEquals(1, beerList.getTotalPages()),
+                () -> assertEquals(0, beerList.getNumber()),
+                () -> assertEquals(savedBeer, beerList.getContent().getFirst()));
     }
 
     @Test
@@ -65,14 +62,11 @@ class BeerRepositoryTest {
 
         Page<@NonNull Beer> beerList = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%", Pageable.unpaged());
 
-        assertAll(
-            () -> assertEquals(2, beerList.getTotalElements()),
-            () -> assertEquals(1, beerList.getTotalPages()),
-            () -> assertEquals(0, beerList.getNumber()),
-            () -> assertTrue(beerList.getContent().contains(firstBeer)),
-            () -> assertTrue(beerList.getContent().contains(secondBeer)),
-            () -> assertFalse(beerList.getContent().contains(thirdBeer))
-        );
+        assertAll(() -> assertEquals(2, beerList.getTotalElements()), () -> assertEquals(1, beerList.getTotalPages()),
+                () -> assertEquals(0, beerList.getNumber()),
+                () -> assertTrue(beerList.getContent().contains(firstBeer)),
+                () -> assertTrue(beerList.getContent().contains(secondBeer)),
+                () -> assertFalse(beerList.getContent().contains(thirdBeer)));
     }
 
     @Test
@@ -98,23 +92,23 @@ class BeerRepositoryTest {
             .price(BigDecimal.valueOf(10))
             .build());
 
-        Page<@NonNull Beer> beerLisPage1 = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%", PageRequest.of(0, 1));
-        Page<@NonNull Beer> beerListPage2 = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%", PageRequest.of(1, 1));
+        Page<@NonNull Beer> beerLisPage1 = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%",
+                PageRequest.of(0, 1));
+        Page<@NonNull Beer> beerListPage2 = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%hallo%",
+                PageRequest.of(1, 1));
 
-        assertAll(
-            () -> assertEquals(2, beerLisPage1.getTotalElements()),
-            () -> assertEquals(2, beerLisPage1.getTotalPages()),
+        assertAll(() -> assertEquals(2, beerLisPage1.getTotalElements()),
+                () -> assertEquals(2, beerLisPage1.getTotalPages()),
 
-            () -> assertEquals(0, beerLisPage1.getNumber()),
-            () -> assertEquals(1, beerLisPage1.getNumberOfElements()),
-            () -> assertTrue(beerLisPage1.getContent().contains(firstBeer)),
-            () -> assertFalse(beerLisPage1.getContent().contains(thirdBeer)),
+                () -> assertEquals(0, beerLisPage1.getNumber()),
+                () -> assertEquals(1, beerLisPage1.getNumberOfElements()),
+                () -> assertTrue(beerLisPage1.getContent().contains(firstBeer)),
+                () -> assertFalse(beerLisPage1.getContent().contains(thirdBeer)),
 
-            () -> assertEquals(1, beerListPage2.getNumber()),
-            () -> assertEquals(1, beerListPage2.getNumberOfElements()),
-            () -> assertTrue(beerListPage2.getContent().contains(secondBeer)),
-            () -> assertFalse(beerLisPage1.getContent().contains(thirdBeer))
-        );
+                () -> assertEquals(1, beerListPage2.getNumber()),
+                () -> assertEquals(1, beerListPage2.getNumberOfElements()),
+                () -> assertTrue(beerListPage2.getContent().contains(secondBeer)),
+                () -> assertFalse(beerLisPage1.getContent().contains(thirdBeer)));
     }
 
     @Test
@@ -135,12 +129,9 @@ class BeerRepositoryTest {
 
         Page<@NonNull Beer> beerList = beerRepository.findAllByBeerStyle(BeerStyle.PALE_ALE, Pageable.unpaged());
 
-        assertAll(
-            () -> assertEquals(1, beerList.getTotalElements()),
-            () -> assertEquals(1, beerList.getTotalPages()),
-            () -> assertEquals(0, beerList.getNumber()),
-            () -> assertEquals(firstBeer, beerList.getContent().getFirst())
-        );
+        assertAll(() -> assertEquals(1, beerList.getTotalElements()), () -> assertEquals(1, beerList.getTotalPages()),
+                () -> assertEquals(0, beerList.getNumber()),
+                () -> assertEquals(firstBeer, beerList.getContent().getFirst()));
     }
 
     @Test
@@ -159,14 +150,12 @@ class BeerRepositoryTest {
             .price(BigDecimal.valueOf(10))
             .build());
 
-        Page<@NonNull Beer> beerList = beerRepository.findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(BeerStyle.PALE_ALE, "%hallo%", Pageable.unpaged());
+        Page<@NonNull Beer> beerList = beerRepository.findAllByBeerStyleAndBeerNameIsLikeIgnoreCase(BeerStyle.PALE_ALE,
+                "%hallo%", Pageable.unpaged());
 
-        assertAll(
-            () -> assertEquals(1, beerList.getTotalElements()),
-            () -> assertEquals(1, beerList.getTotalPages()),
-            () -> assertEquals(0, beerList.getNumber()),
-            () -> assertEquals(firstBeer, beerList.getContent().getFirst())
-        );
+        assertAll(() -> assertEquals(1, beerList.getTotalElements()), () -> assertEquals(1, beerList.getTotalPages()),
+                () -> assertEquals(0, beerList.getNumber()),
+                () -> assertEquals(firstBeer, beerList.getContent().getFirst()));
     }
 
     @Test
@@ -180,12 +169,8 @@ class BeerRepositoryTest {
 
         beerRepository.flush();
 
-        assertAll(
-            () -> assertNotNull(savedBeer),
-            () -> assertNotNull(savedBeer.getId()),
-            () -> assertNotNull(savedBeer.getBeerName()),
-            () -> assertEquals("hallo", savedBeer.getBeerName())
-        );
+        assertAll(() -> assertNotNull(savedBeer), () -> assertNotNull(savedBeer.getId()),
+                () -> assertNotNull(savedBeer.getBeerName()), () -> assertEquals("hallo", savedBeer.getBeerName()));
     }
 
     @Test

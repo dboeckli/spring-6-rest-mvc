@@ -7,8 +7,10 @@ import org.mapstruct.Mapping;
 
 @Mapper
 public interface BeerOrderLineMapper {
+
     @Mapping(target = "beerOrder", ignore = true)
     BeerOrderLine beerOrderLineDtoToBeerOrderLine(BeerOrderLineDTO beerOrderLineDto);
 
     BeerOrderLineDTO beerOrderLineToBeerOrderLineDto(BeerOrderLine beerOrderLine);
+
 }

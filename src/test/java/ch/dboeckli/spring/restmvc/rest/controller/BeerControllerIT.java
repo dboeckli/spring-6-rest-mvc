@@ -53,40 +53,49 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class BeerControllerIT {
 
-    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
-        jwt().jwt(jwt -> jwt.claims(claims -> {
-                claims.put("scope", "message.read");
-                claims.put("scope", "message.write");
-            })
-            .subject("messaging-client")
-            .notBefore(Instant.now().minusSeconds(5L)));
+    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor = jwt()
+        .jwt(jwt -> jwt.claims(claims -> {
+            claims.put("scope", "message.read");
+            claims.put("scope", "message.write");
+        }).subject("messaging-client").notBefore(Instant.now().minusSeconds(5L)));
+
     @Autowired
     ApplicationEvents applicationEvents;
+
     @Autowired
     BeerController beerController;
+
     @Autowired
     BeerRepository beerRepository;
+
     @Autowired
     BeerOrderLinesRepository beerOrderLinesRepository;
+
     @Autowired
     BeerMapper beerMapper;
+
     @Autowired
     ObjectMapper objectMapper;
+
     @Autowired
     WebApplicationContext webApplicationContext;
+
     @Autowired
     private CacheManager cacheManager;
+
     @Value("${spring.security.user.name}")
     private String username;
+
     @Value("${spring.security.user.password}")
     private String password;
+
     @Value("${controllers.beer-controller.request-path}")
     private String requestPath;
 
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back to deletion to assure that the other tests are not failing
+    // we roll back to deletion to assure that the other tests are not failing
     void testDeleteBeerById() {
         Beer beer = beerRepository.findAll().getFirst();
         beerController.deleteBeer(beer.getId());
@@ -97,7 +106,7 @@ class BeerControllerIT {
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back to deletion to assure that the other tests are not failing
+    // we roll back to deletion to assure that the other tests are not failing
     void testDeleteBeerByIdNotFound() {
         assertThrows(NotFoundException.class, () -> beerController.deleteBeer(UUID.randomUUID()));
     }
@@ -105,7 +114,7 @@ class BeerControllerIT {
     @Test
     @Transactional
     @Rollback(true)
-        // we rollback to deletion to assuere that the other tests are not failling
+    // we rollback to deletion to assuere that the other tests are not failling
     void testSaveBeer() {
         BeerDTO newBeerDTO = BeerDTO.builder()
             .beerName("verynewBeer")
@@ -135,8 +144,8 @@ class BeerControllerIT {
             .quantityOnHand(2)
             .build();
 
-        MvcResult result = mockMvc.perform(post(requestPath + "/createBeer")
-                .with(jwtRequestPostProcessor)
+        MvcResult result = mockMvc
+            .perform(post(requestPath + "/createBeer").with(jwtRequestPostProcessor)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newBeerDTO)))
@@ -151,15 +160,17 @@ class BeerControllerIT {
             assertNotNull(beerDTO);
             assertEquals("verynewBeer", beerDTO.getBeerName());
             assertEquals(1, applicationEvents.stream(BeerCreatedEvent.class).count());
-            assertEquals("verynewBeer", applicationEvents.stream(BeerCreatedEvent.class).findFirst().get().getBeer().getBeerName());
-            assertEquals("messaging-client", applicationEvents.stream(BeerCreatedEvent.class).findFirst().get().getAuthentication().getName());
+            assertEquals("verynewBeer",
+                    applicationEvents.stream(BeerCreatedEvent.class).findFirst().get().getBeer().getBeerName());
+            assertEquals("messaging-client",
+                    applicationEvents.stream(BeerCreatedEvent.class).findFirst().get().getAuthentication().getName());
         });
     }
 
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back to deletion to assure that the other tests are not failing
+    // we roll back to deletion to assure that the other tests are not failing
     void testUpdateExistingBeer() {
         Beer beer = beerRepository.findAll().getFirst();
         BeerDTO beerDTO = beerMapper.beerToBeerDto(beer);
@@ -183,8 +194,8 @@ class BeerControllerIT {
 
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
 
-        MvcResult result = mockMvc.perform(put(requestPath + "/editBeer/{beerId}", beerToUpdate.getId())
-                .with(jwtRequestPostProcessor)
+        MvcResult result = mockMvc
+            .perform(put(requestPath + "/editBeer/{beerId}", beerToUpdate.getId()).with(jwtRequestPostProcessor)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(beerToUpdateDTO)))
@@ -199,24 +210,26 @@ class BeerControllerIT {
             assertNotNull(beerDTO);
             assertEquals("UPDATED BEER", beerDTO.getBeerName());
             assertEquals(1, applicationEvents.stream(BeerCreatedEvent.class).count());
-            assertEquals("UPDATED BEER", applicationEvents.stream(BeerCreatedEvent.class).findFirst().get().getBeer().getBeerName());
-            assertEquals("messaging-client", applicationEvents.stream(BeerCreatedEvent.class).findFirst().get().getAuthentication().getName());
+            assertEquals("UPDATED BEER",
+                    applicationEvents.stream(BeerCreatedEvent.class).findFirst().get().getBeer().getBeerName());
+            assertEquals("messaging-client",
+                    applicationEvents.stream(BeerCreatedEvent.class).findFirst().get().getAuthentication().getName());
         });
     }
 
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back to deletion to assure that the other tests are not failing
+    // we roll back to deletion to assure that the other tests are not failing
     void testUpdateExistingBeerButNotFound() {
-        assertThrows(NotFoundException.class, () ->
-            beerController.editBeer(BeerDTO.builder().build(), UUID.randomUUID()));
+        assertThrows(NotFoundException.class,
+                () -> beerController.editBeer(BeerDTO.builder().build(), UUID.randomUUID()));
     }
 
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back to deletion to assure that the other tests are not failing
+    // we roll back to deletion to assure that the other tests are not failing
     void testPatchBeer() {
         Beer givenBeer = beerRepository.findAll().getFirst();
         BeerDTO beerDTO = beerMapper.beerToBeerDto(givenBeer);
@@ -233,7 +246,7 @@ class BeerControllerIT {
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back to deletion to assure that the other tests are not failing
+    // we roll back to deletion to assure that the other tests are not failing
     void testPatchBeerDoesNotExist() {
         BeerDTO beerDTO = BeerDTO.builder().build();
 
@@ -248,8 +261,8 @@ class BeerControllerIT {
 
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
 
-        MvcResult result = mockMvc.perform(patch(requestPath + "/patchBeer/{beerId}", beerToUpdate.getId())
-                .with(jwtRequestPostProcessor)
+        MvcResult result = mockMvc
+            .perform(patch(requestPath + "/patchBeer/{beerId}", beerToUpdate.getId()).with(jwtRequestPostProcessor)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(beerToUpdateDTO)))
@@ -264,14 +277,17 @@ class BeerControllerIT {
             assertNotNull(beerDTO);
             assertEquals("PATCHED BEER", beerDTO.getBeerName());
             assertEquals(1, applicationEvents.stream(BeerPatchEvent.class).count());
-            assertEquals("PATCHED BEER", applicationEvents.stream(BeerPatchEvent.class).findFirst().get().getBeer().getBeerName());
-            assertEquals("messaging-client", applicationEvents.stream(BeerPatchEvent.class).findFirst().get().getAuthentication().getName());
+            assertEquals("PATCHED BEER",
+                    applicationEvents.stream(BeerPatchEvent.class).findFirst().get().getBeer().getBeerName());
+            assertEquals("messaging-client",
+                    applicationEvents.stream(BeerPatchEvent.class).findFirst().get().getAuthentication().getName());
         });
     }
 
     @Test
     void testListBeers() {
-        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, null);
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null,
+                null, null, null);
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
@@ -285,7 +301,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeersWithMaxPageSize() {
-        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, MAX_PAGE_SIZE + 1);
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null,
+                null, null, MAX_PAGE_SIZE + 1);
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
@@ -299,7 +316,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeerByName() {
-        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", null, null, null, null);
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", null,
+                null, null, null);
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
@@ -313,20 +331,18 @@ class BeerControllerIT {
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
 
         mockMvc.perform(get(requestPath + "/listBeers")
-                //.with(httpBasic(username, password))
-                .with(jwtRequestPostProcessor)
-                .queryParam("beerName", "IPA")
-                .queryParam("pageSize", "800"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content.size()", is(60)));
+            // .with(httpBasic(username, password))
+            .with(jwtRequestPostProcessor)
+            .queryParam("beerName", "IPA")
+            .queryParam("pageSize", "800")).andExpect(status().isOk()).andExpect(jsonPath("$.content.size()", is(60)));
     }
 
     @Test
     void testListBeersByNameWithWrongCredentials() throws Exception {
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
 
-        mockMvc.perform(get(requestPath + "/listBeers")
-                .with(httpBasic("wrongwusername", "wrongpassword"))
+        mockMvc
+            .perform(get(requestPath + "/listBeers").with(httpBasic("wrongwusername", "wrongpassword"))
                 .queryParam("beerName", "IPA")
                 .queryParam("pageSize", "800"))
             .andExpect(status().isUnauthorized());
@@ -334,7 +350,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeerByNamePage2() {
-        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", null, null, 2, 50);
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", null,
+                null, 2, 50);
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
@@ -348,7 +365,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeerByStyleAndBeerName() {
-        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA", BeerStyle.IPA, null, null, null);
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("IPA",
+                BeerStyle.IPA, null, null, null);
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
@@ -359,7 +377,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeerNameWithShowInventory() {
-        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, true, null, null);
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController
+            .listBeers("Ninja Porter", null, true, null, null);
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
@@ -372,7 +391,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeerNameWithoutShowInventory() {
-        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, false, null, null);
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController
+            .listBeers("Ninja Porter", null, false, null, null);
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
@@ -385,7 +405,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeerNameWithNullShowInventory() {
-        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers("Ninja Porter", null, null, null, null);
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController
+            .listBeers("Ninja Porter", null, null, null, null);
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
@@ -398,7 +419,8 @@ class BeerControllerIT {
 
     @Test
     void testListBeerByStyle() {
-        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, BeerStyle.IPA, null, null, null);
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null,
+                BeerStyle.IPA, null, null, null);
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
@@ -410,37 +432,37 @@ class BeerControllerIT {
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back to deletion to assure that the other tests are not failing
+    // we roll back to deletion to assure that the other tests are not failing
     void testEmptyListBeer() {
         beerOrderLinesRepository.deleteAll();
         beerRepository.deleteAll();
 
-        // we need to clear the cache, because the deleteAll (in the repository class) does not evict the cache
+        // we need to clear the cache, because the deleteAll (in the repository class)
+        // does not evict the cache
         Collection<String> cacheNames = cacheManager.getCacheNames();
         cacheNames.forEach(cacheName -> cacheManager.getCache(cacheName).clear());
 
-        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null, null, null, null);
+        ResponseEntity<@NonNull Page<@NonNull BeerDTO>> beersDtoResponseEntity = beerController.listBeers(null, null,
+                null, null, null);
         Page<@NonNull BeerDTO> beerDtos = beersDtoResponseEntity.getBody();
 
-        assertAll(
-            () -> {
-                assert beerDtos != null;
-                assertEquals(0, beerDtos.getTotalElements());
-            }
-        );
+        assertAll(() -> {
+            assert beerDtos != null;
+            assertEquals(0, beerDtos.getTotalElements());
+        });
     }
 
     @Test
     @Transactional
     @Rollback(true)
-        // we roll back to deletion to assure that the other tests are not failing
+    // we roll back to deletion to assure that the other tests are not failing
     void testDeleteBeerWithMockMVC() throws Exception {
         Beer beerToDelete = beerRepository.findAll().getFirst();
 
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
 
-        mockMvc.perform(delete(requestPath + "/deleteBeer/{beerId}", beerToDelete.getId())
-                .with(jwtRequestPostProcessor)
+        mockMvc
+            .perform(delete(requestPath + "/deleteBeer/{beerId}", beerToDelete.getId()).with(jwtRequestPostProcessor)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
@@ -448,7 +470,8 @@ class BeerControllerIT {
         assertAll(() -> {
             assertEquals(1, applicationEvents.stream(BeerDeleteEvent.class).count());
             assertNull(applicationEvents.stream(BeerDeleteEvent.class).findFirst().get().getBeer().getBeerName());
-            assertEquals("messaging-client", applicationEvents.stream(BeerDeleteEvent.class).findFirst().get().getAuthentication().getName());
+            assertEquals("messaging-client",
+                    applicationEvents.stream(BeerDeleteEvent.class).findFirst().get().getAuthentication().getName());
         });
     }
 
@@ -459,16 +482,15 @@ class BeerControllerIT {
         ResponseEntity<@NonNull BeerDTO> beerDTOResponseEntity = beerController.getBeerById(givenBeerId);
         BeerDTO beerDTO = beerDTOResponseEntity.getBody();
 
-        assertAll(
-            () -> {
-                assert beerDTO != null;
-                assertEquals(givenBeerId, beerDTO.getId());
-            }
-        );
+        assertAll(() -> {
+            assert beerDTO != null;
+            assertEquals(givenBeerId, beerDTO.getId());
+        });
     }
 
     @Test
     void testGetBeerByIdNotFound() {
         assertThrows(NotFoundException.class, () -> beerController.getBeerById(UUID.randomUUID()));
     }
+
 }

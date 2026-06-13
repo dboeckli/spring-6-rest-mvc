@@ -20,4 +20,5 @@ public interface BeerMapper {
     @Mapping(target = "auditEventType", ignore = true)
     @Mapping(target = "principalName", ignore = true)
     BeerAudit beerToBeerAudit(Beer beer);
+
 }

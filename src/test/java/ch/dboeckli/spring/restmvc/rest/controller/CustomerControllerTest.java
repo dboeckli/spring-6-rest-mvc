@@ -38,24 +38,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 class CustomerControllerTest {
 
-    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor =
-        jwt().jwt(jwt -> jwt.claims(claims -> {
-                claims.put("scope", "message.read");
-                claims.put("scope", "message.write");
-            })
-            .subject("messaging-client")
-            .notBefore(Instant.now().minusSeconds(5L)));
+    public static final SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor jwtRequestPostProcessor = jwt()
+        .jwt(jwt -> jwt.claims(claims -> {
+            claims.put("scope", "message.read");
+            claims.put("scope", "message.write");
+        }).subject("messaging-client").notBefore(Instant.now().minusSeconds(5L)));
+
     @MockitoBean
     CustomerService customerService;
+
     CustomerServiceImpl customerServiceImpl;
+
     @Autowired
     private MockMvc mockMvc;
+
     @Autowired
     private ObjectMapper objectMapper;
+
     @Value("${controllers.customer-controller.request-path}")
     private String requestPath;
+
     @Value("${spring.security.user.name}")
     private String username;
+
     @Value("${spring.security.user.password}")
     private String password;
 
@@ -69,15 +74,17 @@ class CustomerControllerTest {
         CustomerDTO givenCustomer = customerServiceImpl.listCustomers().getFirst();
         given(customerService.getCustomerById(givenCustomer.getId())).willReturn(Optional.of(givenCustomer));
 
-        mockMvc.perform(get(requestPath + "/getCustomerById/" + givenCustomer.getId())
-                .with(jwtRequestPostProcessor)
-                //.with(httpBasic(username,password))
-                .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(requestPath + "/getCustomerById/" + givenCustomer.getId()).with(jwtRequestPostProcessor)
+            // .with(httpBasic(username,password))
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id", is(givenCustomer.getId().toString())))
             .andExpect(jsonPath("$.name", is(givenCustomer.getName())))
-            .andExpect(content().json(objectMapper.writeValueAsString(givenCustomer)));  // oder das ganze Object
+            .andExpect(content().json(objectMapper.writeValueAsString(givenCustomer))); // oder
+                                                                                        // das
+                                                                                        // ganze
+                                                                                        // Object
     }
 
     @Test
@@ -85,7 +92,8 @@ class CustomerControllerTest {
         CustomerDTO givenCustomer = customerServiceImpl.listCustomers().getFirst();
         given(customerService.getCustomerById(givenCustomer.getId())).willReturn(Optional.of(givenCustomer));
 
-        mockMvc.perform(get(requestPath + "/getCustomerById/" + givenCustomer.getId())
+        mockMvc
+            .perform(get(requestPath + "/getCustomerById/" + givenCustomer.getId())
                 .with(httpBasic("wrongusername", "wrongpassword"))
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isUnauthorized());
@@ -93,14 +101,12 @@ class CustomerControllerTest {
 
     @Test
     void testGetCustomerByIdAndThrowsNotFoundException() throws Exception {
-        //given(customerService.getCustomerById(any())).willThrow(NotfoundException.class);
+        // given(customerService.getCustomerById(any())).willThrow(NotfoundException.class);
         given(customerService.getCustomerById(any())).willReturn(Optional.empty());
 
-        mockMvc.perform(get(requestPath + "/getCustomerById/" + UUID.randomUUID())
-                .with(jwtRequestPostProcessor)
-                //.with(httpBasic(username,password))
-                .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNotFound());
+        mockMvc.perform(get(requestPath + "/getCustomerById/" + UUID.randomUUID()).with(jwtRequestPostProcessor)
+            // .with(httpBasic(username,password))
+            .accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
     }
 
     @Test
@@ -111,12 +117,11 @@ class CustomerControllerTest {
 
         given(customerService.saveNewCustomer(any(CustomerDTO.class))).willReturn(givenCustomer);
 
-        mockMvc.perform(post(requestPath + "/createCustomer")
-                .with(jwtRequestPostProcessor)
-                //.with(httpBasic(username,password))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(givenCustomer)))
+        mockMvc.perform(post(requestPath + "/createCustomer").with(jwtRequestPostProcessor)
+            // .with(httpBasic(username,password))
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(givenCustomer)))
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
@@ -127,17 +132,20 @@ class CustomerControllerTest {
         CustomerDTO givenCustomerToEdit = customerServiceImpl.listCustomers().getFirst();
         givenCustomerToEdit.setName("veryveryNew Customer");
 
-        given(customerService.editCustomer(givenCustomerToEdit.getId(), givenCustomerToEdit)).willReturn(Optional.of(givenCustomerToEdit));
+        given(customerService.editCustomer(givenCustomerToEdit.getId(), givenCustomerToEdit))
+            .willReturn(Optional.of(givenCustomerToEdit));
 
-        mockMvc.perform(put(requestPath + "/editCustomer/" + givenCustomerToEdit.getId())
-                .with(jwtRequestPostProcessor)
-                //.with(httpBasic(username,password))
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(givenCustomerToEdit)))
+        mockMvc.perform(put(requestPath + "/editCustomer/" + givenCustomerToEdit.getId()).with(jwtRequestPostProcessor)
+            // .with(httpBasic(username,password))
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(givenCustomerToEdit)))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().json(objectMapper.writeValueAsString(givenCustomerToEdit)));  // oder das ganze Object;
+            .andExpect(content().json(objectMapper.writeValueAsString(givenCustomerToEdit))); // oder
+                                                                                              // das
+                                                                                              // ganze
+                                                                                              // Object;
     }
 
     @Test
@@ -146,9 +154,10 @@ class CustomerControllerTest {
 
         given(customerService.deleteCustomer(givenCustomerToDelete.getId())).willReturn(true);
 
-        mockMvc.perform(delete(requestPath + "/deleteCustomer/" + givenCustomerToDelete.getId())
+        mockMvc
+            .perform(delete(requestPath + "/deleteCustomer/" + givenCustomerToDelete.getId())
                 .with(jwtRequestPostProcessor)
-                //.with(httpBasic(username,password))
+                // .with(httpBasic(username,password))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(givenCustomerToDelete)))
@@ -160,10 +169,9 @@ class CustomerControllerTest {
         List<CustomerDTO> givenCustomers = customerServiceImpl.listCustomers();
         given(customerService.listCustomers()).willReturn(givenCustomers);
 
-        MvcResult result = mockMvc.perform(get(requestPath + "/listCustomer")
-                .with(jwtRequestPostProcessor)
-                //.with(httpBasic(username,password))
-                .accept(MediaType.APPLICATION_JSON))
+        MvcResult result = mockMvc.perform(get(requestPath + "/listCustomer").with(jwtRequestPostProcessor)
+            // .with(httpBasic(username,password))
+            .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(3))
             .andReturn();
@@ -181,16 +189,19 @@ class CustomerControllerTest {
         CustomerDTO givenCustomerToPatch = customerServiceImpl.listCustomers().getFirst();
         givenCustomerToPatch.setName("patchedCustomerName");
 
-        given(customerService.patchCustomer(givenCustomerToPatch.getId(), givenCustomerToPatch)).willReturn(Optional.of(givenCustomerToPatch));
+        given(customerService.patchCustomer(givenCustomerToPatch.getId(), givenCustomerToPatch))
+            .willReturn(Optional.of(givenCustomerToPatch));
 
-        mockMvc.perform(patch(requestPath + "/patchCustomer/" + givenCustomerToPatch.getId())
-                .with(jwtRequestPostProcessor)
-                //.with(httpBasic(username,password))
+        mockMvc
+            .perform(patch(requestPath + "/patchCustomer/" + givenCustomerToPatch.getId()).with(jwtRequestPostProcessor)
+                // .with(httpBasic(username,password))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(givenCustomerToPatch)))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().json(objectMapper.writeValueAsString(givenCustomerToPatch)));  // oder das
+            .andExpect(content().json(objectMapper.writeValueAsString(givenCustomerToPatch))); // oder
+                                                                                               // das
     }
+
 }

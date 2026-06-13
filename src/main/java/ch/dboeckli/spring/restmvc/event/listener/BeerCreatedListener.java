@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 public class BeerCreatedListener {
 
     private final BeerAuditRepository beerAuditRepository;
+
     private final BeerMapper beerMapper;
 
     @Observed(name = "beer.created")
@@ -24,7 +25,8 @@ public class BeerCreatedListener {
     @EventListener
     public void listen(BeerEvent event) {
         log.info("Beer Event Listener called for event: {}", event);
-        log.info("Current Thread name: {}, Current Thread ID: {}", Thread.currentThread().getName(), Thread.currentThread().threadId());
+        log.info("Current Thread name: {}, Current Thread ID: {}", Thread.currentThread().getName(),
+                Thread.currentThread().threadId());
 
         String eventType;
         switch (event) {
@@ -45,4 +47,5 @@ public class BeerCreatedListener {
         BeerAudit savedBeerAudit = beerAuditRepository.save(beerAudit);
         log.info("Beer Audit saved: {}", savedBeerAudit.getAuditId());
     }
+
 }
