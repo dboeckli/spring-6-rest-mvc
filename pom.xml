@@ -5,7 +5,8 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>4.1.0</version>
-    <relativePath/>
+    <!-- to avoid conflicts between sortpom and release maven plugin, we add here the space before the closing slash -->
+    <relativePath />
     <!-- lookup parent from repository -->
   </parent>
 
@@ -78,17 +79,6 @@
     <sonar.scm.provider>git</sonar.scm.provider>
     <jacoco.version>0.8.15</jacoco.version>
   </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-parent</artifactId>
-        <version>2025.0.2</version>
-        <type>pom</type>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -371,7 +361,10 @@
               <exclude>target/**</exclude>
               <exclude>**/node_modules/**</exclude>
             </excludes>
-            <sortPom/>
+            <sortPom>
+              <!-- to avoid conflicts with release maven plugin -->
+              <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
+            </sortPom>
           </pom>
           <markdown>
             <includes>
@@ -381,7 +374,7 @@
               <exclude>target/**</exclude>
               <exclude>**/node_modules/**</exclude>
             </excludes>
-            <flexmark/>
+            <flexmark />
           </markdown>
           <json>
             <includes>
@@ -393,14 +386,14 @@
               <exclude>.github/**</exclude>
               <exclude>.idea/**</exclude>
             </excludes>
-            <prettier/>
+            <prettier />
           </json>
           <yaml>
             <includes>
               <include>src/main/resources/application*.yaml</include>
               <include>src/main/resources/application*.yml</include>
             </includes>
-            <prettier/>
+            <prettier />
           </yaml>
           <shell>
             <includes>
@@ -504,11 +497,11 @@
             <configuration>
               <target>
                 <propertyfile file="${project.build.directory}/helm.properties">
-                  <entry key="helm.chart.version" value="v${project.version}"/>
+                  <entry key="helm.chart.version" value="v${project.version}" />
                 </propertyfile>
                 <!--suppress UnresolvedMavenProperty -->
-                <replaceregexp byline="true" file="${project.build.directory}/helm.properties" match="helm\.chart\.version=(v[0-9]+\.[0-9]+\.[0-9]+)_.*-SNAPSHOT" replace="helm.chart.version=\1-${git.commit.id.abbrev}"/>
-                <property file="${project.build.directory}/helm.properties"/>
+                <replaceregexp byline="true" file="${project.build.directory}/helm.properties" match="helm\.chart\.version=(v[0-9]+\.[0-9]+\.[0-9]+)_.*-SNAPSHOT" replace="helm.chart.version=\1-${git.commit.id.abbrev}" />
+                <property file="${project.build.directory}/helm.properties" />
               </target>
             </configuration>
           </execution>
@@ -521,8 +514,8 @@
             <phase>test</phase>
             <configuration>
               <target>
-                <delete file="${project.build.directory}/helm-charts/dependencies-values.yaml"/>
-                <delete file="${project.build.directory}/helm-charts/dependencies-Chart.yaml"/>
+                <delete file="${project.build.directory}/helm-charts/dependencies-values.yaml" />
+                <delete file="${project.build.directory}/helm-charts/dependencies-Chart.yaml" />
               </target>
             </configuration>
           </execution>
