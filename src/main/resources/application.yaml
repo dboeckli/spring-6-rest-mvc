@@ -13,6 +13,9 @@ spring:
   threads:
     virtual:
       enabled: true
+  task:
+    execution:
+      propagate-context: true
 
   h2:
     console:
