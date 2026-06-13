@@ -48,7 +48,7 @@ services:
 
   auth-server:
     container_name: auth-server
-    image: domboeckli/spring-6-auth-server:v0.0.7-SNAPSHO
+    image: domboeckli/spring-6-auth-server:v0.0.7-SNAPSHOT
     ports:
       - "9000:9000"
     expose:
