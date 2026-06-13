@@ -180,6 +180,7 @@ logging:
   level:
     # kafka is very verbose here
     org.apache.kafka.clients.NetworkClient: ERROR
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
 
 security:
   auth-server-health-url: http://localhost:9000

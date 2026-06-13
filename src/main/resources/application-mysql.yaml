@@ -163,6 +163,7 @@ logging:
     org.hibernate.orm.jdbc.bind: WARN
     # kafka is very verbose here
     org.apache.kafka.clients.NetworkClient: ERROR
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
 
 controllers:
   customer-controller:
