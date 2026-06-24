@@ -47,5 +47,5 @@ kafka:
 
 kafkaImage:
   repository: apache/kafka
-  tag: "4.3.0"
+  tag: "4.3.1"
   pullPolicy: IfNotPresent
