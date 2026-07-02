@@ -48,7 +48,7 @@
     },
     "helmv3": {
         "managerFilePatterns": [
-            "/(^|/)Chart\\.ya?ml$/"
+            "/(^|/)(dependencies-)?Chart\\.ya?ml$/"
         ]
     },
     "packageRules": [
