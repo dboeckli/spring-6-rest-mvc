@@ -84,7 +84,14 @@
             "automerge": false,
             "automergeType": "pr",
             "ignoreTests": true
+        },
+        {
+            "matchDatasources": ["docker"],
+            "matchPackageNames": ["repo.repsy.io/user08694146/helm-dboeckli/spring-6-auth-server"],
+            "registryUrls": ["https://repo.repsy.io/user08694146/helm-dboeckli"],
+            "versioning": "semver-coerced"
         }
+
     ],
     "customManagers": [
         {
