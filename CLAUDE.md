@@ -43,6 +43,7 @@ Run `./mvnw spring-javaformat:apply` and `./mvnw spotless:apply` before committi
 ## Architecture
 
 ### Layering (`src/main/java/ch/dboeckli/spring/restmvc/`)
+
 - `rest/controller` — REST controllers. Request paths are **externalized** via config properties
   (`controllers.*.request-path`), not hard-coded in `@RequestMapping`. `ExceptionHandlerController` +
   `CustomErrorController` centralize error handling; `NotFoundException` → 404.
@@ -58,21 +59,24 @@ Run `./mvnw spring-javaformat:apply` and `./mvnw spotless:apply` before committi
 - `health` / `config/AuthServerHealthIndicator` — custom actuator health indicators (Kafka, auth-server).
 
 ### Messaging & Events
+
 Two distinct event mechanisms — don't confuse them:
 - **Spring `ApplicationEvent`s** (`event/events`, `event/listener/BeerCreatedListener`) — in-process
-  events published on beer create/update/patch/delete, handled asynchronously (virtual threads enabled via
-  `spring.threads.virtual.enabled=true`).
+events published on beer create/update/patch/delete, handled asynchronously (virtual threads enabled via
+`spring.threads.virtual.enabled=true`).
 - **Kafka** — `OrderPlacedListener` publishes to the `order.placed` topic; `DrinkSplitterRouter` consumes it
-  and routes each order line to `drink.request.{icecold,cold,cool}` topics by beer style; `DrinkPreparedListener`
-  consumes `drink.prepared`. **All Kafka topic names are constants in `config/KafkaConfig`** — reference them,
-  don't inline strings.
+and routes each order line to `drink.request.{icecold,cold,cool}` topics by beer style; `DrinkPreparedListener`
+consumes `drink.prepared`. **All Kafka topic names are constants in `config/KafkaConfig`** — reference them,
+don't inline strings.
 
 ### Security
+
 `config/SpringSecurityConfigRest` — OAuth2 resource server (JWT). All endpoints require authentication
 **except** actuator, swagger/openapi, and h2-console. CORS allowed origins are bound from
 `security.cors.allowed-origins`. The `test-disabled-security` profile disables this chain for tests.
 
 ### Observability
+
 Micrometer + Prometheus, OpenTelemetry (OTLP export disabled by default), actuator with all endpoints
 exposed. OpenAPI via springdoc (`/swagger-ui/index.html`, `/v3/api-docs`); the OpenAPI JSON/YAML is
 generated from the running app during the build.
@@ -104,3 +108,4 @@ generated from the running app during the build.
   final Spring Boot jar and paired with `lombok-mapstruct-binding` for MapStruct.
 - Flyway migrations are **append-only and versioned** (`V{n}__description.sql`) — add a new file, never edit an
   existing migration. When changing `src/scripts/mysql-init.sql`, regenerate the k8s ConfigMap (see README).
+
