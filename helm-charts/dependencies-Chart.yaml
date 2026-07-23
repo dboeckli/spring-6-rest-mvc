@@ -8,6 +8,6 @@ appVersion: 0.0.1
 
 dependencies:
   - name: spring-6-auth-server-chart
-    version: "0.0.8"
+    version: "0.0.11-snapshot"
     repository: "oci://repo.repsy.io/user08694146/helm-dboeckli"
     condition: authServer.enabled
