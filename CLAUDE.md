@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Spring Boot 4 / Spring Framework 6 REST MVC backend ("Spring Framework 6: Beginner to Guru").
+Spring Boot 4 / Spring Framework 7 REST MVC backend ("Spring Framework 6: Beginner to Guru" course, upgraded to Spring Boot 4).
 Exposes a beer / customer / beer-order REST API secured as an OAuth2 resource server. Requires
 **Java 25**. Listens on port **8081** (NodePort **30081** in Kubernetes).
 
@@ -24,6 +24,7 @@ Use the Maven wrapper (`./mvnw`, or `mvnw.cmd` on Windows).
 ./mvnw test -Dtest=BeerControllerTest              # single test class
 ./mvnw test -Dtest=BeerControllerTest#methodName   # single test method
 ./mvnw spotless:apply        # auto-fix pom/markdown/json/yaml/shell formatting
+./mvnw spring-javaformat:apply  # auto-fix Java code style
 ```
 
 **Formatting is enforced at build time** (fails the `validate` phase):
@@ -33,12 +34,17 @@ Run `./mvnw spring-javaformat:apply` and `./mvnw spotless:apply` before committi
 
 ## Running Locally
 
-- **Default profile** → in-memory **H2** database (Flyway disabled, schema via JPA). H2 console at `/h2-console`.
-- **`mysql` profile** → MySQL with Flyway migrations enabled (`src/main/resources/db/migration/V*.sql`).
-- `spring-boot-docker-compose` auto-starts `compose-h2.yaml` (Kafka + auth-server) on app startup in the
-  default profile; `compose.yaml` additionally defines MySQL. Kafka broker is expected on `localhost:29092`.
-- **The OAuth2 auth-server must be running on port 9000** (`localhost:9000`) — many tests and the running
-  app depend on it as the JWT issuer. IntelliJ run configs live in `.run/`.
+Two IntelliJ run configs in `.run/` cover both modes — Docker must be running:
+
+- **"SpringRestMvcApplication With H2"** — default profile, in-memory H2 (Flyway disabled, schema via JPA).
+  `spring-boot-docker-compose` auto-starts `compose-h2.yaml` which brings up **Kafka + Auth-Server**.
+  H2 console at `/h2-console`.
+- **"SpringRestMvcApplication mysql"** — `mysql` profile, Flyway migrations enabled
+  (`src/main/resources/db/migration/V*.sql`). Auto-starts `compose.yaml` which brings up
+  **MySQL + Kafka + Auth-Server**.
+
+Both compose files start the **OAuth2 auth-server** (port 9000, `localhost:9000`) as a container —
+it is the JWT issuer for tests and the running app. Kafka broker is exposed on `localhost:29092`.
 
 ## Architecture
 

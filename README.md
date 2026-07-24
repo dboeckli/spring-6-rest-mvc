@@ -155,6 +155,29 @@ Start the application with `./mvnw spring-boot:run`. Spring Boot Docker Compose 
 
 H2 connection parameters are in `src/main/resources/application.yaml`.
 
+### IntelliJ HTTP Client
+
+The `restRequest/` folder contains IntelliJ HTTP request files for manual API testing:
+
+|               File                |          Coverage           |
+|-----------------------------------|-----------------------------|
+| `beerControllerRequest.http`      | Beer CRUD endpoints         |
+| `beerOrderControllerRequest.http` | Beer order endpoints        |
+| `customerControllerRequest.http`  | Customer CRUD endpoints     |
+| `actuator.http`                   | Actuator/health endpoints   |
+| `authServerRequests.http`         | Auth-server token requests  |
+| `openapi.http`                    | OpenAPI JSON/YAML endpoints |
+
+Environments are configured in `restRequest/http-client.env.json`:
+
+| Environment |     App port     | Auth-Server port |              Use for              |
+|-------------|------------------|------------------|-----------------------------------|
+| `local`     | 8081             | 9000             | Local run via IntelliJ run config |
+| `k8s`       | 30081 (NodePort) | 30900 (NodePort) | Kubernetes deployment             |
+
+Authentication uses OAuth2 Client Credentials (`messaging-client` / `secret`, scopes `message.read message.write`).
+Select the environment in IntelliJ's HTTP client toolbar before running a request.
+
 ## Docker
 
 ### Build Image
