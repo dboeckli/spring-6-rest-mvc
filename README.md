@@ -104,22 +104,22 @@ erDiagram
 
 ## Prerequisites
 
-| Requirement      | Version  |
-|------------------|----------|
-| Java             | 25       |
-| Maven Wrapper    | included |
-| Docker           | any      |
-| Kubernetes/Helm  | optional |
+|   Requirement   | Version  |
+|-----------------|----------|
+| Java            | 25       |
+| Maven Wrapper   | included |
+| Docker          | any      |
+| Kubernetes/Helm | optional |
 
 The **OAuth2 auth-server must be running on port 9000** (`localhost:9000`) for tests and the running
 application. It is started automatically via `compose-h2.yaml` when using the default profile.
 
 ## Profiles
 
-| Profile   | Database          | Flyway     | Notes                                  |
-|-----------|-------------------|------------|----------------------------------------|
-| `default` | H2 (in-memory)    | disabled   | Schema via JPA; H2 console available   |
-| `mysql`   | MySQL (Docker)    | enabled    | Requires `compose.yaml` services       |
+|  Profile  |    Database    |  Flyway  |                Notes                 |
+|-----------|----------------|----------|--------------------------------------|
+| `default` | H2 (in-memory) | disabled | Schema via JPA; H2 console available |
+| `mysql`   | MySQL (Docker) | enabled  | Requires `compose.yaml` services     |
 
 ## Build & Test
 
@@ -144,14 +144,14 @@ Start the application with `./mvnw spring-boot:run`. Spring Boot Docker Compose 
 
 ### Endpoints
 
-| Resource           | Local                                         | Kubernetes (NodePort)                          |
-|--------------------|-----------------------------------------------|------------------------------------------------|
-| Application        | http://localhost:8081                         | http://\<node-ip\>:30081                       |
-| OpenAPI JSON       | http://localhost:8081/v3/api-docs             | http://\<node-ip\>:30081/v3/api-docs           |
-| OpenAPI YAML       | http://localhost:8081/v3/api-docs.yaml        | http://\<node-ip\>:30081/v3/api-docs.yaml      |
-| Swagger UI         | http://localhost:8081/swagger-ui/index.html   | http://\<node-ip\>:30081/swagger-ui/index.html |
-| H2 Console         | http://localhost:8081/h2-console              | http://\<node-ip\>:30081/h2-console            |
-| Auth Server        | http://localhost:9000                         | —                                              |
+|   Resource   |                    Local                    |             Kubernetes (NodePort)              |
+|--------------|---------------------------------------------|------------------------------------------------|
+| Application  | http://localhost:8081                       | http://\<node-ip\>:30081                       |
+| OpenAPI JSON | http://localhost:8081/v3/api-docs           | http://\<node-ip\>:30081/v3/api-docs           |
+| OpenAPI YAML | http://localhost:8081/v3/api-docs.yaml      | http://\<node-ip\>:30081/v3/api-docs.yaml      |
+| Swagger UI   | http://localhost:8081/swagger-ui/index.html | http://\<node-ip\>:30081/swagger-ui/index.html |
+| H2 Console   | http://localhost:8081/h2-console            | http://\<node-ip\>:30081/h2-console            |
+| Auth Server  | http://localhost:9000                       | —                                              |
 
 H2 connection parameters are in `src/main/resources/application.yaml`.
 
