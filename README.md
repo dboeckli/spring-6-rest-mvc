@@ -1,174 +1,286 @@
-# Spring Framework 6: Beginner to Guru
+# Spring Framework 6: Beginner to Guru — Spring 6 REST MVC
 
-## Spring 6 Rest MVC API
+Spring Boot 4 / Spring Framework 6 REST MVC backend. Exposes a Beer, Customer, and Beer-Order REST API
+secured as an OAuth2 resource server.
 
-This is the Backend Part. Application is listening on port 8081/30081
-* default profile: runs with a in memory h2 database:
-* mysql: requires mysql provided by a docker image.
+## Architecture Overview
 
-![Spring Framework 6 Architecture](docs/guru.png)
-*Spring Framework 6 Architecture Diagram*
+```mermaid
+graph LR
+    Client(["💻 Client"])
 
-When Testing this module requires that the authentication server is up and running at localhost on port 9000/30090.
+    subgraph Auth ["OAuth2"]
+        AuthServer["Spring Auth Server\n:9000"]
+    end
 
-- openapi api-docs:
-  - http://localhost:8081/v3/api-docs
-  - http://localhost:30081/v3/api-docs
-- openapi gui:
-  - http://localhost:8081/swagger-ui/index.html
-  - http://localhost:30081/swagger-ui/index.html
-- openapi-yaml:
-  - http://localhost:8081/v3/api-docs.yaml
-  - http://localhost:30081/v3/api-docs.yaml
-- h2-console:
-  - http://localhost:8081/h2-console (check application.yaml for connection parameters)
-  - http://localhost:30081/h2-console (check application.yaml for connection parameters)
+    subgraph Gateway ["API Gateway"]
+        GW["Spring Gateway\n:8080"]
+    end
 
-## Kubernetes
+    subgraph Backends ["Backend Services"]
+        MVC["Spring MVC\n:8081"]
+        WebFlux["Spring WebFlux\n:8082"]
+        WebFluxFn["Spring WebFlux.fn\n:8083"]
+    end
 
-### Generate Config Map for mysql init script
+    subgraph Databases ["Databases"]
+        MySQL[("MySQL")]
+        H2[("H2\nIn-Memory")]
+        Mongo[("MongoDB")]
+    end
 
-When updating 'src/scripts/init-mysql-mysql.sql', apply the changes to the Kubernetes ConfigMap:
+    AuthServer -->|"issues JWT"| GW
+    Client <-->|"HTTP"| GW
+    GW --> MVC
+    GW --> WebFlux
+    GW --> WebFluxFn
+    MVC <--> MySQL
+    WebFlux <--> H2
+    WebFluxFn <--> Mongo
+```
+
+## Database Schema
+
+```mermaid
+erDiagram
+    customer {
+        VARCHAR(36)  id PK
+        VARCHAR(255) name
+        VARCHAR(255) email
+        DATETIME(6)  created_date
+        DATETIME(6)  update_date
+        INT          version
+    }
+
+    beer_order {
+        VARCHAR(36)  id PK
+        VARCHAR(36)  customer_id FK
+        VARCHAR(255) customer_ref
+        DATETIME(6)  created_date
+        DATETIME(6)  last_modified_date
+        BIGINT       version
+    }
+
+    beer_order_line {
+        VARCHAR(36) id PK
+        VARCHAR(36) beer_order_id FK
+        VARCHAR(36) beer_id FK
+        INT         order_quantity
+        INT         quantity_allocated
+        DATETIME(6) created_date
+        DATETIME(6) last_modified_date
+        BIGINT      version
+    }
+
+    beer {
+        VARCHAR(36)   id PK
+        VARCHAR(50)   beer_name
+        SMALLINT      beer_style
+        VARCHAR(255)  upc
+        DECIMAL(38_2) price
+        INT           quantity_on_hand
+        DATETIME(6)   created_date
+        DATETIME(6)   update_date
+        INT           version
+    }
+
+    flyway_schema_history {
+        INT           installed_rank PK
+        VARCHAR(50)   version
+        VARCHAR(200)  description
+        VARCHAR(20)   type
+        VARCHAR(1000) script
+        INT           checksum
+        VARCHAR(100)  installed_by
+        TIMESTAMP     installed_on
+        INT           execution_time
+        TINYINT(1)    success
+    }
+
+    customer ||--o{ beer_order : "places"
+    beer_order ||--o{ beer_order_line : "contains"
+    beer ||--o{ beer_order_line : "ordered via"
+```
+
+## Prerequisites
+
+| Requirement      | Version  |
+|------------------|----------|
+| Java             | 25       |
+| Maven Wrapper    | included |
+| Docker           | any      |
+| Kubernetes/Helm  | optional |
+
+The **OAuth2 auth-server must be running on port 9000** (`localhost:9000`) for tests and the running
+application. It is started automatically via `compose-h2.yaml` when using the default profile.
+
+## Profiles
+
+| Profile   | Database          | Flyway     | Notes                                  |
+|-----------|-------------------|------------|----------------------------------------|
+| `default` | H2 (in-memory)    | disabled   | Schema via JPA; H2 console available   |
+| `mysql`   | MySQL (Docker)    | enabled    | Requires `compose.yaml` services       |
+
+## Build & Test
 
 ```bash
-kubectl create configmap mysql-init-script --from-file=init.sql=src/scripts/init-mysql.sql --dry-run=client -o yaml | Out-File -Encoding utf8 k8s/mysql-init-script-configmap.yaml
+./mvnw clean verify          # full build: format check, unit + IT tests, JaCoCo, Helm lint/template
+./mvnw clean install         # verify + build local Docker image + Helm package
+./mvnw test                  # unit tests only (surefire, *Test)
+./mvnw verify                # integration tests only (failsafe, *IT)
+./mvnw test -Dtest=BeerControllerTest              # single test class
+./mvnw test -Dtest=BeerControllerTest#methodName   # single test method
+./mvnw spotless:apply        # auto-fix pom/markdown/json/yaml/shell formatting
+./mvnw spring-javaformat:apply                     # auto-fix Java code style
 ```
 
-### Deployment with Kubernetes
+> Formatting is enforced at build time. Run both `spotless:apply` and `spring-javaformat:apply`
+> before committing if the build fails at the `validate` phase.
 
-Deployment goes into the default namespace.
+## Running Locally
 
-To deploy all resources:
+Start the application with `./mvnw spring-boot:run`. Spring Boot Docker Compose auto-starts
+`compose-h2.yaml` (Kafka + auth-server) on startup in the default profile.
 
-```bash
-kubectl apply -f target/k8s/
-```
+### Endpoints
 
-To remove all resources:
+| Resource           | Local                                         | Kubernetes (NodePort)                          |
+|--------------------|-----------------------------------------------|------------------------------------------------|
+| Application        | http://localhost:8081                         | http://\<node-ip\>:30081                       |
+| OpenAPI JSON       | http://localhost:8081/v3/api-docs             | http://\<node-ip\>:30081/v3/api-docs           |
+| OpenAPI YAML       | http://localhost:8081/v3/api-docs.yaml        | http://\<node-ip\>:30081/v3/api-docs.yaml      |
+| Swagger UI         | http://localhost:8081/swagger-ui/index.html   | http://\<node-ip\>:30081/swagger-ui/index.html |
+| H2 Console         | http://localhost:8081/h2-console              | http://\<node-ip\>:30081/h2-console            |
+| Auth Server        | http://localhost:9000                         | —                                              |
 
-```bash
-kubectl delete -f target/k8s/
-```
-
-Check
-
-```bash
-kubectl get deployments -o wide
-kubectl get pods -o wide
-```
-
-You can use the actuator rest call to verify via port 30081
-
-### Deployment with Helm
-
-Be aware that we are using a different namespace here (not default).
-
-Go to the directory where the tgz file has been created after 'mvn install'
-
-```powershell
-cd target/helm/repo
-```
-
-unpack
-
-```powershell
-$file = Get-ChildItem -Filter spring-6-rest-mvc-v*.tgz | Select-Object -First 1
-tar -xvf $file.Name
-```
-
-install
-
-```powershell
-$APPLICATION_NAME = Get-ChildItem -Directory | Where-Object { $_.LastWriteTime -ge $file.LastWriteTime } | Select-Object -ExpandProperty Name
-helm upgrade --install $APPLICATION_NAME ./$APPLICATION_NAME --namespace spring-6-rest-mvc --create-namespace --wait --timeout 5m --debug --render-subchart-notes
-```
-
-show logs and show event
-
-```powershell
-kubectl get pods -n spring-6-rest-mvc
-```
-
-replace $POD with pods from the command above
-
-```powershell
-kubectl logs $POD -n spring-6-rest-mvc --all-containers
-```
-
-Show Details and Event
-
-$POD_NAME can be: spring-6-rest-mvc-mongodb, spring-6-rest-mvc
-
-```powershell
-kubectl describe pod $POD_NAME -n spring-6-rest-mvc
-```
-
-Show Endpoints
-
-```powershell
-kubectl get endpoints -n spring-6-rest-mvc
-```
-
-status
-
-```powershell
-helm status $APPLICATION_NAME --namespace spring-6-rest-mvc
-```
-
-test
-
-```powershell
-helm test $APPLICATION_NAME --namespace spring-6-rest-mvc --logs
-```
-
-uninstall
-
-```powershell
-helm uninstall $APPLICATION_NAME --namespace spring-6-rest-mvc
-```
-
-delete all
-
-```powershell
-kubectl delete all --all -n spring-6-rest-mvc
-```
-
-create busybox sidecar
-
-```powershell
-kubectl run busybox-test --rm -it --image=busybox:1.36 --namespace=spring-6-rest-mvc --command -- sh
-```
-
-You can use the actuator rest call to verify via port 30081
+H2 connection parameters are in `src/main/resources/application.yaml`.
 
 ## Docker
 
-### create image
+### Build Image
 
 ```shell
-.\mvnw clean package spring-boot:build-image
+./mvnw clean install
 ```
 
-or just run
+Or explicitly:
 
 ```shell
-.\mvnw clean install
+./mvnw clean package spring-boot:build-image
 ```
 
-### run image
+### Run with Docker
 
-Hint: remove the daemon flag -d to see what is happening, else it run in background
+Remove the `-d` flag to see logs in the foreground.
 
 ```shell
-docker run --name mysql -d -e MYSQL_USER=restadmin -e MYSQL_PASSWORD=password -e MYSQL_DATABASE=restmvcdb -e MYSQL_ROOT_PASSWORD=password mysql:9
-docker stop mysql
-docker rm mysql
-docker start mysql
+# Start MySQL
+docker run --name mysql -d \
+  -e MYSQL_USER=restadmin \
+  -e MYSQL_PASSWORD=password \
+  -e MYSQL_DATABASE=restmvcdb \
+  -e MYSQL_ROOT_PASSWORD=password \
+  mysql:9
 
-docker run --name rest-mvc -d -p 8081:8080 -e SPRING_PROFILES_ACTIVE=mysql -e SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://auth-server:9000 -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/restmvcdb -e SERVER_PORT=8080 --link auth-server:auth-server --link mysql:mysql spring-6-rest-mvc:0.0.1-SNAPSHOT
- 
-docker stop rest-mvc
-docker rm rest-mvc
-docker start rest-mvc
+# Start the application
+docker run --name rest-mvc -d \
+  -p 8081:8080 \
+  -e SPRING_PROFILES_ACTIVE=mysql \
+  -e SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://auth-server:9000 \
+  -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/restmvcdb \
+  -e SERVER_PORT=8080 \
+  --link auth-server:auth-server \
+  --link mysql:mysql \
+  spring-6-rest-mvc:0.0.1-SNAPSHOT
+
+# Stop / restart
+docker stop rest-mvc && docker rm rest-mvc
+docker stop mysql && docker rm mysql
 ```
 
+## Kubernetes
+
+Deployment goes into the **default** namespace when using raw manifests,
+or the **`spring-6-rest-mvc`** namespace when using Helm.
+
+### Generate ConfigMap for MySQL Init Script
+
+When updating `src/scripts/mysql-init.sql`, regenerate the Kubernetes ConfigMap:
+
+```powershell
+kubectl create configmap mysql-init-script \
+  --from-file=init.sql=src/scripts/mysql-init.sql \
+  --dry-run=client -o yaml | Out-File -Encoding utf8 k8s/mysql-init-script-configmap.yaml
+```
+
+### Deploy with kubectl
+
+```bash
+# Apply all resources
+kubectl apply -f target/k8s/
+
+# Verify
+kubectl get deployments -o wide
+kubectl get pods -o wide
+
+# Remove all resources
+kubectl delete -f target/k8s/
+```
+
+### Deploy with Helm
+
+After `./mvnw clean install`, a packaged chart is placed in `target/helm/repo/`.
+
+```powershell
+# Navigate to the chart directory
+cd target/helm/repo
+
+# Unpack the chart archive
+$file = Get-ChildItem -Filter spring-6-rest-mvc-v*.tgz | Select-Object -First 1
+tar -xvf $file.Name
+
+# Install / upgrade
+$APPLICATION_NAME = Get-ChildItem -Directory |
+  Where-Object { $_.LastWriteTime -ge $file.LastWriteTime } |
+  Select-Object -ExpandProperty Name
+helm upgrade --install $APPLICATION_NAME ./$APPLICATION_NAME \
+  --namespace spring-6-rest-mvc --create-namespace \
+  --wait --timeout 5m --debug --render-subchart-notes
+```
+
+### Helm Operations
+
+```powershell
+# List pods
+kubectl get pods -n spring-6-rest-mvc
+
+# Logs (replace $POD with a pod name from the command above)
+kubectl logs $POD -n spring-6-rest-mvc --all-containers
+
+# Describe a pod ($POD_NAME: spring-6-rest-mvc or spring-6-rest-mvc-mysql)
+kubectl describe pod $POD_NAME -n spring-6-rest-mvc
+
+# Show endpoints
+kubectl get endpoints -n spring-6-rest-mvc
+
+# Helm status / test / uninstall
+helm status $APPLICATION_NAME --namespace spring-6-rest-mvc
+helm test   $APPLICATION_NAME --namespace spring-6-rest-mvc --logs
+helm uninstall $APPLICATION_NAME --namespace spring-6-rest-mvc
+
+# Remove all resources in the namespace
+kubectl delete all --all -n spring-6-rest-mvc
+```
+
+### Debugging in Kubernetes
+
+Spawn a temporary BusyBox shell for in-cluster diagnostics:
+
+```powershell
+kubectl run busybox-test --rm -it \
+  --image=busybox:1.36 \
+  --namespace=spring-6-rest-mvc \
+  --command -- sh
+```
+
+Use the actuator endpoint to verify the application is healthy via NodePort **30081**.
