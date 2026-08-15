@@ -39,7 +39,7 @@ spec:
             - /scripts/wait-for-readiness.sh
           args:
             - authServer
-            - {{ default (printf "%s-spring-6-auth-server.%s.svc.cluster.local" .Release.Name .Release.Namespace) .Values.authServer.serviceFQDN | quote }}
+            - {{ default (printf "spring-6-auth-server.%s.svc.cluster.local" .Release.Namespace) .Values.authServer.serviceFQDN | quote }}
             - {{ .Values.authServer.port | quote }}
           volumeMounts:
             - name: scripts
@@ -47,7 +47,7 @@ spec:
               readOnly: true
 
       containers:
-        - name: {{ .Chart.Name }}
+        - name: @project.artifactId@
           image: "{{ .Values.image.registry }}/@project.artifactId@:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:

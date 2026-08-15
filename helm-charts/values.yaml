@@ -1,3 +1,6 @@
+nameOverride: "spring-6-rest-mvc"
+fullnameOverride: "spring-6-rest-mvc"
+
 global:
   timezone: Europe/Zurich
   timezonePath: /etc/localtime
@@ -52,6 +55,8 @@ probes:
 mysql:
   enabled: true
 
+  fullnameOverride: "spring-6-rest-mvc-mysql"
+
   database: restmvcdb
 
   port: 3306
@@ -67,6 +72,9 @@ mysql:
 
 kafka:
   enabled: true
+
+  fullnameOverride: "spring-6-rest-mvc-kafka"
+
   port: 9092
   serviceFQDN: "spring-6-rest-mvc-kafka.spring-6-rest-mvc.svc.cluster.local"
 
@@ -77,16 +85,15 @@ authServer:
   targetPort: 9000
   nodePort: 30900
 
-  serviceFQDN: "spring-6-rest-mvc-spring-6-auth-server.spring-6-rest-mvc.svc.cluster.local"
+  serviceFQDN: "spring-6-auth-server.spring-6-rest-mvc.svc.cluster.local"
 
 ingress:
   enabled: false
 
 # Section for overriding values in subcharts.
-
-spring-6-auth-server:
+spring-6-auth-server-chart:
   spring:
     issuer:
-      uri: "http://spring-6-rest-mvc-spring-6-auth-server.spring-6-rest-mvc.svc.cluster.local:9000"
+      uri: "http://spring-6-auth-server.spring-6-rest-mvc.svc.cluster.local:9000"
 
 
