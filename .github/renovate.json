@@ -135,6 +135,17 @@
                 "- name: (?<depName>spring-6-auth-server-chart)[\\s\\S]*?version: \"(?<currentValue>[^\"]+)\""
             ],
             "registryUrlTemplate": "https://repo.repsy.io/user08694146/helm-dboeckli"
+        },
+        {
+            "description": "Update mysql image version in Testcontainers ITs",
+            "customType": "regex",
+            "datasourceTemplate": "docker",
+            "managerFilePatterns": [
+                "/(^|\\/)MySql\\d?IT\\.java$/"
+            ],
+            "matchStrings": [
+                "DockerImageName\\.parse\\(\"(?<depName>mysql):(?<currentValue>[^\"]+)\"\\)"
+            ]
         }
     ],
     "platformAutomerge": false,
