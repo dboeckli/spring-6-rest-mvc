@@ -15,6 +15,21 @@ JWT resource server exposing a Beer / Customer / BeerOrder REST API.
   springdoc OpenAPI generation that depends on it.
 - Start locally: `./mvnw spring-boot:run` (app on `:8081`).
 
+After changing code, always verify: run the relevant Maven goal above and report its output
+(evidence, not just "done").
+
+## Sandbox build quirk (required)
+
+This sandbox mounts the repo via filesystem passthrough, which blocks symlinks. Spotless's
+`npm install` (prettier) therefore fails with `EPERM` unless npm skips bin links:
+
+```bash
+export npm_config_bin_links=false    # export BEFORE running ./mvnw
+```
+
+Without it, `./mvnw validate` / `./mvnw verify` fail in the spotless step. On a normal host
+(Windows/CI) this is not needed.
+
 ## Formatting is enforced (fails the `validate` phase)
 
 - Java: Spring Java Format → fix with `./mvnw spring-javaformat:apply`.

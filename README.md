@@ -137,6 +137,63 @@ application. It is started automatically via `compose-h2.yaml` when using the de
 > Formatting is enforced at build time. Run both `spotless:apply` and `spring-javaformat:apply`
 > before committing if the build fails at the `validate` phase.
 
+## Sandbox (local dev environment)
+
+The sandbox consists of the app (Spring Boot, port 8081) plus an auth-server (port 9000) and Kafka,
+provided by `compose-h2.yaml`. The services start automatically via `spring.docker.compose.enabled=true`
+when the app boots, so usually one step is enough.
+
+### Start the sandbox (opencode-sandbox-kit)
+
+The sandbox is provisioned by the opencode-sandbox-kit and runs as a Docker container. It mounts this
+repo, starts opencode, and connects the IntelliJ MCP server.
+
+Allow the kit source (GitHub without cloning):
+
+```powershell
+sbx settings set kit.allowedSources --% "[\"docker.io/\",\"github.com/dboeckli/\"]"
+```
+
+Start a new sandbox:
+
+```powershell
+sbx run opencode --name spring-6-rest-mvc --kit "git+https://github.com/dboeckli/opencode-sandbox-kit.git" "C:\development\projects\spring-6-rest-mvc"
+```
+
+Start the sandbox with Kubernetes support:
+
+```powershell
+sbx run opencode --name spring-6-rest-mvc --kit "git+https://github.com/dboeckli/opencode-sandbox-kit.git" "C:\development\projects\spring-6-rest-mvc" "$env:USERPROFILE\.kube:ro"
+```
+
+Apply the kit to an existing sandbox (restarts the sandbox, VM state is kept):
+
+```powershell
+sbx kit add spring-6-rest-mvc "git+https://github.com/dboeckli/opencode-sandbox-kit.git"
+```
+
+### Start the app
+
+```shell
+docker compose -f compose-h2.yaml up        # optional: start Kafka + auth-server manually (else they start with the app)
+```
+
+Then run the `SpringRestMvcApplication With H2` run configuration in IntelliJ
+(`.run/SpringRestMvcApplication With H2.run.xml`, main class
+`ch.dboeckli.spring.restmvc.SpringRestMvcApplication`). Alternatively start via
+`./mvnw spring-boot:run`.
+
+The compose file brings up:
+
+- `auth-server` (port 9000) — required by the OAuth2 resource server
+- `kafka` (ports 9092/29092) — required for the beer event topics
+
+### Verify
+
+- Swagger UI: http://localhost:8081/swagger-ui/index.html
+- OpenAPI json: http://localhost:8081/v3/api-docs
+- H2 console: http://localhost:8081/h2-console
+
 ## Running Locally
 
 Start the application with `./mvnw spring-boot:run`. Spring Boot Docker Compose auto-starts
