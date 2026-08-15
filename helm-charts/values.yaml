@@ -1,3 +1,6 @@
+nameOverride: "spring-6-rest-mvc"
+fullnameOverride: "spring-6-rest-mvc"
+
 global:
   timezone: Europe/Zurich
   timezonePath: /etc/localtime
@@ -52,6 +55,8 @@ probes:
 mysql:
   enabled: true
 
+  fullnameOverride: "spring-6-rest-mvc-mysql"
+
   database: restmvcdb
 
   port: 3306
@@ -67,6 +72,9 @@ mysql:
 
 kafka:
   enabled: true
+
+  fullnameOverride: "spring-6-rest-mvc-kafka"
+
   port: 9092
   serviceFQDN: "spring-6-rest-mvc-kafka.spring-6-rest-mvc.svc.cluster.local"
 
