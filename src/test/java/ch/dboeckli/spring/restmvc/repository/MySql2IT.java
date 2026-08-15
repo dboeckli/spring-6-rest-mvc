@@ -24,7 +24,7 @@ class MySql2IT {
 
     @Container
     @ServiceConnection
-    static MySQLContainer mySQLContainer = new MySQLContainer(DockerImageName.parse("mysql:8.4.5"));
+    static MySQLContainer mySQLContainer = new MySQLContainer(DockerImageName.parse("mysql:8.4.11"));
 
     @Autowired
     BeerRepository beerRepository;
