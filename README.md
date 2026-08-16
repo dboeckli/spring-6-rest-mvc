@@ -13,30 +13,20 @@ graph LR
         AuthServer["Spring Auth Server\n:9000"]
     end
 
-    subgraph Gateway ["API Gateway"]
-        GW["Spring Gateway\n:8080"]
-    end
-
     subgraph Backends ["Backend Services"]
         MVC["Spring MVC\n:8081"]
-        WebFlux["Spring WebFlux\n:8082"]
-        WebFluxFn["Spring WebFlux.fn\n:8083"]
     end
 
     subgraph Databases ["Databases"]
         MySQL[("MySQL")]
         H2[("H2\nIn-Memory")]
-        Mongo[("MongoDB")]
     end
 
-    AuthServer -->|"issues JWT"| GW
-    Client <-->|"HTTP"| GW
-    GW --> MVC
-    GW --> WebFlux
-    GW --> WebFluxFn
+    AuthServer -->|"issues JWT"| Client
+    Client <-->|"HTTP (Bearer JWT)"| MVC
+    MVC -->|"validates JWT"| AuthServer
     MVC <--> MySQL
-    WebFlux <--> H2
-    WebFluxFn <--> Mongo
+    MVC <--> H2
 ```
 
 ## Database Schema
