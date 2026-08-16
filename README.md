@@ -223,7 +223,7 @@ Environments are configured in `restRequest/http-client.env.json`:
 | `k8s`       | 30081 (NodePort) | 30900 (NodePort) | Kubernetes deployment             |
 
 Authentication uses OAuth2 Client Credentials (`messaging-client` / `secret`, scopes `message.read message.write`).
-Select the environment in IntelliJ's HTTP client toolbar before running a request.
+Select the environment in IntelliJ's HTTP client toolbar before running a request
 
 ## Docker
 
@@ -270,7 +270,7 @@ docker stop mysql && docker rm mysql
 
 ## Kubernetes
 
-Deployment goes into the **default** namespace when using raw manifests, or the **`spring-6-rest-mvc`** namespace when 
+Deployment goes into the **default** namespace when using raw manifests, or the **`spring-6-rest-mvc`** namespace when
 using Helm.
 
 ### Generate ConfigMap for MySQL Init Script
