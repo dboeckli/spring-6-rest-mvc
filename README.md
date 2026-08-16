@@ -270,8 +270,8 @@ docker stop mysql && docker rm mysql
 
 ## Kubernetes
 
-Deployment goes into the **default** namespace when using raw manifests,
-or the **`spring-6-rest-mvc`** namespace when using Helm.
+Deployment goes into the **default** namespace when using raw manifests, or the **`spring-6-rest-mvc`** namespace when 
+using Helm.
 
 ### Generate ConfigMap for MySQL Init Script
 
