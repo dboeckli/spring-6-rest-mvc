@@ -918,7 +918,7 @@
               <arguments>
                 <argument>registry</argument>
                 <argument>login</argument>
-                <argument>helm.oci.cloudsmith.io</argument>
+                <argument>docker.cloudsmith.io</argument>
                 <argument>--username</argument>
                 <!--suppress UnresolvedMavenProperty: CLOUDSMITH_USERNAME is set by GitHub Actions -->
                 <argument>${env.CLOUDSMITH_USERNAME}</argument>
@@ -946,7 +946,22 @@
                 <argument>--password</argument>
                 <!--suppress UnresolvedMavenProperty: CLOUDSMITH_API_KEY is set by GitHub Actions -->
                 <argument>${env.CLOUDSMITH_API_KEY}</argument>
-                <argument>oci://helm.oci.cloudsmith.io/dboeckli/dboeckli-cloudsmith-repo</argument>
+                <argument>oci://docker.cloudsmith.io/dboeckli/dboeckli-cloudsmith-repo</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>cloudsmith-tag-helm</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>deploy</phase>
+            <configuration>
+              <executable>bash</executable>
+              <arguments>
+                <argument>${project.basedir}/.github/workflows/scripts/set-cloudsmith-helm-tag.sh</argument>
+                <!--suppress UnresolvedMavenProperty: helm.chart.version is set by maven antrun plugin -->
+                <argument>${helm.chart.version}</argument>
               </arguments>
             </configuration>
           </execution>
