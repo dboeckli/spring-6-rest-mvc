@@ -407,7 +407,7 @@
               <exclude>**/node_modules/**</exclude>
             </excludes>
             <shfmt>
-              <version>3.13.0</version>
+              <version>3.13.1</version>
             </shfmt>
           </shell>
         </configuration>
@@ -899,6 +899,8 @@
               <arguments>
                 <argument>package</argument>
                 <argument>${project.build.directory}/helm-charts/</argument>
+                <argument>${project.build.directory}/helm-charts/charts/kafka</argument>
+                <argument>${project.build.directory}/helm-charts/charts/mysql</argument>
                 <argument>--destination</argument>
                 <argument>${project.build.directory}/helm/repo</argument>
                 <argument>--version</argument>
@@ -940,6 +942,50 @@
                 <argument>push</argument>
                 <!--suppress UnresolvedMavenProperty: helm.chart.version is set by maven antrun plugin -->
                 <argument>${project.build.directory}/helm/repo/${project.artifactId}-chart-${helm.chart.version}.tgz</argument>
+                <argument>--username</argument>
+                <!--suppress UnresolvedMavenProperty: CLOUDSMITH_USERNAME is set by GitHub Actions -->
+                <argument>${env.CLOUDSMITH_USERNAME}</argument>
+                <argument>--password</argument>
+                <!--suppress UnresolvedMavenProperty: CLOUDSMITH_API_KEY is set by GitHub Actions -->
+                <argument>${env.CLOUDSMITH_API_KEY}</argument>
+                <argument>oci://docker.cloudsmith.io/dboeckli/dboeckli-cloudsmith-repo</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>helm-push-kafka</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>deploy</phase>
+            <configuration>
+              <executable>${helm.executable}</executable>
+              <arguments>
+                <argument>push</argument>
+                <!--suppress UnresolvedMavenProperty: helm.chart.version is set by maven antrun plugin -->
+                <argument>${project.build.directory}/helm/repo/spring-6-rest-mvc-kafka-chart-${helm.chart.version}.tgz</argument>
+                <argument>--username</argument>
+                <!--suppress UnresolvedMavenProperty: CLOUDSMITH_USERNAME is set by GitHub Actions -->
+                <argument>${env.CLOUDSMITH_USERNAME}</argument>
+                <argument>--password</argument>
+                <!--suppress UnresolvedMavenProperty: CLOUDSMITH_API_KEY is set by GitHub Actions -->
+                <argument>${env.CLOUDSMITH_API_KEY}</argument>
+                <argument>oci://docker.cloudsmith.io/dboeckli/dboeckli-cloudsmith-repo</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>helm-push-mysql</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>deploy</phase>
+            <configuration>
+              <executable>${helm.executable}</executable>
+              <arguments>
+                <argument>push</argument>
+                <!--suppress UnresolvedMavenProperty: helm.chart.version is set by maven antrun plugin -->
+                <argument>${project.build.directory}/helm/repo/spring-6-rest-mvc-mysql-chart-${helm.chart.version}.tgz</argument>
                 <argument>--username</argument>
                 <!--suppress UnresolvedMavenProperty: CLOUDSMITH_USERNAME is set by GitHub Actions -->
                 <argument>${env.CLOUDSMITH_USERNAME}</argument>

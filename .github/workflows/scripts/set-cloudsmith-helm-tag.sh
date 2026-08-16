@@ -23,21 +23,23 @@ command -v curl >/dev/null 2>&1 || error_exit "curl is not installed or not in P
 command -v jq >/dev/null 2>&1 || error_exit "jq is not installed or not in PATH."
 [ -n "${CLOUDSMITH_API_KEY:-}" ] || error_exit "CLOUDSMITH_API_KEY is not set."
 
-echo "Tagging Cloudsmith package for chart version: $CHART_VERSION"
+echo "Tagging Cloudsmith packages for chart version: $CHART_VERSION"
 
 PACKAGES=$(curl -sS -H "X-Api-Key: $CLOUDSMITH_API_KEY" \
 	"https://api.cloudsmith.io/v1/packages/$OWNER/$REPO/?page_size=100")
 
-IDENTIFIER=$(echo "$PACKAGES" | jq -r --arg v "$CHART_VERSION" \
-	'.[] | select(((.tags.version // []) | index($v)) != null) | .slug_perm' | head -1)
+IDENTIFIERS=$(echo "$PACKAGES" | jq -r --arg v "$CHART_VERSION" \
+	'.[] | select(((.tags.version // []) | index($v)) != null) | .slug_perm')
 
-if [ -z "$IDENTIFIER" ]; then
+if [ -z "$IDENTIFIERS" ]; then
 	error_exit "No Cloudsmith package found for version tag $CHART_VERSION"
 fi
-echo "Found package identifier: $IDENTIFIER"
 
-RESULT=$(curl -sS -X POST -H "X-Api-Key: $CLOUDSMITH_API_KEY" -H "Content-Type: application/json" \
-	-d '{"tags": ["helm"]}' \
-	"https://api.cloudsmith.io/v1/packages/$OWNER/$REPO/$IDENTIFIER/tag/")
-echo "$RESULT" | jq -r '"Tag status: " + .status_str'
-echo "Cloudsmith package $IDENTIFIER tagged as helm (version $CHART_VERSION)"
+echo "$IDENTIFIERS" | while read -r IDENTIFIER; do
+	echo "Tagging package: $IDENTIFIER"
+	RESULT=$(curl -sS -X POST -H "X-Api-Key: $CLOUDSMITH_API_KEY" -H "Content-Type: application/json" \
+		-d '{"tags": ["helm"]}' \
+		"https://api.cloudsmith.io/v1/packages/$OWNER/$REPO/$IDENTIFIER/tag/")
+	echo "$RESULT" | jq -r '"Tag status: " + .status_str'
+	echo "Cloudsmith package $IDENTIFIER tagged as helm (version $CHART_VERSION)"
+done
