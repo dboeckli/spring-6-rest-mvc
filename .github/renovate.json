@@ -154,6 +154,32 @@
             "matchStrings": [
                 "DockerImageName\\.parse\\(\"(?<depName>mysql):(?<currentValue>[^\"]+)\"\\)"
             ]
+        },
+        {
+            "description": "Keep kafka subchart appVersion in sync with apache/kafka image tag",
+            "customType": "regex",
+            "datasourceTemplate": "docker",
+            "depNameTemplate": "apache/kafka",
+            "packageNameTemplate": "apache/kafka",
+            "managerFilePatterns": [
+                "/helm-charts\\/charts\\/kafka\\/Chart\\.ya?ml$/"
+            ],
+            "matchStrings": [
+                "appVersion:\\s*\"(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\""
+            ]
+        },
+        {
+            "description": "Keep mysql subchart appVersion in sync with mysql image tag",
+            "customType": "regex",
+            "datasourceTemplate": "docker",
+            "depNameTemplate": "mysql",
+            "packageNameTemplate": "mysql",
+            "managerFilePatterns": [
+                "/helm-charts\\/charts\\/mysql\\/Chart\\.ya?ml$/"
+            ],
+            "matchStrings": [
+                "appVersion:\\s*\"(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)\""
+            ]
         }
     ],
     "platformAutomerge": false,

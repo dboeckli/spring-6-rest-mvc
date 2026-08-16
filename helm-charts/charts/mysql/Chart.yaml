@@ -1,8 +1,8 @@
 apiVersion: v2
-name: spring-6-rest-mvc-mysql
-description: A Helm subchart for Mysql used in Spring 6 Reactive MongoDB application
+name: spring-6-rest-mvc-mysql-chart
+description: A Helm subchart for Mysql used in the Spring 6 REST MVC application
 type: application
 # Disable Sonar warning for invalid semver: This value is set by Maven filtering
 # and will be replaced with a valid version number during the build process.
 version: @helm.chart.version@
-appVersion: "8.4.5"
+appVersion: "8.4.11"

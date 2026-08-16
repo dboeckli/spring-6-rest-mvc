@@ -51,11 +51,15 @@ jobs:
       - name: Pull Helm Chart
         env:
           HELM_CHART_VERSION: ${{ inputs.helm-chart-version }}
-          DOCKER_USER: ${{ vars.DOCKER_USER }}
+          CLOUDSMITH_USERNAME: ${{ vars.CLOUDSMITH_USERNAME }}
+          CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
           APPLICATION_NAME: ${{ inputs.application-name }}
         run: |
-          echo "Pulling Helm Chart Version: $HELM_CHART_VERSION from oci://registry-1.docker.io/$DOCKER_USER/$APPLICATION_NAME-chart"
-          helm pull oci://registry-1.docker.io/$DOCKER_USER/$APPLICATION_NAME-chart --version "$HELM_CHART_VERSION"
+          helm registry login docker.cloudsmith.io \
+            --username "$CLOUDSMITH_USERNAME" \
+            --password "$CLOUDSMITH_API_KEY"
+          echo "Pulling Helm Chart Version: $HELM_CHART_VERSION from oci://docker.cloudsmith.io/dboeckli/dboeckli-cloudsmith-repo/$APPLICATION_NAME-chart"
+          helm pull oci://docker.cloudsmith.io/dboeckli/dboeckli-cloudsmith-repo/$APPLICATION_NAME-chart --version "$HELM_CHART_VERSION"
           tar -xvf $APPLICATION_NAME-*.tgz  
 
       - name: Deploy application with Helm
