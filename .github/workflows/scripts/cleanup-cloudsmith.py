@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
-"""Löscht Cloudsmith-Packages, deren Helm-Chart-Version einem Feature-Branch-Snapshot entspricht.
+"""Löscht Cloudsmith-Packages, deren Helm-Chart-Version einem Feature-Branch-Snapshot entspricht
+oder die kein Version-Tag mehr tragen (dangling, nach erneutem Push derselben Version).
 
 Sicher: nur Versionen gematcht auf `-snapshot.<hex>` (nie main/master `-snapshot`,
-nie Release). Zusätzlich nur älter als MAX_AGE_DAYS. Dry-Run als Default.
+nie Release) sowie untagged Packages. Zusätzlich nur älter als MAX_AGE_DAYS.
+Dry-Run als Default.
 
 Umgebungsvariablen:
   OWNER / REPO               Cloudsmith owner + Repo (pflicht)
   CLOUDSMITH_API_KEY         API-Key (pflicht)
   PACKAGE                    Nur Packages, deren Name diesen String enthält (optional)
-  MAX_AGE_DAYS               Mindestalter in Tagen (Default 14)
+  MAX_AGE_DAYS               Mindestalter in Tagen (Default 1)
   DRY_RUN                    "true" = nur auflisten (Default true)
 """
 import json
@@ -23,7 +25,7 @@ OWNER = os.environ["OWNER"]
 REPO = os.environ["REPO"]
 PACKAGE = os.environ.get("PACKAGE", "")
 KEY = os.environ["CLOUDSMITH_API_KEY"]
-MAX_AGE_DAYS = int(os.environ.get("MAX_AGE_DAYS", "14"))
+MAX_AGE_DAYS = int(os.environ.get("MAX_AGE_DAYS", "1"))
 DRY_RUN = os.environ.get("DRY_RUN", "true").lower() == "true"
 FEATURE_RE = re.compile(r"-snapshot\.[0-9a-fA-F]+$")
 
@@ -41,6 +43,15 @@ def chart_versions(pkg):
 
 def feature_versions(pkg):
     return [v for v in chart_versions(pkg) if FEATURE_RE.search(v)]
+
+
+def delete_candidates(pkg):
+    feats = feature_versions(pkg)
+    if feats:
+        return feats
+    if not chart_versions(pkg):
+        return ["<untagged>"]
+    return []
 
 
 def age_days(uploaded_at):
@@ -65,8 +76,8 @@ def main():
             if PACKAGE and PACKAGE not in name:
                 continue
 
-            feats = feature_versions(pkg)
-            if not feats:
+            candidates = delete_candidates(pkg)
+            if not candidates:
                 continue
 
             age = age_days(pkg.get("uploaded_at") or "")
@@ -76,7 +87,7 @@ def main():
             listed += 1
             ident = pkg.get("identifier_perm") or pkg.get("slug_perm")
             action = "[DRY-RUN] würde löschen" if DRY_RUN else "Lösche"
-            print(f"{action} {name}:{feats} (Alter {age}d, id={ident})")
+            print(f"{action} {name}:{candidates} (Alter {age}d, id={ident})")
             if not DRY_RUN:
                 req("DELETE", f"/packages/{OWNER}/{REPO}/{ident}/")
                 deleted += 1

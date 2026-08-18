@@ -11,7 +11,7 @@ on:
         description: 'Nur auflisten, nicht löschen'
       max-age-days:
         type: number
-        default: 14
+        default: 1
         description: 'Nur älter als X Tage löschen'
   schedule:
     - cron: '15 4 * * *'
@@ -32,6 +32,6 @@ jobs:
           OWNER: dboeckli
           REPO: dboeckli-cloudsmith-repo
           PACKAGE: spring-6-rest-mvc
-          MAX_AGE_DAYS: ${{ inputs.max-age-days != '' && inputs.max-age-days || 14 }}
+          MAX_AGE_DAYS: ${{ inputs.max-age-days != '' && inputs.max-age-days || 1 }}
           DRY_RUN: ${{ github.event_name != 'schedule' && inputs.dry-run == true }}
         run: python3 .github/workflows/scripts/cleanup-cloudsmith.py
