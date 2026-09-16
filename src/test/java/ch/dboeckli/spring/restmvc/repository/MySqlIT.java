@@ -25,7 +25,7 @@ class MySqlIT {
 
     @Container
     static org.testcontainers.mysql.MySQLContainer mySQLContainer = new MySQLContainer(
-            DockerImageName.parse("mysql:8.4.11"));
+            DockerImageName.parse("mysql:26.7.0"));
 
     @Autowired
     BeerRepository beerRepository;
