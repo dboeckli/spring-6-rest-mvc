@@ -14,7 +14,7 @@ function error_exit {
 
 CHART_VERSION="${1:-}"
 OWNER="${CLOUDSMITH_OWNER:-dboeckli}"
-REPO="${CLOUDSMITH_REPOSITORY:-dboeckli-cloudsmith-repo}"
+REPO="${CLOUDSMITH_REPOSITORY:-helm-repo}"
 
 if [ -z "$CHART_VERSION" ]; then
 	error_exit "Usage: $0 <chart-version>"
