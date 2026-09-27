@@ -948,7 +948,7 @@
                 <argument>--password</argument>
                 <!--suppress UnresolvedMavenProperty: CLOUDSMITH_API_KEY is set by GitHub Actions -->
                 <argument>${env.CLOUDSMITH_API_KEY}</argument>
-                <argument>oci://docker.cloudsmith.io/dboeckli/dboeckli-cloudsmith-repo</argument>
+                <argument>oci://docker.cloudsmith.io/dboeckli/helm-repo</argument>
               </arguments>
             </configuration>
           </execution>
@@ -970,7 +970,7 @@
                 <argument>--password</argument>
                 <!--suppress UnresolvedMavenProperty: CLOUDSMITH_API_KEY is set by GitHub Actions -->
                 <argument>${env.CLOUDSMITH_API_KEY}</argument>
-                <argument>oci://docker.cloudsmith.io/dboeckli/dboeckli-cloudsmith-repo</argument>
+                <argument>oci://docker.cloudsmith.io/dboeckli/helm-repo</argument>
               </arguments>
             </configuration>
           </execution>
@@ -992,7 +992,7 @@
                 <argument>--password</argument>
                 <!--suppress UnresolvedMavenProperty: CLOUDSMITH_API_KEY is set by GitHub Actions -->
                 <argument>${env.CLOUDSMITH_API_KEY}</argument>
-                <argument>oci://docker.cloudsmith.io/dboeckli/dboeckli-cloudsmith-repo</argument>
+                <argument>oci://docker.cloudsmith.io/dboeckli/helm-repo</argument>
               </arguments>
             </configuration>
           </execution>
