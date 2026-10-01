@@ -1,7 +1,16 @@
-# Spring Framework 6: Beginner to Guru — Spring 6 REST MVC
+# Spring 6 REST MVC
 
-Spring Boot 4 / Spring Framework 6 REST MVC backend. Exposes a Beer, Customer, and Beer-Order REST API
-secured as an OAuth2 resource server.
+Spring Boot 4 / Spring Framework 6 REST MVC backend exposing a Beer, Customer, and Beer-Order REST API
+secured as an OAuth2 resource server. It acts as the **order service** in a distributed
+drink-preparation saga: once an order is placed it splits drink requests over Kafka, which are
+prepared by three drink microservices that report back via `drink.prepared`.
+
+The saga spans four repositories:
+
+- [spring-6-rest-mvc](https://github.com/dboeckli/spring-6-rest-mvc) — this order service (REST API + order workflow)
+- [spring-6-cold-micro-service](https://github.com/dboeckli/spring-6-cold-micro-service) — prepares cold drinks (`drink.request.cold`)
+- [spring-6-cool-micro-service](https://github.com/dboeckli/spring-6-cool-micro-service) — prepares cool drinks (`drink.request.cool`)
+- [spring-6-icecold-micro-service](https://github.com/dboeckli/spring-6-icecold-micro-service) — prepares ice-cold drinks (`drink.request.icecold`)
 
 ## Architecture Overview
 
@@ -17,6 +26,16 @@ graph LR
         MVC["Spring MVC\n:8081"]
     end
 
+    subgraph Messaging ["Messaging"]
+        Kafka[("Kafka\n:9092")]
+    end
+
+    subgraph Drinks ["Drink Microservices"]
+        Cold["spring-6-cold-micro-service\n(ColdListener)"]
+        Cool["spring-6-cool-micro-service\n(CoolListener)"]
+        IceCold["spring-6-icecold-micro-service\n(IceColdListener)"]
+    end
+
     subgraph Databases ["Databases"]
         MySQL[("MySQL")]
         H2[("H2\nIn-Memory")]
@@ -27,7 +46,26 @@ graph LR
     MVC -->|"validates JWT"| AuthServer
     MVC <--> MySQL
     MVC <--> H2
+    MVC <-->|"order.placed"| Kafka
+    MVC -->|"drink.request.cold\n(GOSE, WHEAT)"| Kafka
+    MVC -->|"drink.request.cool\n(STOUT, PORTER, ALE, IPA, PALE_ALE)"| Kafka
+    MVC -->|"drink.request.icecold\n(LAGER, SAISON)"| Kafka
+    Kafka -->|"drink.request.cold"| Cold
+    Kafka -->|"drink.request.cool"| Cool
+    Kafka -->|"drink.request.icecold"| IceCold
+    Cold -->|"drink.prepared"| Kafka
+    Cool -->|"drink.prepared"| Kafka
+    IceCold -->|"drink.prepared"| Kafka
+    Kafka -->|"drink.prepared"| MVC
 ```
+
+Kafka topics (see `KafkaConfig`):
+
+- `order.placed` — produced by `OrderPlacedListener`, consumed by `DrinkSplitterRouter`
+- `drink.request.icecold` / `drink.request.cold` / `drink.request.cool` — produced by
+  `DrinkSplitterRouter` per beer style and consumed by the matching drink microservice
+- `drink.prepared` — produced by the drink microservices, consumed by `DrinkPreparedListener`, which
+  marks the order line `COMPLETE`
 
 ## Database Schema
 
