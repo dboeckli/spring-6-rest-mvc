@@ -3,18 +3,27 @@ GET http://localhost:{{application-port}}/api/v1/beerOrder/listBeerOrders
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
 
 ### get beer order by id
 GET http://localhost:{{application-port}}/api/v1/beerOrder/getBeerOrderyById/bb669f5b-427b-46b3-b0b9-1e003227f6dc
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
 
 ### create a order. get a valid customer id from the list of customers before
 POST http://localhost:{{application-port}}/api/v1/beerOrder/createBeerOrder
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
 
 {
   "customerId": "61edc9d7-e949-4539-b75b-9b66970a1832",
@@ -27,6 +36,9 @@ PUT http://localhost:{{application-port}}/api/v1/beerOrder/updateBeerOrder/4078c
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
 
 {
     "customerId": "61edc9d7-e949-4539-b75b-9b66970a1832",
@@ -46,3 +58,6 @@ DELETE http://localhost:{{application-port}}/api/v1/beerOrder/deleteBeerOrder/6a
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc

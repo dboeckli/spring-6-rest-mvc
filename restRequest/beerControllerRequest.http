@@ -1,38 +1,29 @@
 ###
-< {%
-    function randomHex(length) {
-        let result = '';
-        const chars = '0123456789abcdef';
-        for (let i = 0; i < length; i++) {
-            result += chars[Math.floor(Math.random() * chars.length)];
-        }
-        return result;
-    }
-
-    const traceId = randomHex(32);
-    const spanId  = randomHex(16);
-
-    request.variables.set("traceId", traceId);
-    request.variables.set("spanId", spanId);
-%}
 GET http://localhost:{{application-port}}/api/v1/beer/listBeers
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
 traceparent: 00-{{traceId}}-{{spanId}}-03
-baggage: testBaggage=listBeers
+baggage: testBaggage=spring-6-rest-mvc
 
 ###
 GET http://localhost:{{application-port}}/api/v1/beer/getBeerById/c5327dfa-ef05-42ff-bb8b-f5500536483b
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
 
 ###
 POST http://localhost:{{application-port}}/api/v1/beer/createBeer
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
 
 {
   "version": 0,
@@ -48,6 +39,9 @@ PUT http://localhost:{{application-port}}/api/v1/beer/editBeer/4908886e-8df4-4df
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
 
 {
   "version": 0,
@@ -63,6 +57,9 @@ PATCH http://localhost:{{application-port}}/api/v1/beer/patchBeer/9d07c34b-36fb-
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
 
 {
   "beerName": "patched Beername"
@@ -73,9 +70,15 @@ DELETE http://localhost:{{application-port}}/api/v1/beer/deleteBeer/6ab05faf-743
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
 
 ### this one does not work anymore. we need a jwt token
 GET http://localhost:{{application-port}}/api/v1/beer/listBeers
 Accept: application/json
 Content-Type: application/json
 Authorization: Basic master password
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
