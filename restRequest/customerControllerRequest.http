@@ -3,18 +3,27 @@ GET http://localhost:{{application-port}}/api/v1/customer/listCustomer
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
 
 ###
 GET http://localhost:{{application-port}}/api/v1/customer/getCustomerById/6294eedb-ce3d-4153-81cd-99b292f3d263
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
 
 ###
 POST http://localhost:{{application-port}}/api/v1/customer/createCustomer
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
 
 {
   "customerName": "eder",
@@ -26,6 +35,9 @@ PUT http://localhost:{{application-port}}/api/v1/customer/editCustomer/4908886e-
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
 
 {
   "customerName": "editedCustomerName",
@@ -37,6 +49,9 @@ PUT http://localhost:{{application-port}}/api/v1/customer/patchCustomer/4908886e
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
 
 {
   "customerName": "patchedCustomerName"
@@ -47,3 +62,6 @@ DELETE http://localhost:{{application-port}}/api/v1/customer/deleteCustomer/9b6f
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{$auth.token("auth-id")}}
+< scripts/traceparent.js
+traceparent: 00-{{traceId}}-{{spanId}}-03
+baggage: testBaggage=spring-6-rest-mvc
