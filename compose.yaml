@@ -55,3 +55,42 @@ services:
       - 9000
     environment:
       SPRING_SECURITY_OAUTH2_AUTHORIZATION_SERVER_ISSUER: http://localhost:9000
+
+  # Drink-preparation saga participants.
+  # Each service overrides its Kafka bootstrap (default is [::1]:29092) to the in-network broker
+  # and disables Spring Boot Docker Compose (it must not spawn its own broker inside the container).
+  cold-micro-service:
+    container_name: cold-micro-service
+    image: ghcr.io/dboeckli/spring-6-cold-micro-service:0.0.1-snapshot
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8091:8081"
+    environment:
+      SPRING_DOCKER_COMPOSE_ENABLED: "false"
+      SPRING_APPLICATION_JSON: '{"spring":{"kafka":{"bootstrap-servers":"kafka:9092","admin":{"properties":{"bootstrap-servers":"kafka:9092"}},"consumer":{"bootstrap-servers":"kafka:9092"},"producer":{"bootstrap-servers":"kafka:9092"}}}}'
+
+  cool-micro-service:
+    container_name: cool-micro-service
+    image: ghcr.io/dboeckli/spring-6-cool-micro-service:0.0.1-snapshot
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8092:8082"
+    environment:
+      SPRING_DOCKER_COMPOSE_ENABLED: "false"
+      SPRING_APPLICATION_JSON: '{"spring":{"kafka":{"bootstrap-servers":"kafka:9092","admin":{"properties":{"bootstrap-servers":"kafka:9092"}},"consumer":{"bootstrap-servers":"kafka:9092"},"producer":{"bootstrap-servers":"kafka:9092"}}}}'
+
+  icecold-micro-service:
+    container_name: icecold-micro-service
+    image: ghcr.io/dboeckli/spring-6-icecold-micro-service:0.0.1-snapshot
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "8090:8080"
+    environment:
+      SPRING_DOCKER_COMPOSE_ENABLED: "false"
+      SPRING_APPLICATION_JSON: '{"spring":{"kafka":{"bootstrap-servers":"kafka:9092","admin":{"properties":{"bootstrap-servers":"kafka:9092"}},"consumer":{"bootstrap-servers":"kafka:9092"},"producer":{"bootstrap-servers":"kafka:9092"}}}}'
