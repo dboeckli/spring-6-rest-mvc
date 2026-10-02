@@ -108,7 +108,8 @@ spring-6-auth-server-chart:
 spring-6-cold-micro-service-chart:
   fullnameOverride: spring-6-cold-micro-service
   service:
-    type: ClusterIP
+    # default 30081 collides with the rest-mvc NodePort
+    nodePort: 30091
   kafka:
     enabled: false
     serviceFQDN: "spring-6-rest-mvc-kafka.spring-6-rest-mvc.svc.cluster.local"
@@ -118,7 +119,7 @@ spring-6-cold-micro-service-chart:
 spring-6-cool-micro-service-chart:
   fullnameOverride: spring-6-cool-micro-service
   service:
-    type: ClusterIP
+    nodePort: 30082
   kafka:
     enabled: false
     serviceFQDN: "spring-6-rest-mvc-kafka.spring-6-rest-mvc.svc.cluster.local"
@@ -128,7 +129,7 @@ spring-6-cool-micro-service-chart:
 spring-6-icecold-micro-service-chart:
   fullnameOverride: spring-6-icecold-micro-service
   service:
-    type: ClusterIP
+    nodePort: 30080
   kafka:
     enabled: false
     serviceFQDN: "spring-6-rest-mvc-kafka.spring-6-rest-mvc.svc.cluster.local"
