@@ -87,6 +87,15 @@ authServer:
 
   serviceFQDN: "spring-6-auth-server.spring-6-rest-mvc.svc.cluster.local"
 
+coldMicroService:
+  enabled: true
+
+coolMicroService:
+  enabled: true
+
+icecoldMicroService:
+  enabled: true
+
 ingress:
   enabled: false
 
@@ -95,5 +104,35 @@ spring-6-auth-server-chart:
   spring:
     issuer:
       uri: "http://spring-6-auth-server.spring-6-rest-mvc.svc.cluster.local:9000"
+
+spring-6-cold-micro-service-chart:
+  fullnameOverride: spring-6-cold-micro-service
+  service:
+    type: ClusterIP
+  kafka:
+    enabled: false
+    serviceFQDN: "spring-6-rest-mvc-kafka.spring-6-rest-mvc.svc.cluster.local"
+    port: 9092
+    clientPort: 9092
+
+spring-6-cool-micro-service-chart:
+  fullnameOverride: spring-6-cool-micro-service
+  service:
+    type: ClusterIP
+  kafka:
+    enabled: false
+    serviceFQDN: "spring-6-rest-mvc-kafka.spring-6-rest-mvc.svc.cluster.local"
+    port: 9092
+    clientPort: 9092
+
+spring-6-icecold-micro-service-chart:
+  fullnameOverride: spring-6-icecold-micro-service
+  service:
+    type: ClusterIP
+  kafka:
+    enabled: false
+    serviceFQDN: "spring-6-rest-mvc-kafka.spring-6-rest-mvc.svc.cluster.local"
+    port: 9092
+    clientPort: 9092
 
 

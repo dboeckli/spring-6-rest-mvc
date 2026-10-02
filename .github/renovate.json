@@ -117,6 +117,20 @@
             "ignoreTests": true
         },
         {
+            "description": "Drink microservice Helm charts on Docker Hub (domboeckli)",
+            "matchDatasources": [
+                "docker"
+            ],
+            "matchPackageNames": [
+                "domboeckli/spring-6-cold-micro-service-chart",
+                "domboeckli/spring-6-cool-micro-service-chart",
+                "domboeckli/spring-6-icecold-micro-service-chart"
+            ],
+            "versioning": "maven",
+            "allowedVersions": "/^[0-9]+\\.[0-9]+\\.[0-9]+(-snapshot)?$/",
+            "ignoreUnstable": false
+        },
+        {
             "matchDatasources": [
                 "docker"
             ],
@@ -166,6 +180,18 @@
                 "- name: (?<depName>spring-6-auth-server-chart)[\\s\\S]*?version: \"(?<currentValue>[^\"]+)\""
             ],
             "registryUrlTemplate": "https://repo.repsy.io/user08694146/helm-dboeckli"
+        },
+        {
+            "description": "Update drink microservice chart versions in dependencies-Chart.yaml (Docker Hub OCI)",
+            "customType": "regex",
+            "datasourceTemplate": "docker",
+            "managerFilePatterns": [
+                "/(^|\\/)dependencies-Chart\\.ya?ml$/"
+            ],
+            "matchStrings": [
+                "- name: (?<depName>spring-6-(?:cold|cool|icecold)-micro-service-chart)[\\s\\S]*?version: \"(?<currentValue>[^\"]+)\""
+            ],
+            "packageNameTemplate": "domboeckli/{{{depName}}}"
         },
         {
             "description": "Update mysql image version in Testcontainers ITs",

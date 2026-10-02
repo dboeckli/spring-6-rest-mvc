@@ -11,3 +11,15 @@ dependencies:
     version: "0.0.11-snapshot"
     repository: "oci://repo.repsy.io/user08694146/helm-dboeckli"
     condition: authServer.enabled
+  - name: spring-6-cold-micro-service-chart
+    version: "0.0.1-snapshot"
+    repository: "oci://registry-1.docker.io/domboeckli"
+    condition: coldMicroService.enabled
+  - name: spring-6-cool-micro-service-chart
+    version: "0.0.1-snapshot"
+    repository: "oci://registry-1.docker.io/domboeckli"
+    condition: coolMicroService.enabled
+  - name: spring-6-icecold-micro-service-chart
+    version: "0.0.1-snapshot"
+    repository: "oci://registry-1.docker.io/domboeckli"
+    condition: icecoldMicroService.enabled
