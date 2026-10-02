@@ -45,6 +45,51 @@ spec:
             - name: scripts
               mountPath: /scripts
               readOnly: true
+        {{- if .Values.coldMicroService.enabled }}
+        - name: wait-for-cold-micro-service
+          image: {{.Values.busyboxImage.repository }}:{{.Values.busyboxImage.tag }}
+          imagePullPolicy: {{.Values.busyboxImage.pullPolicy }}
+          command:
+            - /scripts/wait-for-readiness.sh
+          args:
+            - coldMicroService
+            - {{ default (printf "spring-6-cold-micro-service.%s.svc.cluster.local" .Release.Namespace) .Values.coldMicroService.serviceFQDN | quote }}
+            - {{ .Values.coldMicroService.port | quote }}
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+              readOnly: true
+        {{- end }}
+        {{- if .Values.coolMicroService.enabled }}
+        - name: wait-for-cool-micro-service
+          image: {{.Values.busyboxImage.repository }}:{{.Values.busyboxImage.tag }}
+          imagePullPolicy: {{.Values.busyboxImage.pullPolicy }}
+          command:
+            - /scripts/wait-for-readiness.sh
+          args:
+            - coolMicroService
+            - {{ default (printf "spring-6-cool-micro-service.%s.svc.cluster.local" .Release.Namespace) .Values.coolMicroService.serviceFQDN | quote }}
+            - {{ .Values.coolMicroService.port | quote }}
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+              readOnly: true
+        {{- end }}
+        {{- if .Values.icecoldMicroService.enabled }}
+        - name: wait-for-icecold-micro-service
+          image: {{.Values.busyboxImage.repository }}:{{.Values.busyboxImage.tag }}
+          imagePullPolicy: {{.Values.busyboxImage.pullPolicy }}
+          command:
+            - /scripts/wait-for-readiness.sh
+          args:
+            - icecoldMicroService
+            - {{ default (printf "spring-6-icecold-micro-service.%s.svc.cluster.local" .Release.Namespace) .Values.icecoldMicroService.serviceFQDN | quote }}
+            - {{ .Values.icecoldMicroService.port | quote }}
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+              readOnly: true
+        {{- end }}
 
       containers:
         - name: @project.artifactId@
