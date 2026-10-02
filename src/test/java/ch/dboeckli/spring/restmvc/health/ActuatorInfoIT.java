@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItems;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -77,7 +78,7 @@ class ActuatorInfoIT {
             .andExpect(jsonPath("$.details.nodes[0]").value("localhost:29092"))
             .andExpect(jsonPath("$.details.consumerGroups").isArray())
             .andExpect(jsonPath("$.details.consumerGroups")
-                .value(containsInAnyOrder("DrinkSplitterRouter", "drinkPreparedListener", "KafkaIntegrationTest")))
+                .value(hasItems("DrinkSplitterRouter", "drinkPreparedListener", "KafkaIntegrationTest")))
             .andExpect(jsonPath("$.details.topics").isArray())
             .andExpect(jsonPath("$.details.topics").value(containsInAnyOrder("health-check", "drink.request.cool",
                     "drink.prepared", "drink.request.cold", "drink.request.icecold", "order.placed")));
