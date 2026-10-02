@@ -89,12 +89,18 @@ authServer:
 
 coldMicroService:
   enabled: true
+  port: 8081
+  serviceFQDN: "spring-6-cold-micro-service.spring-6-rest-mvc.svc.cluster.local"
 
 coolMicroService:
   enabled: true
+  port: 8082
+  serviceFQDN: "spring-6-cool-micro-service.spring-6-rest-mvc.svc.cluster.local"
 
 icecoldMicroService:
   enabled: true
+  port: 8080
+  serviceFQDN: "spring-6-icecold-micro-service.spring-6-rest-mvc.svc.cluster.local"
 
 ingress:
   enabled: false
