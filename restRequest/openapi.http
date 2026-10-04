@@ -1,7 +1,7 @@
 ### 
+< scripts/traceparent.js
 GET http://localhost:{{application-port}}/v3/api-docs
 Accept: application/json
 Content-Type: application/json
-< scripts/traceparent.js
 traceparent: 00-{{traceId}}-{{spanId}}-03
 baggage: testBaggage=spring-6-rest-mvc
