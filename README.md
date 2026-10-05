@@ -167,14 +167,15 @@ application. It is started automatically via `compose-h2.yaml` when using the de
 
 ## Sandbox (local dev environment)
 
-The sandbox consists of the app (Spring Boot, port 8081) plus an auth-server (port 9000) and Kafka,
-provided by `compose-h2.yaml`. The services start automatically via `spring.docker.compose.enabled=true`
-when the app boots, so usually one step is enough.
+The sandbox consists of the app (Spring Boot, port 8081) plus an auth-server (port 9000), Kafka and the
+cold/cool/icecold drink micro-services, provided by `compose-h2.yaml`. The services start automatically
+via `spring.docker.compose.enabled=true` when the app boots, so usually one step is enough.
 
 ### Start the sandbox (opencode-sandbox-kit)
 
 The sandbox is provisioned by the opencode-sandbox-kit and runs as a Docker container. It mounts this
-repo, starts opencode, and connects the IntelliJ MCP server.
+repo, starts opencode, and connects the host-side IntelliJ, Kubernetes and Docker MCP servers via the
+sbx MCP gateway (`--static-mcp idea,k8s,docker`).
 
 Allow the kit source (Codeberg without cloning):
 
@@ -189,45 +190,10 @@ sbx run opencode `
     --kit "git+https://codeberg.org/dboeckli/opencode-sandbox-kit.git#dir=opencode-agent" `
     --template docker.cloudsmith.io/dboeckli/sbx/sbx-opencode-tooling:latest `
     --skills=off `
-    --static-mcp idea `
+    --static-mcp idea,k8s,docker `
     . `
     "C:\development\maven-repo:ro"
 ```
-
-Start the sandbox with Kubernetes support:
-
-```powershell
-sbx run opencode `
-    --kit "git+https://codeberg.org/dboeckli/opencode-sandbox-kit.git#dir=opencode-agent" `
-    --template docker.cloudsmith.io/dboeckli/sbx/sbx-opencode-tooling:latest `
-    --skills=off `
-    --static-mcp idea `
-    . `
-    "C:\development\maven-repo:ro" `
-    "$env:USERPROFILE\.kube:ro"
-```
-
-Apply the kit to an existing sandbox (restarts the sandbox, VM state is kept):
-
-```powershell
-sbx kit add opencode-spring-6-rest-mvc "git+https://codeberg.org/dboeckli/opencode-sandbox-kit.git#dir=opencode-agent"
-```
-
-### Start the app
-
-```shell
-docker compose -f compose-h2.yaml up        # optional: start Kafka + auth-server manually (else they start with the app)
-```
-
-Then run the `SpringRestMvcApplication With H2` run configuration in IntelliJ
-(`.run/SpringRestMvcApplication With H2.run.xml`, main class
-`ch.dboeckli.spring.restmvc.SpringRestMvcApplication`). Alternatively start via
-`./mvnw spring-boot:run`.
-
-The compose file brings up:
-
-- `auth-server` (port 9000) — required by the OAuth2 resource server
-- `kafka` (ports 9092/29092) — required for the beer event topics
 
 ### Verify
 
@@ -237,8 +203,17 @@ The compose file brings up:
 
 ## Running Locally
 
-Start the application with `./mvnw spring-boot:run`. Spring Boot Docker Compose auto-starts
-`compose-h2.yaml` (Kafka + auth-server) on startup in the default profile.
+Start the application via one of the two IntelliJ run configurations:
+
+|         Run configuration          | Profile | Database |
+|------------------------------------|---------|----------|
+| `SpringRestMvcApplication With H2` | default | H2       |
+| `SpringRestMvcApplication mysql`   | `mysql` | MySQL    |
+
+Spring Boot Docker Compose auto-starts the matching compose file on startup:
+
+- `compose-h2.yaml` (default) — Kafka, auth-server + cold/cool/icecold micro-services
+- `compose.yaml` (`mysql`) — MySQL, Kafka, auth-server + cold/cool/icecold micro-services
 
 ### Endpoints
 
@@ -275,49 +250,6 @@ Environments are configured in `restRequest/http-client.env.json`:
 
 Authentication uses OAuth2 Client Credentials (`messaging-client` / `secret`, scopes `message.read message.write`).
 Select the environment in IntelliJ's HTTP client toolbar before running a request
-
-## Docker
-
-### Build Image
-
-```shell
-./mvnw clean install
-```
-
-Or explicitly:
-
-```shell
-./mvnw clean package spring-boot:build-image
-```
-
-### Run with Docker
-
-Remove the `-d` flag to see logs in the foreground.
-
-```shell
-# Start MySQL
-docker run --name mysql -d \
-  -e MYSQL_USER=restadmin \
-  -e MYSQL_PASSWORD=password \
-  -e MYSQL_DATABASE=restmvcdb \
-  -e MYSQL_ROOT_PASSWORD=password \
-  mysql:9
-
-# Start the application
-docker run --name rest-mvc -d \
-  -p 8081:8080 \
-  -e SPRING_PROFILES_ACTIVE=mysql \
-  -e SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://auth-server:9000 \
-  -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/restmvcdb \
-  -e SERVER_PORT=8080 \
-  --link auth-server:auth-server \
-  --link mysql:mysql \
-  spring-6-rest-mvc:0.0.1-SNAPSHOT
-
-# Stop / restart
-docker stop rest-mvc && docker rm rest-mvc
-docker stop mysql && docker rm mysql
-```
 
 ## Kubernetes
 
