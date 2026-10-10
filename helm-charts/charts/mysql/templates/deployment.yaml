@@ -42,6 +42,11 @@ spec:
               mountPath: /var/lib/mysql
             - name: mysql-init-script
               mountPath: /docker-entrypoint-initdb.d
+          startupProbe:
+            tcpSocket:
+              port: {{ .Values.mysql.port }}
+            periodSeconds: 5
+            failureThreshold: 30
           readinessProbe:
             tcpSocket:
               port: {{ .Values.mysql.port }}
