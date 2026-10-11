@@ -160,6 +160,11 @@
       <version>${datasource-micrometer.version}</version>
     </dependency>
     <dependency>
+      <groupId>net.ttddyy.observation</groupId>
+      <artifactId>datasource-micrometer-opentelemetry</artifactId>
+      <version>${datasource-micrometer.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <scope>runtime</scope>
