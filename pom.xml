@@ -65,6 +65,8 @@
 
     <logstash-logback.version>9.0</logstash-logback.version>
 
+    <datasource-micrometer.version>2.3.0</datasource-micrometer.version>
+
     <spring-javaformat-maven-plugin.version>0.0.48</spring-javaformat-maven-plugin.version>
     <spotless-maven-plugin.version>3.10.4</spotless-maven-plugin.version>
 
@@ -151,6 +153,11 @@
     <dependency>
       <groupId>com.mysql</groupId>
       <artifactId>mysql-connector-j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.ttddyy.observation</groupId>
+      <artifactId>datasource-micrometer-spring-boot</artifactId>
+      <version>${datasource-micrometer.version}</version>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
