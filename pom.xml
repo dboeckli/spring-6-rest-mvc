@@ -1041,6 +1041,11 @@
             </goals>
             <configuration>
               <append>true</append>
+              <excludes>
+                <!-- JaCoCo cannot instrument the generated JSqlParser token manager
+                (MethodTooLargeException); it is a transitive dep of datasource-micrometer-opentelemetry -->
+                <exclude>net/sf/jsqlparser/*</exclude>
+              </excludes>
             </configuration>
           </execution>
           <execution>
