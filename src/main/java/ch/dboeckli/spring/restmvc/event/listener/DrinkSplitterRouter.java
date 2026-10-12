@@ -36,6 +36,10 @@ public class DrinkSplitterRouter {
                     log.debug("Splitting LAGER Order");
                     sendIceColdBeer(beerOrderLine);
                     break;
+                case PILSNER:
+                    log.debug("Splitting PILSNER Order");
+                    sendIceColdBeer(beerOrderLine);
+                    break;
                 case STOUT:
                     log.debug("Splitting STOUT Order");
                     sendCoolBeer(beerOrderLine);
@@ -67,6 +71,10 @@ public class DrinkSplitterRouter {
                 case SAISON:
                     log.debug("Splitting SAISON Order");
                     sendIceColdBeer(beerOrderLine);
+                    break;
+                default:
+                    log.warn("Unhandled beer style {}, sending to cool", beerOrderLine.getBeer().getBeerStyle());
+                    sendCoolBeer(beerOrderLine);
                     break;
             }
         });
