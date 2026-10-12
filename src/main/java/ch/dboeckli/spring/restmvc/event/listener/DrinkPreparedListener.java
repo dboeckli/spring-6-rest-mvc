@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DrinkPreparedListener {
 
-    BeerOrderLineRepository beerOrderLineRepository;
+    private final BeerOrderLineRepository beerOrderLineRepository;
 
     @KafkaListener(topics = KafkaConfig.DRINK_PREPARED_TOPIC, groupId = "drinkPreparedListener")
     public void listen(DrinkPreparedEvent event) {
