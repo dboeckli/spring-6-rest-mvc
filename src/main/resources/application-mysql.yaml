@@ -156,6 +156,12 @@ management:
 appconfig:
   cache:
     enabled: true
+  request-logging:
+    # set to false to remove the request logging filter from the chain entirely
+    enabled: true
+    # request URI prefixes that are not logged
+    exclude-paths:
+      - /actuator/health
 
 # Show bind values
 logging:
@@ -163,7 +169,7 @@ logging:
     org.hibernate.orm.jdbc.bind: WARN
     # kafka is very verbose here
     org.apache.kafka.clients.NetworkClient: ERROR
-    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+    ch.dboeckli.spring.restmvc.config.RequestLoggingFilter: DEBUG
 
 controllers:
   customer-controller:

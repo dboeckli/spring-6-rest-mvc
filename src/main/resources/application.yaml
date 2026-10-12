@@ -157,6 +157,12 @@ management:
 appconfig:
   cache:
     enabled: true
+  request-logging:
+    # set to false to remove the request logging filter from the chain entirely
+    enabled: true
+    # request URI prefixes that are not logged
+    exclude-paths:
+      - /actuator/health
 
 controllers:
   customer-controller:
@@ -180,7 +186,7 @@ logging:
   level:
     # kafka is very verbose here
     org.apache.kafka.clients.NetworkClient: ERROR
-    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+    ch.dboeckli.spring.restmvc.config.RequestLoggingFilter: DEBUG
 
 security:
   auth-server-health-url: http://localhost:9000
