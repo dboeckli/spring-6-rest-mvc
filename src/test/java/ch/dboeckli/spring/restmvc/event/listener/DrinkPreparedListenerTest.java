@@ -27,8 +27,7 @@ class DrinkPreparedListenerTest {
     @BeforeEach
     void setUp() {
         beerOrderLineRepository = mock(BeerOrderLineRepository.class);
-        drinkPreparedListener = new DrinkPreparedListener();
-        drinkPreparedListener.beerOrderLineRepository = beerOrderLineRepository;
+        drinkPreparedListener = new DrinkPreparedListener(beerOrderLineRepository);
     }
 
     @Test
