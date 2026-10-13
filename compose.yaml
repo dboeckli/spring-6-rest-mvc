@@ -61,7 +61,7 @@ services:
   # and disables Spring Boot Docker Compose (it must not spawn its own broker inside the container).
   cold-micro-service:
     container_name: cold-micro-service
-    image: ghcr.io/dboeckli/spring-6-cold-micro-service:0.0.1-snapshot
+    image: domboeckli/spring-6-cold-micro-service:0.0.1-snapshot
     depends_on:
       kafka:
         condition: service_healthy
@@ -73,7 +73,7 @@ services:
 
   cool-micro-service:
     container_name: cool-micro-service
-    image: ghcr.io/dboeckli/spring-6-cool-micro-service:0.0.1-snapshot
+    image: domboeckli/spring-6-cool-micro-service:0.0.1-snapshot
     depends_on:
       kafka:
         condition: service_healthy
@@ -85,7 +85,7 @@ services:
 
   icecold-micro-service:
     container_name: icecold-micro-service
-    image: ghcr.io/dboeckli/spring-6-icecold-micro-service:0.0.1-snapshot
+    image: domboeckli/spring-6-icecold-micro-service:0.0.1-snapshot
     depends_on:
       kafka:
         condition: service_healthy
