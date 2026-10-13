@@ -1,19 +1,23 @@
 package ch.dboeckli.spring.restmvc.rest.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NullMarked;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-// Remark. commented out and disabled by the NotfoundException class in adding there @ResponseStatus annotation
-//@ControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class ExceptionHandlerController {
 
-    // @ExceptionHandler(NotfoundException.class)
-    @NullMarked
-    public ResponseEntity<NotFoundException> handleNotFoundException() {
-        log.info("handleNotFoundException");
-        return ResponseEntity.notFound().build();
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ProblemDetail> handleDataIntegrityViolation(DataIntegrityViolationException exception) {
+        log.warn("Data integrity violation: {}", exception.getMessage());
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
+                "The request conflicts with existing data, e.g. the entity is still referenced by other records.");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
     }
 
 }
