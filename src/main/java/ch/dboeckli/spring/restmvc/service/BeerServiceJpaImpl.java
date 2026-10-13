@@ -207,19 +207,18 @@ public class BeerServiceJpaImpl implements BeerService {
     @Override
     @Caching(evict = { @CacheEvict(cacheNames = "beerCache"), @CacheEvict(cacheNames = "beerListCache") })
     public Boolean deleteBeer(UUID beerId) {
-        if (beerRepository.existsById(beerId)) {
+        return beerRepository.findById(beerId).map(foundBeer -> {
             clearCache(beerId);
-            beerRepository.deleteById(beerId);
+            beerRepository.delete(foundBeer);
 
-            // publish an event
+            // publish an event with the full beer so the audit can record it
             log.info("Current Thread name: " + Thread.currentThread().getName());
             log.info("Current Thread ID: " + Thread.currentThread().threadId());
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            eventPublisher.publishEvent(new BeerDeleteEvent(Beer.builder().id(beerId).build(), authentication));
+            eventPublisher.publishEvent(new BeerDeleteEvent(foundBeer, authentication));
 
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 
     private void clearCache(UUID beerId) {
