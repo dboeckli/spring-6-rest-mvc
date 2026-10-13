@@ -469,9 +469,10 @@ class BeerControllerIT {
 
         assertAll(() -> {
             assertEquals(1, applicationEvents.stream(BeerDeleteEvent.class).count());
-            assertNull(applicationEvents.stream(BeerDeleteEvent.class).findFirst().get().getBeer().getBeerName());
-            assertEquals("messaging-client",
-                    applicationEvents.stream(BeerDeleteEvent.class).findFirst().get().getAuthentication().getName());
+            BeerDeleteEvent deleteEvent = applicationEvents.stream(BeerDeleteEvent.class).findFirst().orElseThrow();
+            assertEquals(beerToDelete.getId(), deleteEvent.getBeer().getId());
+            assertEquals(beerToDelete.getBeerName(), deleteEvent.getBeer().getBeerName());
+            assertEquals("messaging-client", deleteEvent.getAuthentication().getName());
         });
     }
 
