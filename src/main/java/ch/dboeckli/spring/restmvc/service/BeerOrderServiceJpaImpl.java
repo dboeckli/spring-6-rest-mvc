@@ -16,6 +16,7 @@ import ch.guru.springframework.spring6restmvcapi.events.OrderPlacedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -36,6 +37,10 @@ public class BeerOrderServiceJpaImpl implements BeerOrderService {
     public static final int MAX_PAGE_SIZE = 100;
 
     public static final int DEFAULT_PAGE_NUMBER = 0;
+
+    private static final int DELETE_MAX_ATTEMPTS = 3;
+
+    private static final long DELETE_RETRY_DELAY_MS = 100;
 
     private final BeerOrderRepository beerOrderRepository;
 
@@ -144,11 +149,36 @@ public class BeerOrderServiceJpaImpl implements BeerOrderService {
 
     @Override
     public Boolean deleteBeerOrder(UUID beerOrderId) {
-        if (beerOrderRepository.existsById(beerOrderId)) {
-            beerOrderRepository.deleteById(beerOrderId);
-            return true;
+        OptimisticLockingFailureException lastException = null;
+
+        for (int attempt = 1; attempt <= DELETE_MAX_ATTEMPTS; attempt++) {
+            try {
+                if (!beerOrderRepository.existsById(beerOrderId)) {
+                    return false;
+                }
+                beerOrderRepository.deleteById(beerOrderId);
+                return true;
+            }
+            catch (OptimisticLockingFailureException ex) {
+                lastException = ex;
+                log.warn("Optimistic locking conflict deleting beer order {} (attempt {}/{}); retrying", beerOrderId,
+                        attempt, DELETE_MAX_ATTEMPTS);
+                sleepBeforeDeleteRetry(attempt);
+            }
         }
-        return false;
+
+        throw new IllegalStateException(
+                "Unable to delete beer order " + beerOrderId + " due to concurrent modification", lastException);
+    }
+
+    private void sleepBeforeDeleteRetry(int attempt) {
+        try {
+            Thread.sleep(DELETE_RETRY_DELAY_MS * attempt);
+        }
+        catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while retrying beer order deletion", ex);
+        }
     }
 
     private PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
