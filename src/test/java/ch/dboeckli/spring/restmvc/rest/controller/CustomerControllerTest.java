@@ -101,12 +101,12 @@ class CustomerControllerTest {
 
     @Test
     void testGetCustomerByIdAndThrowsNotFoundException() throws Exception {
-        // given(customerService.getCustomerById(any())).willThrow(NotfoundException.class);
         given(customerService.getCustomerById(any())).willReturn(Optional.empty());
 
-        mockMvc.perform(get(requestPath + "/getCustomerById/" + UUID.randomUUID()).with(jwtRequestPostProcessor)
-            // .with(httpBasic(username,password))
-            .accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
+        mockMvc
+            .perform(get(requestPath + "/getCustomerById/" + UUID.randomUUID()).with(jwtRequestPostProcessor)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
     }
 
     @Test

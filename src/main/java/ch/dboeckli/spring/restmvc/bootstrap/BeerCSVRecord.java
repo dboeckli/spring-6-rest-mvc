@@ -41,7 +41,7 @@ public class BeerCSVRecord {
     private String style2;
 
     @CsvBindByName(column = "count.y")
-    private String count_y;
+    private String countY;
 
     @CsvBindByName
     private String city;

@@ -25,7 +25,6 @@ public class OrderPlacedListener {
         log.info("Beer Order Event Listener called for event: {}", event.getBeerOrderDTO().getId());
         log.info("Current Thread name: " + Thread.currentThread().getName());
         log.info("Current Thread ID: " + Thread.currentThread().threadId());
-        // TODO: IMPLEMENT PROCESS ORDER LOGIC HERE. SEND TO KAFKA
 
         kafkaTemplate.send(KafkaConfig.ORDER_PLACED_TOPIC, event);
     }

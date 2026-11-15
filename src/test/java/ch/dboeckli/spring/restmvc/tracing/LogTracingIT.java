@@ -123,10 +123,10 @@ public class LogTracingIT {
                 () -> assertThat(logEvents.get(1).getMDCPropertyMap().get("spanId")).isNotBlank()
                     .matches("[0-9a-f]{16}"),
 
-                () -> assertThat(logEvents.getFirst().getMDCPropertyMap().get("traceId"))
-                    .isEqualTo(logEvents.get(1).getMDCPropertyMap().get("traceId")),
-                () -> assertThat(logEvents.getFirst().getMDCPropertyMap().get("spanId"))
-                    .isNotEqualTo(logEvents.get(1).getMDCPropertyMap().get("spanId")),
+                () -> assertThat(logEvents.getFirst().getMDCPropertyMap()).containsEntry("traceId",
+                        logEvents.get(1).getMDCPropertyMap().get("traceId")),
+                () -> assertThat(logEvents.getFirst().getMDCPropertyMap()).doesNotContainEntry("spanId",
+                        logEvents.get(1).getMDCPropertyMap().get("spanId")),
 
                 () -> assertThat(logEvents.getFirst().getThreadName()).isNotEqualTo(logEvents.get(1).getThreadName()));
 

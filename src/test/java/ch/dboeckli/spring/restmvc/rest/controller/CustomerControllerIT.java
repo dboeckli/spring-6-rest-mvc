@@ -59,7 +59,9 @@ class CustomerControllerIT {
     @Rollback(true)
     // we rollback to deletion to assuere that the other tests are not failling
     void testDeleteCustomerDoesNotExist() {
-        assertThrows(NotFoundException.class, () -> customerController.deleteCustomer(UUID.randomUUID()));
+        UUID missingCustomerId = UUID.randomUUID();
+
+        assertThrows(NotFoundException.class, () -> customerController.deleteCustomer(missingCustomerId));
     }
 
     @Test
@@ -85,8 +87,9 @@ class CustomerControllerIT {
     // we roll back to deletion to assure that the other tests are not failing
     void testUpdateCustomerDoesNotExist() {
         CustomerDTO customerDTO = CustomerDTO.builder().build();
+        UUID missingCustomerId = UUID.randomUUID();
 
-        assertThrows(NotFoundException.class, () -> customerController.editCustomer(customerDTO, UUID.randomUUID()));
+        assertThrows(NotFoundException.class, () -> customerController.editCustomer(customerDTO, missingCustomerId));
     }
 
     @Test
@@ -112,8 +115,9 @@ class CustomerControllerIT {
     // we roll back to deletion to assure that the other tests are not failing
     void testPatchCustomerDoesNotExist() {
         CustomerDTO customerDTO = CustomerDTO.builder().build();
+        UUID missingCustomerId = UUID.randomUUID();
 
-        assertThrows(NotFoundException.class, () -> customerController.patchCustomer(customerDTO, UUID.randomUUID()));
+        assertThrows(NotFoundException.class, () -> customerController.patchCustomer(customerDTO, missingCustomerId));
     }
 
     @Test
@@ -138,7 +142,7 @@ class CustomerControllerIT {
         List<CustomerDTO> customerDtos = customersDtoResponseEntity.getBody();
 
         assertAll(() -> {
-            assert customerDtos != null;
+            assertNotNull(customerDtos);
             assertEquals(3, customerDtos.size());
         });
     }
@@ -161,7 +165,7 @@ class CustomerControllerIT {
         List<CustomerDTO> customerDtos = customersDtoResponseEntity.getBody();
 
         assertAll(() -> {
-            assert customerDtos != null;
+            assertNotNull(customerDtos);
             assertEquals(0, customerDtos.size());
         });
     }
@@ -174,14 +178,16 @@ class CustomerControllerIT {
         CustomerDTO customerDTO = customerDtoResponseEntity.getBody();
 
         assertAll(() -> {
-            assert customerDTO != null;
+            assertNotNull(customerDTO);
             assertEquals(givenCustomerId, customerDTO.getId());
         });
     }
 
     @Test
     void testGetCustomerByIdNotFound() {
-        assertThrows(NotFoundException.class, () -> customerController.getCustomerById(UUID.randomUUID()));
+        UUID missingCustomerId = UUID.randomUUID();
+
+        assertThrows(NotFoundException.class, () -> customerController.getCustomerById(missingCustomerId));
     }
 
 }

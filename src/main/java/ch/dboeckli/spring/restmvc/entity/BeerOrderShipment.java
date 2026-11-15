@@ -44,9 +44,4 @@ public class BeerOrderShipment {
     @UpdateTimestamp
     private Timestamp lastModifiedDate;
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
 }

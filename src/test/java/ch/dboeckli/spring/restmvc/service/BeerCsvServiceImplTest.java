@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class BeerCsvServiceImplTest {
 
@@ -19,7 +19,7 @@ class BeerCsvServiceImplTest {
 
         List<BeerCSVRecord> beerCSVRecordList = beerCsvService.convertCSV(file);
 
-        assertThat(beerCSVRecordList.size()).isEqualTo(500);
+        assertThat(beerCSVRecordList).hasSize(500);
     }
 
 }

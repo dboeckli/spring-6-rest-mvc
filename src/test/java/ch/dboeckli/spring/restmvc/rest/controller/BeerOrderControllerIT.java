@@ -82,17 +82,9 @@ class BeerOrderControllerIT {
 
     @Test
     void testListBeerOrders() throws Exception {
-        MvcResult result = mockMvc.perform(get(requestPath + LIST_BEER_ORDERS).with(jwtRequestPostProcessor))
+        mockMvc.perform(get(requestPath + LIST_BEER_ORDERS).with(jwtRequestPostProcessor))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.content.size()", greaterThan(0)))
-            .andReturn();
-
-        String jsonResponse = result.getResponse().getContentAsString();
-        // TODO. DOES NOT WORK. PageImpl is not Serializable
-        // TODO: SEE
-        // https://stackoverflow.com/questions/52490399/spring-boot-page-deserialization-pageimpl-no-constructor
-        // PageImpl<List<BeerOrderDTO>> beerOrderDTOSs =
-        // objectMapper.readValue(jsonResponse, new TypeReference<>() {});
+            .andExpect(jsonPath("$.content.size()", greaterThan(0)));
     }
 
     @Test

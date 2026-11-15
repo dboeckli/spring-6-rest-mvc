@@ -41,7 +41,7 @@ public class BootstrapData implements CommandLineRunner {
     private final CacheManager cacheManager;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     // Eviction does not work. We are using explicitly the cachemanager
     @Caching(evict = { @CacheEvict(cacheNames = "customerCache"), @CacheEvict(cacheNames = "customerListCache"),
             @CacheEvict(cacheNames = "beerCache"), @CacheEvict(cacheNames = "beerListCache") })

@@ -175,16 +175,14 @@ class BeerRepositoryTest {
 
     @Test
     void testSaveBeerNameTooLong() {
-        assertThrows(ConstraintViolationException.class, () -> {
-            beerRepository.save(Beer.builder()
-                .beerName("hallo 01234567890123456789012345678901234567890123456789")
-                .beerStyle(BeerStyle.PALE_ALE)
-                .upc("123")
-                .price(BigDecimal.valueOf(10))
-                .build());
+        Beer tooLongNameBeer = Beer.builder()
+            .beerName("hallo 01234567890123456789012345678901234567890123456789")
+            .beerStyle(BeerStyle.PALE_ALE)
+            .upc("123")
+            .price(BigDecimal.valueOf(10))
+            .build();
 
-            beerRepository.flush();
-        });
+        assertThrows(ConstraintViolationException.class, () -> beerRepository.saveAndFlush(tooLongNameBeer));
 
     }
 

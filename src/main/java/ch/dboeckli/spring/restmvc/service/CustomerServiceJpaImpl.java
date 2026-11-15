@@ -13,15 +13,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Primary
 @Slf4j
 public class CustomerServiceJpaImpl implements CustomerService {
+
+    private static final String CUSTOMER_CACHE = "customerCache";
+
+    private static final String CUSTOMER_LIST_CACHE = "customerListCache";
 
     CustomerRepository customerRepository;
 
@@ -37,33 +41,29 @@ public class CustomerServiceJpaImpl implements CustomerService {
     }
 
     @Override
-    @Cacheable(cacheNames = "customerListCache")
+    @Cacheable(cacheNames = CUSTOMER_LIST_CACHE)
     public List<CustomerDTO> listCustomers() {
-        return customerRepository.findAll()
-            .stream()
-            .map(customerMapper::customerToCustomerDto)
-            .collect(Collectors.toList());
+        return customerRepository.findAll().stream().map(customerMapper::customerToCustomerDto).toList();
     }
 
     @Override
-    @Cacheable(cacheNames = "customerCache")
+    @Cacheable(cacheNames = CUSTOMER_CACHE)
     public Optional<CustomerDTO> getCustomerById(UUID id) {
         return Optional.ofNullable(customerMapper.customerToCustomerDto(customerRepository.findById(id).orElse(null)));
     }
 
     @Override
-    @Caching(evict = { @CacheEvict(cacheNames = "customerCache"), @CacheEvict(cacheNames = "customerListCache") })
+    @Caching(evict = { @CacheEvict(cacheNames = CUSTOMER_CACHE), @CacheEvict(cacheNames = CUSTOMER_LIST_CACHE) })
     public CustomerDTO saveNewCustomer(CustomerDTO newCustomer) {
-        if (cacheManager.getCache("customerListCache") != null) {
-            cacheManager.getCache("customerListCache").clear();
+        if (cacheManager.getCache(CUSTOMER_LIST_CACHE) != null) {
+            cacheManager.getCache(CUSTOMER_LIST_CACHE).clear();
         }
-        cacheManager.getCache("customerListCache").clear();
         return customerMapper
             .customerToCustomerDto(customerRepository.save(customerMapper.customerDtoToCustomer(newCustomer)));
     }
 
     @Override
-    @Caching(evict = { @CacheEvict(cacheNames = "customerCache"), @CacheEvict(cacheNames = "customerListCache") })
+    @Caching(evict = { @CacheEvict(cacheNames = CUSTOMER_CACHE), @CacheEvict(cacheNames = CUSTOMER_LIST_CACHE) })
     public Optional<CustomerDTO> editCustomer(UUID customerId, CustomerDTO customerToEdit) {
         clearCache(customerId);
 
@@ -71,7 +71,7 @@ public class CustomerServiceJpaImpl implements CustomerService {
             if (StringUtils.hasText(customerToEdit.getName())) {
                 foundCustomer.setName(customerToEdit.getName());
             }
-            foundCustomer.setUpdateDate(LocalDateTime.now());
+            foundCustomer.setUpdateDate(LocalDateTime.now(ZoneId.systemDefault()));
             customerMapper.customerToCustomerDto(customerRepository.save(foundCustomer));
         });
         return Optional
@@ -79,7 +79,7 @@ public class CustomerServiceJpaImpl implements CustomerService {
     }
 
     @Override
-    @Caching(evict = { @CacheEvict(cacheNames = "customerCache"), @CacheEvict(cacheNames = "customerListCache") })
+    @Caching(evict = { @CacheEvict(cacheNames = CUSTOMER_CACHE), @CacheEvict(cacheNames = CUSTOMER_LIST_CACHE) })
     public Optional<CustomerDTO> patchCustomer(UUID customerId, CustomerDTO customerToPatch) {
         clearCache(customerId);
 
@@ -87,7 +87,7 @@ public class CustomerServiceJpaImpl implements CustomerService {
             if (StringUtils.hasText(customerToPatch.getName())) {
                 foundCustomer.setName(customerToPatch.getName());
             }
-            foundCustomer.setUpdateDate(LocalDateTime.now());
+            foundCustomer.setUpdateDate(LocalDateTime.now(ZoneId.systemDefault()));
             customerMapper.customerToCustomerDto(customerRepository.save(foundCustomer));
         });
         return Optional
@@ -96,8 +96,8 @@ public class CustomerServiceJpaImpl implements CustomerService {
 
     @Override
     // Eviction does not work. We are using explicitly the cachemanager
-    @Caching(evict = { @CacheEvict(cacheNames = "customerCache"), @CacheEvict(cacheNames = "customerListCache") })
-    public Boolean deleteCustomer(UUID customerId) {
+    @Caching(evict = { @CacheEvict(cacheNames = CUSTOMER_CACHE), @CacheEvict(cacheNames = CUSTOMER_LIST_CACHE) })
+    public boolean deleteCustomer(UUID customerId) {
         if (customerRepository.existsById(customerId)) {
 
             this.clearCache(customerId);
@@ -109,11 +109,11 @@ public class CustomerServiceJpaImpl implements CustomerService {
     }
 
     private void clearCache(UUID customerId) {
-        if (cacheManager.getCache("customerCache") != null) {
-            cacheManager.getCache("customerCache").evict(customerId);
+        if (cacheManager.getCache(CUSTOMER_CACHE) != null) {
+            cacheManager.getCache(CUSTOMER_CACHE).evict(customerId);
         }
-        if (cacheManager.getCache("customerListCache") != null) {
-            cacheManager.getCache("customerListCache").clear();
+        if (cacheManager.getCache(CUSTOMER_LIST_CACHE) != null) {
+            cacheManager.getCache(CUSTOMER_LIST_CACHE).clear();
         }
     }
 

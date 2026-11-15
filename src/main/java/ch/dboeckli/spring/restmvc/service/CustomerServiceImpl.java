@@ -5,10 +5,13 @@ import io.micrometer.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
+
+    private static final String CUSTOMER_NAME = "Pumukel";
 
     private final Map<UUID, CustomerDTO> customerMap;
 
@@ -17,25 +20,25 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerDTO customer1 = CustomerDTO.builder()
             .id(UUID.randomUUID())
-            .name("Pumukel")
-            .createdDate(LocalDateTime.now())
-            .updateDate(LocalDateTime.now())
+            .name(CUSTOMER_NAME)
+            .createdDate(LocalDateTime.now(ZoneId.systemDefault()))
+            .updateDate(LocalDateTime.now(ZoneId.systemDefault()))
             .version("1.0")
             .build();
 
         CustomerDTO customer2 = CustomerDTO.builder()
             .id(UUID.randomUUID())
-            .name("Pumukel")
-            .createdDate(LocalDateTime.now())
-            .updateDate(LocalDateTime.now())
+            .name(CUSTOMER_NAME)
+            .createdDate(LocalDateTime.now(ZoneId.systemDefault()))
+            .updateDate(LocalDateTime.now(ZoneId.systemDefault()))
             .version("1.0")
             .build();
 
         CustomerDTO customer3 = CustomerDTO.builder()
             .id(UUID.randomUUID())
-            .name("Pumukel")
-            .createdDate(LocalDateTime.now())
-            .updateDate(LocalDateTime.now())
+            .name(CUSTOMER_NAME)
+            .createdDate(LocalDateTime.now(ZoneId.systemDefault()))
+            .updateDate(LocalDateTime.now(ZoneId.systemDefault()))
             .version("1.0")
             .build();
 
@@ -59,8 +62,8 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerDTO customer = CustomerDTO.builder()
             .id(UUID.randomUUID())
             .name(newCustomer.getName())
-            .createdDate(LocalDateTime.now())
-            .updateDate(LocalDateTime.now())
+            .createdDate(LocalDateTime.now(ZoneId.systemDefault()))
+            .updateDate(LocalDateTime.now(ZoneId.systemDefault()))
             .version(newCustomer.getVersion())
             .build();
         customerMap.put(customer.getId(), customer);
@@ -86,14 +89,14 @@ public class CustomerServiceImpl implements CustomerService {
             customerToChange.setVersion(customer.getVersion());
         }
         if (!customer.equals(customerToChange)) {
-            customerToChange.setUpdateDate(LocalDateTime.now());
+            customerToChange.setUpdateDate(LocalDateTime.now(ZoneId.systemDefault()));
             customerMap.replace(customerId, customerToChange);
         }
         return Optional.of(customerToChange);
     }
 
     @Override
-    public Boolean deleteCustomer(UUID customerId) {
+    public boolean deleteCustomer(UUID customerId) {
         customerMap.remove(customerId);
         return true;
     }

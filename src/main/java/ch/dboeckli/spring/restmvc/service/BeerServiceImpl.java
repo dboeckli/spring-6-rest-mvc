@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -30,8 +31,8 @@ public class BeerServiceImpl implements BeerService {
             .upc("12356")
             .price(new BigDecimal("12.99"))
             .quantityOnHand(122)
-            .createdDate(LocalDateTime.now())
-            .updateDate(LocalDateTime.now())
+            .createdDate(LocalDateTime.now(ZoneId.systemDefault()))
+            .updateDate(LocalDateTime.now(ZoneId.systemDefault()))
             .build();
 
         BeerDTO beer2 = BeerDTO.builder()
@@ -42,8 +43,8 @@ public class BeerServiceImpl implements BeerService {
             .upc("12356222")
             .price(new BigDecimal("11.99"))
             .quantityOnHand(392)
-            .createdDate(LocalDateTime.now())
-            .updateDate(LocalDateTime.now())
+            .createdDate(LocalDateTime.now(ZoneId.systemDefault()))
+            .updateDate(LocalDateTime.now(ZoneId.systemDefault()))
             .build();
 
         BeerDTO beer3 = BeerDTO.builder()
@@ -54,8 +55,8 @@ public class BeerServiceImpl implements BeerService {
             .upc("12356")
             .price(new BigDecimal("13.99"))
             .quantityOnHand(144)
-            .createdDate(LocalDateTime.now())
-            .updateDate(LocalDateTime.now())
+            .createdDate(LocalDateTime.now(ZoneId.systemDefault()))
+            .updateDate(LocalDateTime.now(ZoneId.systemDefault()))
             .build();
 
         beerMap.put(beer1.getId(), beer1);
@@ -88,8 +89,8 @@ public class BeerServiceImpl implements BeerService {
             .upc(newBeer.getUpc())
             .price(newBeer.getPrice())
             .quantityOnHand(newBeer.getQuantityOnHand())
-            .createdDate(LocalDateTime.now())
-            .updateDate(LocalDateTime.now())
+            .createdDate(LocalDateTime.now(ZoneId.systemDefault()))
+            .updateDate(LocalDateTime.now(ZoneId.systemDefault()))
             .build();
         beerMap.put(savedBeer.getId(), savedBeer);
         return savedBeer;
@@ -102,7 +103,7 @@ public class BeerServiceImpl implements BeerService {
         beerToChange.setBeerStyle(beer.getBeerStyle());
         beerToChange.setPrice(beer.getPrice());
         beerToChange.setQuantityOnHand(beer.getQuantityOnHand());
-        beerToChange.setUpdateDate(LocalDateTime.now());
+        beerToChange.setUpdateDate(LocalDateTime.now(ZoneId.systemDefault()));
         beerToChange.setUpc(beer.getUpc());
         beerToChange.setVersion(beer.getVersion());
         beerMap.replace(beerId, beerToChange);
@@ -110,7 +111,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public Boolean deleteBeer(UUID beerId) {
+    public boolean deleteBeer(UUID beerId) {
         beerMap.remove(beerId);
         return true;
     }
@@ -137,7 +138,7 @@ public class BeerServiceImpl implements BeerService {
             beerToChange.setVersion(beer.getVersion());
         }
         if (!beer.equals(beerToChange)) {
-            beerToChange.setUpdateDate(LocalDateTime.now());
+            beerToChange.setUpdateDate(LocalDateTime.now(ZoneId.systemDefault()));
             beerMap.replace(beerId, beerToChange);
         }
         return Optional.of(beerToChange);
