@@ -101,9 +101,29 @@ Bruno-Smoke-Test als Pflicht-Gate aus:
 4. JUnit-/HTML-Report pro Ordner als Artifact `bruno-reports`
 5. JUnit-Ergebnisse via `EnricoMi/publish-unit-test-result-action` im Checks-Tab
    (`Bruno API smoke tests`)
+6. HTML-Reports werden über GitHub Pages veröffentlicht (Job `publish-bruno-report`)
 
 Schlägt ein Request oder Test fehl, schlägt der Deploy-Job fehl. Die Reports werden trotzdem
 hochgeladen und veröffentlicht (`if: always()`); die Port-Forwards werden per `trap` beendet.
+
+### GitHub Pages
+
+Der Job `publish-bruno-report` baut ein `_site` mit `index.html` und den HTML-Reports aller
+Ordner und veröffentlicht es über die offiziellen Pages-Actions:
+
+<https://dboeckli.github.io/spring-6-rest-mvc/>
+
+Einmalige Voraussetzungen:
+
+- **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+- Falls das `github-pages`-Environment Branch-Regeln hat: den deployenden Branch erlauben.
+
+Hinweise:
+
+- Es wird immer der **letzte Lauf** veröffentlicht (vorherige Reports werden überschrieben).
+- Die Bruno-HTML-Reports laden Vue/Naive UI von `unpkg.com` — der Browser braucht Internetzugang.
+- `--reporter-skip-all-headers` entfernt Auth-Header; Request-/Response-Bodies sind weiterhin im
+  Report.
 
 ## Hinweise
 
