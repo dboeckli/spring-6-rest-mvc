@@ -2,6 +2,9 @@ package ch.dboeckli.spring.restmvc.config;
 
 public class KafkaConfig {
 
+    private KafkaConfig() {
+    }
+
     public static final String ORDER_PLACED_TOPIC = "order.placed";
 
     public static final String DRINK_REQUEST_ICE_COLD_TOPIC = "drink.request.icecold";

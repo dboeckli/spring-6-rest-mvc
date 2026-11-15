@@ -8,8 +8,6 @@ class KafkaConfigTest {
 
     @Test
     void topicNamesAreConfigured() {
-        new KafkaConfig();
-
         assertThat(KafkaConfig.ORDER_PLACED_TOPIC).isEqualTo("order.placed");
         assertThat(KafkaConfig.DRINK_REQUEST_ICE_COLD_TOPIC).isEqualTo("drink.request.icecold");
         assertThat(KafkaConfig.DRINK_REQUEST_COLD_TOPIC).isEqualTo("drink.request.cold");

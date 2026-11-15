@@ -108,7 +108,9 @@ class BeerControllerIT {
     @Rollback(true)
     // we roll back to deletion to assure that the other tests are not failing
     void testDeleteBeerByIdNotFound() {
-        assertThrows(NotFoundException.class, () -> beerController.deleteBeer(UUID.randomUUID()));
+        UUID missingBeerId = UUID.randomUUID();
+
+        assertThrows(NotFoundException.class, () -> beerController.deleteBeer(missingBeerId));
     }
 
     @Test
@@ -181,7 +183,7 @@ class BeerControllerIT {
 
         BeerDTO editedBeer = beerController.editBeer(beerDTO, beer.getId()).getBody();
         assertAll(() -> {
-            assert editedBeer != null;
+            assertNotNull(editedBeer);
             assertEquals("UPDATED BEER", editedBeer.getBeerName());
         });
     }
@@ -222,8 +224,10 @@ class BeerControllerIT {
     @Rollback(true)
     // we roll back to deletion to assure that the other tests are not failing
     void testUpdateExistingBeerButNotFound() {
-        assertThrows(NotFoundException.class,
-                () -> beerController.editBeer(BeerDTO.builder().build(), UUID.randomUUID()));
+        BeerDTO missingBeer = BeerDTO.builder().build();
+        UUID missingBeerId = UUID.randomUUID();
+
+        assertThrows(NotFoundException.class, () -> beerController.editBeer(missingBeer, missingBeerId));
     }
 
     @Test
@@ -249,8 +253,9 @@ class BeerControllerIT {
     // we roll back to deletion to assure that the other tests are not failing
     void testPatchBeerDoesNotExist() {
         BeerDTO beerDTO = BeerDTO.builder().build();
+        UUID missingBeerId = UUID.randomUUID();
 
-        assertThrows(NotFoundException.class, () -> beerController.patchBeer(beerDTO, UUID.randomUUID()));
+        assertThrows(NotFoundException.class, () -> beerController.patchBeer(beerDTO, missingBeerId));
     }
 
     @Test
@@ -291,7 +296,7 @@ class BeerControllerIT {
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
-            assert beersDtos != null;
+            assertNotNull(beersDtos);
             assertEquals(503, beersDtos.getTotalElements());
             assertEquals(21, beersDtos.getTotalPages());
             assertEquals(25, beersDtos.getNumberOfElements());
@@ -306,7 +311,7 @@ class BeerControllerIT {
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
-            assert beersDtos != null;
+            assertNotNull(beersDtos);
             assertEquals(503, beersDtos.getTotalElements());
             assertEquals(6, beersDtos.getTotalPages());
             assertEquals(MAX_PAGE_SIZE, beersDtos.getNumberOfElements());
@@ -321,7 +326,7 @@ class BeerControllerIT {
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
-            assert beersDtos != null;
+            assertNotNull(beersDtos);
             assertEquals(60, beersDtos.getTotalElements());
         });
     }
@@ -355,7 +360,7 @@ class BeerControllerIT {
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
-            assert beersDtos != null;
+            assertNotNull(beersDtos);
             assertEquals(60, beersDtos.getTotalElements());
             assertEquals(1, beersDtos.getNumber());
             assertEquals(2, beersDtos.getTotalPages());
@@ -370,7 +375,7 @@ class BeerControllerIT {
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
-            assert beersDtos != null;
+            assertNotNull(beersDtos);
             assertEquals(57, beersDtos.getTotalElements());
         });
     }
@@ -382,7 +387,7 @@ class BeerControllerIT {
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
-            assert beersDtos != null;
+            assertNotNull(beersDtos);
             assertEquals(1, beersDtos.getTotalElements());
             assertEquals("Ninja Porter", beersDtos.getContent().getFirst().getBeerName());
             assertEquals(140, beersDtos.getContent().getFirst().getQuantityOnHand());
@@ -396,7 +401,7 @@ class BeerControllerIT {
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
-            assert beersDtos != null;
+            assertNotNull(beersDtos);
             assertEquals(1, beersDtos.getTotalElements());
             assertEquals("Ninja Porter", beersDtos.getContent().getFirst().getBeerName());
             assertNull(beersDtos.getContent().getFirst().getQuantityOnHand());
@@ -410,7 +415,7 @@ class BeerControllerIT {
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
-            assert beersDtos != null;
+            assertNotNull(beersDtos);
             assertEquals(1, beersDtos.getTotalElements());
             assertEquals("Ninja Porter", beersDtos.getContent().getFirst().getBeerName());
             assertNull(beersDtos.getContent().getFirst().getQuantityOnHand());
@@ -424,7 +429,7 @@ class BeerControllerIT {
         Page<@NonNull BeerDTO> beersDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
-            assert beersDtos != null;
+            assertNotNull(beersDtos);
             assertEquals(110, beersDtos.getTotalElements());
         });
     }
@@ -447,7 +452,7 @@ class BeerControllerIT {
         Page<@NonNull BeerDTO> beerDtos = beersDtoResponseEntity.getBody();
 
         assertAll(() -> {
-            assert beerDtos != null;
+            assertNotNull(beerDtos);
             assertEquals(0, beerDtos.getTotalElements());
         });
     }
@@ -484,14 +489,16 @@ class BeerControllerIT {
         BeerDTO beerDTO = beerDTOResponseEntity.getBody();
 
         assertAll(() -> {
-            assert beerDTO != null;
+            assertNotNull(beerDTO);
             assertEquals(givenBeerId, beerDTO.getId());
         });
     }
 
     @Test
     void testGetBeerByIdNotFound() {
-        assertThrows(NotFoundException.class, () -> beerController.getBeerById(UUID.randomUUID()));
+        UUID missingBeerId = UUID.randomUUID();
+
+        assertThrows(NotFoundException.class, () -> beerController.getBeerById(missingBeerId));
     }
 
 }

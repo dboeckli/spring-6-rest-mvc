@@ -109,12 +109,12 @@ class BeerControllerTest {
 
     @Test
     void testGetBeerByIdAndThrowsNotFoundException() throws Exception {
-        // given(beerService.getBeerById(any())).willThrow(NotfoundException.class);
         given(beerService.getBeerById(any())).willReturn(Optional.empty());
 
-        mockMvc.perform(get(requestPath + "/getBeerById/" + UUID.randomUUID()).with(jwtRequestPostProcessor)
-            // .with(httpBasic(username,password))
-            .accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
+        mockMvc
+            .perform(get(requestPath + "/getBeerById/" + UUID.randomUUID()).with(jwtRequestPostProcessor)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound());
     }
 
     @Test

@@ -142,13 +142,12 @@ public class BeerOrderServiceJpaImpl implements BeerOrderService {
 
     @Override
     public Optional<BeerOrderDTO> patchBeerOrder(UUID beerOrderId, BeerOrderDTO beerOrder) {
-        // TODO: Implement
         log.error("Patch not Yet Implemented");
         return Optional.empty();
     }
 
     @Override
-    public Boolean deleteBeerOrder(UUID beerOrderId) {
+    public boolean deleteBeerOrder(UUID beerOrderId) {
         OptimisticLockingFailureException lastException = null;
 
         for (int attempt = 1; attempt <= DELETE_MAX_ATTEMPTS; attempt++) {

@@ -10,14 +10,14 @@ class CategoryTest {
     void equalsReturnsTrueForSameInstance() {
         Category category = Category.builder().description("Lager").build();
 
-        assertThat(category.equals(category)).isTrue();
+        assertThat(category).isEqualTo(category);
     }
 
     @Test
     void equalsReturnsFalseForNull() {
         Category category = Category.builder().description("Lager").build();
 
-        assertThat(category.equals(null)).isFalse();
+        assertThat(category).isNotEqualTo(null);
     }
 
     @Test
@@ -25,28 +25,28 @@ class CategoryTest {
         Category category = Category.builder().description("Lager").build();
         Category other = Category.builder().description("Lager").build();
 
-        assertThat(category.equals(other)).isFalse();
+        assertThat(category).isNotEqualTo(other);
     }
 
     @Test
     void equalsReturnsFalseForOtherType() {
         Category category = Category.builder().description("Lager").build();
 
-        assertThat(category.equals("Lager")).isFalse();
+        assertThat(category).isNotEqualTo("Lager");
     }
 
     @Test
     void hashCodeHandlesDescription() {
         Category category = Category.builder().description("Lager").build();
 
-        assertThat(category.hashCode()).isEqualTo(category.hashCode());
+        assertThat(category.hashCode()).isEqualTo(31 * System.identityHashCode(category) + "Lager".hashCode());
     }
 
     @Test
     void hashCodeHandlesNullDescription() {
         Category category = Category.builder().description(null).build();
 
-        assertThat(category.hashCode()).isEqualTo(category.hashCode());
+        assertThat(category.hashCode()).isEqualTo(31 * System.identityHashCode(category));
     }
 
 }

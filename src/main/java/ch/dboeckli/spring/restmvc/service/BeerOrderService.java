@@ -16,10 +16,10 @@ public interface BeerOrderService {
 
     BeerOrderDTO saveNewBeerOrder(BeerOrderCreateDTO newBeerOrder);
 
-    BeerOrderDTO editBeerOrder(UUID beerOrderId, BeerOrderUpdateDTO BeerOrderUpdateDTO);
+    BeerOrderDTO editBeerOrder(UUID beerOrderId, BeerOrderUpdateDTO beerOrderUpdateDTO);
 
     Optional<BeerOrderDTO> patchBeerOrder(UUID beerOrderId, BeerOrderDTO beerOrder);
 
-    Boolean deleteBeerOrder(UUID beerOrderId);
+    boolean deleteBeerOrder(UUID beerOrderId);
 
 }

@@ -57,7 +57,7 @@ public class SpringSecurityConfigRest {
             .permitAll() // permit all actuator endpoints
             .anyRequest()
             .authenticated())
-            .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
             .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**") // CSRF-Schutz
                                                                          // für H2-Console
                                                                          // deaktivieren

@@ -38,6 +38,14 @@ public class BeerServiceJpaImpl implements BeerService {
 
     public static final int DEFAULT_PAGE_NUMBER = 0;
 
+    private static final String BEER_CACHE = "beerCache";
+
+    private static final String BEER_LIST_CACHE = "beerListCache";
+
+    private static final String LOG_THREAD_NAME = "Current Thread name: ";
+
+    private static final String LOG_THREAD_ID = "Current Thread ID: ";
+
     private final BeerRepository beerRepository;
 
     private final BeerMapper beerMapper;
@@ -55,7 +63,7 @@ public class BeerServiceJpaImpl implements BeerService {
     }
 
     @Override
-    @Cacheable(cacheNames = "beerListCache")
+    @Cacheable(cacheNames = BEER_LIST_CACHE)
     public Page<@NonNull BeerDTO> listBeers(String beerName, BeerStyle beerStyle, Boolean showInventory,
             Integer pageNumber, Integer pageSize) {
 
@@ -124,23 +132,23 @@ public class BeerServiceJpaImpl implements BeerService {
     }
 
     @Override
-    @Cacheable(cacheNames = "beerCache")
+    @Cacheable(cacheNames = BEER_CACHE)
     public Optional<BeerDTO> getBeerById(UUID id) {
         return Optional.ofNullable(beerMapper.beerToBeerDto(beerRepository.findById(id).orElse(null)));
     }
 
     @Override
-    @Caching(evict = { @CacheEvict(cacheNames = "beerCache"), @CacheEvict(cacheNames = "beerListCache") })
+    @Caching(evict = { @CacheEvict(cacheNames = BEER_CACHE), @CacheEvict(cacheNames = BEER_LIST_CACHE) })
     public BeerDTO saveNewBeer(BeerDTO newBeer) {
-        if (cacheManager.getCache("beerListCache") != null) {
-            cacheManager.getCache("beerListCache").clear();
+        if (cacheManager.getCache(BEER_LIST_CACHE) != null) {
+            cacheManager.getCache(BEER_LIST_CACHE).clear();
         }
 
         Beer savedBeer = beerRepository.save(beerMapper.beerDtoToBeer(newBeer));
 
         // publish an event
-        log.info("Current Thread name: " + Thread.currentThread().getName());
-        log.info("Current Thread ID: " + Thread.currentThread().threadId());
+        log.info(LOG_THREAD_NAME + Thread.currentThread().getName());
+        log.info(LOG_THREAD_ID + Thread.currentThread().threadId());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         eventPublisher.publishEvent(new BeerCreatedEvent(savedBeer, authentication));
 
@@ -148,7 +156,7 @@ public class BeerServiceJpaImpl implements BeerService {
     }
 
     @Override
-    @Caching(evict = { @CacheEvict(cacheNames = "beerCache"), @CacheEvict(cacheNames = "beerListCache") })
+    @Caching(evict = { @CacheEvict(cacheNames = BEER_CACHE), @CacheEvict(cacheNames = BEER_LIST_CACHE) })
     public Optional<BeerDTO> editBeer(UUID beerId, BeerDTO beer) {
         clearCache(beerId);
 
@@ -168,8 +176,8 @@ public class BeerServiceJpaImpl implements BeerService {
             Beer updatedBeer = beerRepository.save(foundBeer);
 
             // publish an event
-            log.info("Current Thread name: " + Thread.currentThread().getName());
-            log.info("Current Thread ID: " + Thread.currentThread().threadId());
+            log.info(LOG_THREAD_NAME + Thread.currentThread().getName());
+            log.info(LOG_THREAD_ID + Thread.currentThread().threadId());
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             eventPublisher.publishEvent(new BeerCreatedEvent(updatedBeer, authentication));
         });
@@ -177,7 +185,7 @@ public class BeerServiceJpaImpl implements BeerService {
     }
 
     @Override
-    @Caching(evict = { @CacheEvict(cacheNames = "beerCache"), @CacheEvict(cacheNames = "beerListCache") })
+    @Caching(evict = { @CacheEvict(cacheNames = BEER_CACHE), @CacheEvict(cacheNames = BEER_LIST_CACHE) })
     public Optional<BeerDTO> patchBeer(UUID beerId, BeerDTO beer) {
         clearCache(beerId);
 
@@ -196,8 +204,8 @@ public class BeerServiceJpaImpl implements BeerService {
             }
             Beer patchedBeer = beerRepository.save(foundBeer);
             // publish an event
-            log.info("Current Thread name: " + Thread.currentThread().getName());
-            log.info("Current Thread ID: " + Thread.currentThread().threadId());
+            log.info(LOG_THREAD_NAME + Thread.currentThread().getName());
+            log.info(LOG_THREAD_ID + Thread.currentThread().threadId());
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             eventPublisher.publishEvent(new BeerPatchEvent(patchedBeer, authentication));
         });
@@ -205,15 +213,15 @@ public class BeerServiceJpaImpl implements BeerService {
     }
 
     @Override
-    @Caching(evict = { @CacheEvict(cacheNames = "beerCache"), @CacheEvict(cacheNames = "beerListCache") })
-    public Boolean deleteBeer(UUID beerId) {
+    @Caching(evict = { @CacheEvict(cacheNames = BEER_CACHE), @CacheEvict(cacheNames = BEER_LIST_CACHE) })
+    public boolean deleteBeer(UUID beerId) {
         return beerRepository.findById(beerId).map(foundBeer -> {
             clearCache(beerId);
             beerRepository.delete(foundBeer);
 
             // publish an event with the full beer so the audit can record it
-            log.info("Current Thread name: " + Thread.currentThread().getName());
-            log.info("Current Thread ID: " + Thread.currentThread().threadId());
+            log.info(LOG_THREAD_NAME + Thread.currentThread().getName());
+            log.info(LOG_THREAD_ID + Thread.currentThread().threadId());
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             eventPublisher.publishEvent(new BeerDeleteEvent(foundBeer, authentication));
 
@@ -222,11 +230,11 @@ public class BeerServiceJpaImpl implements BeerService {
     }
 
     private void clearCache(UUID beerId) {
-        if (cacheManager.getCache("beerCache") != null) {
-            cacheManager.getCache("beerCache").evict(beerId);
+        if (cacheManager.getCache(BEER_CACHE) != null) {
+            cacheManager.getCache(BEER_CACHE).evict(beerId);
         }
-        if (cacheManager.getCache("beerListCache") != null) {
-            cacheManager.getCache("beerListCache").clear();
+        if (cacheManager.getCache(BEER_LIST_CACHE) != null) {
+            cacheManager.getCache(BEER_LIST_CACHE).clear();
         }
     }
 

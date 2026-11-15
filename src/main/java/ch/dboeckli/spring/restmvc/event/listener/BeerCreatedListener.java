@@ -30,10 +30,10 @@ public class BeerCreatedListener {
 
         String eventType;
         switch (event) {
-            case BeerCreatedEvent beerCreatedEvent -> eventType = "BEER_CREATED";
-            case BeerPatchEvent beerPatchedEvent -> eventType = "BEER_PATCHED";
-            case BeerUpdateEvent beerUpdatedEvent -> eventType = "BEER_UPDATED";
-            case BeerDeleteEvent beerDeletedEvent -> eventType = "BEER_DELETED";
+            case BeerCreatedEvent _ -> eventType = "BEER_CREATED";
+            case BeerPatchEvent _ -> eventType = "BEER_PATCHED";
+            case BeerUpdateEvent _ -> eventType = "BEER_UPDATED";
+            case BeerDeleteEvent _ -> eventType = "BEER_DELETED";
             default -> eventType = "UNKNOWN";
         }
         log.info("New Beer Event Type to audit: {}", eventType);

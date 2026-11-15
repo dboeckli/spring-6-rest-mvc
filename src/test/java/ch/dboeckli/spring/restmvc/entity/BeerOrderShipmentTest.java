@@ -31,11 +31,4 @@ class BeerOrderShipmentTest {
         assertThat(shipment.getLastModifiedDate()).isEqualTo(TIMESTAMP);
     }
 
-    @Test
-    void hashCodeIsStable() {
-        BeerOrderShipment shipment = BeerOrderShipment.builder().trackingNumber("track-1").build();
-
-        assertThat(shipment.hashCode()).isEqualTo(shipment.hashCode());
-    }
-
 }

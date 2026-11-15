@@ -54,6 +54,7 @@ public class BeerOrder {
     @ToString.Exclude
     private BeerOrderShipment beerOrderShipment;
 
+    @SuppressWarnings("java:S107")
     public BeerOrder(UUID id, Long version, BigDecimal paymentAmount, Timestamp createdDate, Timestamp updateDate,
             String customerRef, Customer customer, Set<BeerOrderLine> beerOrderLines,
             BeerOrderShipment beerOrderShipment) {

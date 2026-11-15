@@ -15,11 +15,9 @@ public class BeerCsvServiceImpl implements BeerCsvService {
     @Override
     public List<BeerCSVRecord> convertCSV(File csvFile) {
         try {
-            List<BeerCSVRecord> beerCSVRecordList = new CsvToBeanBuilder<BeerCSVRecord>(new FileReader(csvFile))
-                .withType(BeerCSVRecord.class)
+            return new CsvToBeanBuilder<BeerCSVRecord>(new FileReader(csvFile)).withType(BeerCSVRecord.class)
                 .build()
                 .parse();
-            return beerCSVRecordList;
         }
         catch (FileNotFoundException e) {
             throw new RuntimeException(e);
