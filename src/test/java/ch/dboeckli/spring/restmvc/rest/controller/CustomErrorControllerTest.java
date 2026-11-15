@@ -30,6 +30,7 @@ class CustomErrorControllerTest {
 
     @SuppressWarnings("unused")
     private void handleBeer(BeerDTO beer) {
+        // Only used to derive a MethodParameter for MethodArgumentNotValidException.
     }
 
 }

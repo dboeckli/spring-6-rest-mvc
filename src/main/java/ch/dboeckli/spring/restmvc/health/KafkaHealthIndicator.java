@@ -19,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class KafkaHealthIndicator implements HealthIndicator {
 
+    private static final String KAFKA_BOOTSTRAP_SERVERS_DETAIL = "kafkaBootstrapServers";
+
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     private final String kafkaBootstrapServers;
@@ -82,7 +84,7 @@ public class KafkaHealthIndicator implements HealthIndicator {
             }
 
             return Health.up()
-                .withDetail("kafkaBootstrapServers", kafkaBootstrapServers)
+                .withDetail(KAFKA_BOOTSTRAP_SERVERS_DETAIL, kafkaBootstrapServers)
                 .withDetail("kafkaResponse", responseInfo)
                 .withDetail("clusterId", describeCluster.clusterId().get())
                 .withDetail("nodes",
@@ -99,12 +101,12 @@ public class KafkaHealthIndicator implements HealthIndicator {
             Thread.currentThread().interrupt();
             wasDownLastCheck = true;
             log.warn("### Kafka Server connection interrupted for {}", kafkaBootstrapServers, ex);
-            return Health.down(ex).withDetail("kafkaBootstrapServers", kafkaBootstrapServers).build();
+            return Health.down(ex).withDetail(KAFKA_BOOTSTRAP_SERVERS_DETAIL, kafkaBootstrapServers).build();
         }
         catch (Exception ex) {
             wasDownLastCheck = true;
             log.warn("### Kafka Server connection down to {}", kafkaBootstrapServers, ex);
-            return Health.down(ex).withDetail("kafkaBootstrapServers", kafkaBootstrapServers).build();
+            return Health.down(ex).withDetail(KAFKA_BOOTSTRAP_SERVERS_DETAIL, kafkaBootstrapServers).build();
         }
     }
 
