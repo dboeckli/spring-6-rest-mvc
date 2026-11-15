@@ -32,5 +32,13 @@ build/
 ### VS Code ###
 .vscode/
 
+### Python ###
+__pycache__/
+*.py[cod]
+
+### Node ###
+node_modules/
+bru-reports/
+
 ### Claude Code ###
 .claude/settings.local.json
