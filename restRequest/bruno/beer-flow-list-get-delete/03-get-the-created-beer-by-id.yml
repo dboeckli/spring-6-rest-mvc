@@ -1,7 +1,7 @@
 info:
-  name: 2) get beer by id (logs and checks {{beerId}} before sending)
+  name: 3) get the created beer by id (logs and checks {{beerId}} before sending)
   type: http
-  seq: 2
+  seq: 3
 
 http:
   method: GET
@@ -19,24 +19,6 @@ http:
 
 runtime:
   scripts:
-    - type: before-request
-      code: |-
-        function randomHex(length) {
-            let result = '';
-            const chars = '0123456789abcdef';
-            for (let i = 0; i < length; i++) {
-                result += chars[Math.floor(Math.random() * chars.length)];
-            }
-            return result;
-        }
-        bru.setVar("traceId", randomHex(32));
-        bru.setVar("spanId", randomHex(16));
-
-        const beerId = bru.getVar("beerId");
-        console.log("getBeerById -> beerId=" + beerId);
-        if (!beerId) {
-            throw new Error("beerId is not set - run 'list beers' first");
-        }
     - type: tests
       code: |-
         test("getBeerById returns 200", function () {

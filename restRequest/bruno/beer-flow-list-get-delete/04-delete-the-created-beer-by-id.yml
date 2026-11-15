@@ -1,7 +1,7 @@
 info:
-  name: 3) delete the beer by id
+  name: 4) delete the created beer by id
   type: http
-  seq: 3
+  seq: 4
 
 http:
   method: DELETE
