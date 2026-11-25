@@ -101,17 +101,25 @@ Bruno-Smoke-Test als Pflicht-Gate aus:
 4. JUnit-/HTML-Report pro Ordner als Artifact `bruno-reports`
 5. JUnit-Ergebnisse via `EnricoMi/publish-unit-test-result-action` im Checks-Tab
    (`Bruno API smoke tests`)
-6. HTML-Reports werden über GitHub Pages veröffentlicht (Job `publish-bruno-report`)
+6. HTML-Reports werden über GitHub Pages veröffentlicht (Build-Job
+   `publish-bruno-report`, Deploy-Job `deploy-bruno-report`)
 
 Schlägt ein Request oder Test fehl, schlägt der Deploy-Job fehl. Die Reports werden trotzdem
 hochgeladen und veröffentlicht (`if: always()`); die Port-Forwards werden per `trap` beendet.
 
 ### GitHub Pages
 
-Der Job `publish-bruno-report` baut ein `_site` mit `index.html` und den HTML-Reports aller
-Ordner und veröffentlicht es über die offiziellen Pages-Actions:
+Der Build-Job `publish-bruno-report` baut ein `_site` mit `index.html` und den HTML-Reports aller
+Ordner und lädt es als Pages-Artefakt hoch. Der separate Deploy-Job `deploy-bruno-report`
+(`needs: publish-bruno-report`) veröffentlicht es über die offiziellen Pages-Actions:
 
 <https://dboeckli.github.io/spring-6-rest-mvc/>
+
+Upload und Deploy laufen bewusst in **getrennten Jobs** (offizielles Pages-Muster): dadurch ist der
+Upload-Job vollständig abgeschlossen (Artefakt indexiert), bevor `deploy-pages` läuft — das
+beseitigt die eventual-consistencybedingte Flakiness des Deploys im selben Job. Ein einfacher
+Deploy-Retry (kurze Wartezeit + zweiter Versuch) fängt Rest-Latenz ab, ohne auf interne
+Actions-Results-APIs zu setzen.
 
 Einmalige Voraussetzungen:
 
